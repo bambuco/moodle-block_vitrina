@@ -69,7 +69,6 @@ class detail implements renderable, templatable {
         $networkslist = explode("\n", $networks);
         $socialnetworks = [];
 
-
         $courseurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id]);
         foreach ($networkslist as $one) {
 
@@ -168,7 +167,7 @@ class detail implements renderable, templatable {
         }
 
         $coursename = $first . '<span>' . $last . '</span>';
-        // End
+        // End course name format.
 
         // Check enrolled status.
         $custom->enrolled = !(isguestuser() || !isloggedin() || !is_enrolled($coursecontext));

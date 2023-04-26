@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course details.
+ *
+ * @package   block_vitrina
+ * @copyright 2023 David Herney @ BambuCo
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once('../../config.php');
 require_once('classes/output/detail.php');
 
@@ -27,6 +35,8 @@ if ($id == SITEID) {
 }
 
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
+
+require_login(null, true);
 
 $syscontext = context_system::instance();
 
@@ -59,7 +69,7 @@ if ($enroll) {
         $enrolinstances = enrol_get_instances($course->id, true);
         $enrolplugin = enrol_get_plugin('self');
 
-        foreach($enrolinstances as $instance) {
+        foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {
 
                 if ($instance->password) {
@@ -90,7 +100,6 @@ if (!$course->visible) {
     $renderable = new \block_vitrina\output\detail($course);
     $renderer = $PAGE->get_renderer('block_vitrina');
     echo $renderer->render($renderable);
-
 }
 
 echo $OUTPUT->footer();

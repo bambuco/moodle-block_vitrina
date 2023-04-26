@@ -20,11 +20,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/str'], function($, str) {
+define(['jquery', 'core/str', 'core/log'], function($, str, Log) {
 
     // Load strings.
     var strings = [];
-    strings.push({ key: 'courselinkcopiedtoclipboard', component: 'block_vitrina' });
+    strings.push({key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'});
 
     var s = [];
 
@@ -34,12 +34,15 @@ define(['jquery', 'core/str'], function($, str) {
             s[one.key] = one.key;
         });
 
-        str.get_strings(strings).then(function (results) {
+        str.get_strings(strings).done(function(results) {
             var pos = 0;
             strings.forEach(one => {
                 s[one.key] = results[pos];
                 pos++;
             });
+        }).fail(function(e) {
+            Log.debug('Error loading strings');
+            Log.debug(e);
         });
     }
     // End of Load strings.
@@ -54,7 +57,7 @@ define(['jquery', 'core/str'], function($, str) {
             $input.select();
             document.execCommand("copy");
 
-            var $msg = $('<div class="msg-courselink-copy">' + s['courselinkcopiedtoclipboard'] + '</div>');
+            var $msg = $('<div class="msg-courselink-copy">' + s.courselinkcopiedtoclipboard + '</div>');
 
             $input.parent().append($msg);
             window.setTimeout(function() {

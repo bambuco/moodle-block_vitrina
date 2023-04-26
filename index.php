@@ -14,12 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * List of available courses.
+ *
+ * @package   block_vitrina
+ * @copyright 2023 David Herney @ BambuCo
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once('../../config.php');
 require_once('classes/output/catalog.php');
 
 $query = optional_param('q', '', PARAM_TEXT);
 $spage = optional_param('spage', 0, PARAM_INT);
 $sort = optional_param('sort', '', PARAM_TEXT);
+
+require_login(null, true);
 
 $syscontext = context_system::instance();
 
@@ -66,7 +76,7 @@ $categories = get_config('block_vitrina', 'categories');
 
 $categoriesids = [];
 $catslist = explode(',', $categories);
-foreach($catslist as $catid) {
+foreach ($catslist as $catid) {
     if (is_numeric($catid)) {
         $categoriesids[] = (int)trim($catid);
     }
@@ -89,38 +99,38 @@ if (!empty($query)) {
 if ($sort == 'greats') {
     $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
     $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
-                FROM {course} AS c
-                INNER JOIN {block_rate_course} AS r ON r.course = c.id
+                FROM {course} c
+                INNER JOIN {block_rate_course} r ON r.course = c.id
                 WHERE " . $selectgreats .
                 " GROUP BY c.id HAVING rating > 3
                 ORDER BY rating DESC";
     $courses = $DB->get_records_sql($sql, $params, $spage * $amount, $amount);
 
-    $sql_count = "SELECT COUNT(DISTINCT c.id)
-                FROM {course} AS c
-                INNER JOIN {block_rate_course} AS r ON r.course = c.id
+    $sqlcount = "SELECT COUNT(DISTINCT c.id)
+                FROM {course} c
+                INNER JOIN {block_rate_course} r ON r.course = c.id
                 WHERE " . $selectgreats;
 
-    $coursescount = $DB->count_records_sql($sql_count, $params);
-} else  if ($sort == 'premium') {
+    $coursescount = $DB->count_records_sql($sqlcount, $params);
 
+} else if ($sort == 'premium') {
 
     $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
 
     $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
     $sql = "SELECT c.*
-                FROM {course} AS c
-                INNER JOIN {customfield_data} AS cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+                FROM {course} c
+                INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
                 WHERE " . $selectpremium .
                 " ORDER BY c.fullname ASC";
     $courses = $DB->get_records_sql($sql, $params, $spage * $amount, $amount);
 
-    $sql_count = "SELECT COUNT(1)
-                    FROM {course} AS c
-                    INNER JOIN {customfield_data} AS cd ON fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+    $sqlcount = "SELECT COUNT(1)
+                    FROM {course} c
+                    INNER JOIN {customfield_data} cd ON fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
                     WHERE " . $selectpremium;
 
-    $coursescount = $DB->count_records_sql($sql_count, $params);
+    $coursescount = $DB->count_records_sql($sqlcount, $params);
 } else {
     if ($sort == 'recents') {
         $courses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', $spage * $amount, $amount);

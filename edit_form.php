@@ -29,6 +29,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_vitrina_edit_form extends block_edit_form {
+
+    /**
+     * Defines forms elements.
+     *
+     * @param \moodleform $mform The form to add elements to.
+     *
+     * @return void
+     */
     protected function specific_definition($mform) {
         global $CFG;
 

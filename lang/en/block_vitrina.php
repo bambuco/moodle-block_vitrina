@@ -25,7 +25,7 @@
 
 $string['pluginname'] = 'Showcase';
 
-//Capabilities
+// Capabilities.
 $string['vitrina:addinstance'] = 'Add a new Showcase block';
 $string['vitrina:myaddinstance'] = 'Add a new Showcase block to Dashboard';
 

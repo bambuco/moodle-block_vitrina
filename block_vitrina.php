@@ -33,7 +33,7 @@ class block_vitrina extends block_base {
     /**
      * Initialice the block.
      */
-    function init() {
+    public function init() {
         $this->title = get_string('pluginname', 'block_vitrina');
     }
 
@@ -43,7 +43,7 @@ class block_vitrina extends block_base {
      *
      * @return boolean
      */
-    function has_config() {
+    public function has_config() {
         return true;
     }
 
@@ -58,7 +58,7 @@ class block_vitrina extends block_base {
      *
      * @return array page-type prefix => true/false.
      */
-    function applicable_formats() {
+    public function applicable_formats() {
         return ['all' => true];
     }
 
@@ -67,7 +67,7 @@ class block_vitrina extends block_base {
      * Use this function to act on instance data just after it's loaded and before anything else is done
      * For instance: if your block will have different title's depending on location (site, course, blog, etc)
      */
-    function specialization() {
+    public function specialization() {
         if (isset($this->config->title)) {
             $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
         } else {
@@ -80,7 +80,7 @@ class block_vitrina extends block_base {
      * If yes, then it is assumed that the block WILL USE per-instance configuration
      * @return boolean
      */
-    function instance_allow_multiple() {
+    public function instance_allow_multiple() {
         return true;
     }
 
@@ -89,15 +89,15 @@ class block_vitrina extends block_base {
      *
      * @return stdObject
      */
-    function get_content() {
+    public function get_content() {
         global $DB;
 
-        if ($this->content !== NULL) {
+        if ($this->content !== null) {
             return $this->content;
         }
 
-        $this->content         =  new stdClass;
-        $this->content->text   = '';
+        $this->content = new stdClass;
+        $this->content->text = '';
         $this->content->footer = '';
 
         $amount = get_config('block_vitrina', 'singleamount');
@@ -120,7 +120,7 @@ class block_vitrina extends block_base {
 
         $categoriesids = [];
         $catslist = explode(',', $categories);
-        foreach($catslist as $catid) {
+        foreach ($catslist as $catid) {
             if (is_numeric($catid)) {
                 $categoriesids[] = (int)trim($catid);
             }
@@ -136,7 +136,7 @@ class block_vitrina extends block_base {
         $html = '';
 
         if ($courses && is_array($courses)) {
-            // Load templates to display courses;
+            // Load templates to display courses.
             $renderable = new \block_vitrina\output\main($courses);
             $renderer = $this->page->get_renderer('block_vitrina');
             $html .= $renderer->render($renderable);

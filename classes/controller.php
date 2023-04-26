@@ -47,7 +47,7 @@ class controller {
      * @param object $course Course to be processed.
      * @param bool   $large  True if load full information about the course.
      */
-     public static function course_preprocess($course, $large = false) {
+    public static function course_preprocess($course, $large = false) {
         global $CFG, $OUTPUT, $DB, $PAGE, $USER;
 
         self::$large = $large;
@@ -140,7 +140,6 @@ class controller {
                     $ratings = $rate->ratings;
                 }
 
-
                 $course->rating = new \stdClass();
                 $course->rating->total = $rating;
                 $course->rating->count = $ratings;
@@ -188,13 +187,16 @@ class controller {
         if ($large) {
             $fullcourse = new \core_course_list_element($course);
 
-            $course->commentscount = $DB->count_records('comments', ['contextid' => $coursecontext->id, 'component' => 'block_comments']);
+            $course->commentscount = $DB->count_records('comments', ['contextid' => $coursecontext->id,
+                                                                     'component' => 'block_comments']);
 
             if ($course->commentscount > 0) {
                 $course->hascomments = true;
+
                 // Get 20 newest records.
-                $course->comments = $DB->get_records('comments', ['contextid' => $coursecontext->id, 'component' => 'block_comments'],
-                                                        'timecreated DESC', '*', 0, 20);
+                $course->comments = $DB->get_records('comments',
+                                                     ['contextid' => $coursecontext->id, 'component' => 'block_comments'],
+                                                     'timecreated DESC', '*', 0, 20);
 
                 $course->comments = array_values($course->comments);
 
@@ -202,7 +204,7 @@ class controller {
 
                 foreach ($course->comments as $comment) {
                     $user = $DB->get_record('user', ['id' => $comment->userid]);
-                    $userpicture = new \user_picture($user, ['alttext'=>false, 'link'=>false]);
+                    $userpicture = new \user_picture($user, ['alttext' => false, 'link' => false]);
                     $userpicture->size = 200;
                     $comment->userpicture = $userpicture->get_url($PAGE);
                     $comment->timeformated = userdate($comment->timecreated, $strftimeformat);
@@ -223,7 +225,7 @@ class controller {
 
             $categoriesids = [];
             $catslist = explode(',', $categories);
-            foreach($catslist as $catid) {
+            foreach ($catslist as $catid) {
                 if (is_numeric($catid)) {
                     $categoriesids[] = (int)trim($catid);
                 }
@@ -244,8 +246,8 @@ class controller {
                         $ids[] = $key;
                     }
 
-                    $sqlintances = "SELECT c.id, c.category FROM {tag_instance} AS t " .
-                                    " INNER JOIN {course} AS c ON t.itemtype = 'course' AND c.id = t.itemid" .
+                    $sqlintances = "SELECT c.id, c.category FROM {tag_instance} t " .
+                                    " INNER JOIN {course} c ON t.itemtype = 'course' AND c.id = t.itemid" .
                                     " WHERE t.tagid IN (" . (implode(',', $ids)) . ") " . $categoriescondition .
                                     " GROUP BY c.id, c.category" .
                                     " ORDER BY t.timemodified DESC";
@@ -267,7 +269,7 @@ class controller {
             if (count($related) < $relatedlimit) {
                 // Exclude previous related courses, current course and the site.
                 $relatedids = implode(',', array_merge($related, [$course->id, SITEID]));
-                $sql = "SELECT id FROM {course} AS c " .
+                $sql = "SELECT id FROM {course} c " .
                         " WHERE visible = 1 AND (enddate > :enddate OR enddate IS NULL) AND id NOT IN ($relatedids)" .
                         $categoriescondition .
                         " ORDER BY startdate DESC";
