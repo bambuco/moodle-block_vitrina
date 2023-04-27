@@ -46,5 +46,21 @@ class block_vitrina_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_title', get_string('customtitle', 'block_vitrina'));
         $mform->setType('config_title', PARAM_TEXT);
 
+        // Amount of courses shown at instance.
+        $mform->addElement('text', 'config_singleamount', get_string('singleamountcourses', 'block_vitrina'), ['size' => 2]);
+        $mform->setType('config_singleamount', PARAM_INT);
+        $mform->setDefault('config_singleamount', 4);
+        $mform->addHelpButton('config_singleamount', 'singleamountcourses', 'block_vitrina');
+
+        // Select courses categories.
+        $displaylist = \core_course_category::make_categories_list('moodle/course:create');
+
+        $options = [
+            'multiple' => true,
+            'noselectionstring' => get_string('selectcategories', 'block_vitrina')
+        ];
+
+        $mform->addElement('autocomplete', 'config_categories', get_string('coursecategory', 'block_vitrina'), $displaylist, $options);
+
     }
 }

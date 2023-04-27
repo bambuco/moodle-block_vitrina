@@ -15,19 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing vitrina block instances.
- *
- * @package   block_vitrina
- * @copyright 2023 David Herney @ BambuCo
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-/**
  * Class containing block base implementation for Vitrina.
  *
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+require_once('classes/output/catalog.php');
+
 class block_vitrina extends block_base {
 
     /**
@@ -106,6 +101,11 @@ class block_vitrina extends block_base {
             $amount = 4;
         }
 
+        // Take config from instance if it isn't empty.
+        if (!empty($this->config->singleamount)) {
+            $amount = $this->config->singleamount;
+        }
+
         $params = [];
         $select = 'visible = 1 AND id != ' . SITEID;
 
@@ -118,16 +118,25 @@ class block_vitrina extends block_base {
         // Categories filter.
         $categories = get_config('block_vitrina', 'categories');
 
-        $categoriesids = [];
-        $catslist = explode(',', $categories);
-        foreach ($catslist as $catid) {
-            if (is_numeric($catid)) {
-                $categoriesids[] = (int)trim($catid);
+        if (!empty($this->config->categories)) {
+            $categories = $this->config->categories;
+        } else {
+            $categoryid = [];
+            $catslist = explode(',', $categories);
+            foreach($catslist as $catid) {
+                if (is_numeric($catid)) {
+                    $categoryid[] = (int)trim($catid);
+                }
+                $categories = $categoryid;
             }
         }
 
-        if (count($categoriesids) > 0) {
-            $select .= ' AND category IN (' . implode(',', $categoriesids) . ')';
+        foreach ($categories as $key => $id) {
+            $categories[$key] = intval($id);
+        }
+
+        if (count($categories) > 0) {
+            $select .= ' AND category IN (' . implode(',', $categories) . ')';
         }
 
         // End Categories filter.

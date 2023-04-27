@@ -23,4 +23,4 @@ FEATURES
 IN VERSION
 =============
 2023042600:
-First version (fork from: https://github.com/cocreatic/moodle-block_greatcourses)
+First version (fork from: https://github.com/cocreatic/moodle-block_vitrina)

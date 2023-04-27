@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->dirroot . '/blocks/vitrina/classes/admin_setting_configmultiselect_autocomplete.php');
+
+
 if ($ADMIN->fulltree) {
 
     // Course fields.
@@ -149,11 +152,21 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtextarea($name, $title, $help, '');
     $settings->add($setting);
 
-    // Categories filter.
+    // Select courses categories.
     $name = 'block_vitrina/categories';
     $title = get_string('categories', 'block_vitrina');
     $help = get_string('categories_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $displaylist = \core_course_category::make_categories_list('moodle/category:manage');
+
+    $default = [];
+    $setting = new admin_setting_configmultiselect_autocomplete (
+        'block_vitrina/categories',
+        get_string('categories', 'block_vitrina'),
+        get_string('categories_help', 'block_vitrina'),
+        $default,
+        $displaylist
+    );
+
     $settings->add($setting);
 
     // Block summary.

@@ -31,6 +31,7 @@ $string['vitrina:myaddinstance'] = 'Adicionar un nuevo bloque de Vitrina de curs
 
 $string['privacy:metadata'] = 'El bloque de vitrina de cursos no almacena datos personales.';
 
+$string['coursecategory'] = 'Categoría de curso';
 $string['customtitle'] = 'Título personalizado';
 $string['amountcourses'] = 'Cantidad de cursos';
 $string['amountcourses_help'] = 'Cantidad de cursos a mostrar en la vista general.';
@@ -118,5 +119,6 @@ $string['hascourseview'] = '¡Tienes acceso a este curso con tu usuario actual!'
 $string['templatetype'] = 'Tipo de plantilla';
 $string['templatetype_help'] = 'Elija una plantilla para ajustar la apariencia de las páginas del bloque';
 $string['comment_by'] = 'Por {$a}';
+$string['selectcategories'] = 'Elija una categoría de curso';
 $string['showmorecomments'] = 'Ver más comentarios';
 $string['showlesscomments'] = 'Ver menos';

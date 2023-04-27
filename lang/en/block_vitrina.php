@@ -31,6 +31,7 @@ $string['vitrina:myaddinstance'] = 'Add a new Showcase block to Dashboard';
 
 $string['privacy:metadata'] = 'The Showcase block does not store any data itself.';
 
+$string['coursecategory'] = 'Course category';
 $string['customtitle'] = 'Custom title';
 $string['amountcourses'] = 'Amount courses';
 $string['amountcourses_help'] = 'Amount courses to display in the main view.';
@@ -118,5 +119,6 @@ $string['hascourseview'] = 'You have access to this course!';
 $string['templatetype'] = 'Template type';
 $string['templatetype_help'] = 'Choose a template to change the block pages appearance';
 $string['comment_by'] = 'By {$a}';
+$string['selectcategories'] = 'Choose a course category';
 $string['showmorecomments'] = 'Show more comments';
 $string['showlesscomments'] = 'Hide comments';
