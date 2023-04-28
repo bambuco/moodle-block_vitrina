@@ -38,7 +38,7 @@ class block_vitrina_edit_form extends block_edit_form {
      * @return void
      */
     protected function specific_definition($mform) {
-        global $CFG;
+        global $CFG, $DB, $PAGE;
 
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
@@ -51,6 +51,23 @@ class block_vitrina_edit_form extends block_edit_form {
         $mform->setType('config_singleamount', PARAM_INT);
         $mform->setDefault('config_singleamount', 4);
         $mform->addHelpButton('config_singleamount', 'singleamountcourses', 'block_vitrina');
+
+        // Tabs
+
+        $mform->addElement('checkbox', 'config_tabdefault', get_string('defaultsort', 'block_vitrina'));
+
+        // Show premium tab config only if premium is available.
+        if (\block_vitrina\controller::premium_available()) {
+            $mform->addElement('checkbox', 'config_tabpremium', get_string('premium', 'block_vitrina'));
+        }
+
+        $mform->addElement('checkbox', 'config_tabrecents', get_string('recents', 'block_vitrina'));
+
+        // Show greats tab config only if rate_course block exists.
+        $bmanager = new \block_manager($PAGE);
+        if ($bmanager->is_known_block_type('rate_course')) {
+            $mform->addElement('checkbox', 'config_tabgreats', get_string('greats', 'block_vitrina'));
+        }
 
         // Select courses categories.
         $displaylist = \core_course_category::make_categories_list('moodle/course:create');

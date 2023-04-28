@@ -17,6 +17,7 @@
 /**
  * Class containing block base implementation for Vitrina.
  *
+ * @package   block_vitrina
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -142,11 +143,34 @@ class block_vitrina extends block_base {
         // End Categories filter.
         $courses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', 0, $amount);
 
+        $tabs = array();
+
+        if (isset($this->config) && is_object($this->config)) {
+            // Show all tab is printed by default if not exists the configuration parameter.
+            if (property_exists($this->config, 'tabdefault') && $this->config->tabdefault) {
+                $tabs[] = 'tabdefault';
+            }
+
+            if (property_exists($this->config, 'tabpremium') && $this->config->tabpremium) {
+                $tabs[] = 'tabpremium';
+            }
+
+            if (property_exists($this->config, 'tabrecents') && $this->config->tabrecents) {
+                $tabs[] = 'tabrecents';
+            }
+
+            if (property_exists($this->config, 'tabgreats') && $this->config->tabgreats) {
+                $tabs[] = 'tabgreats';
+            }
+        } else {
+            $tabs[] = 'tabdefault';
+        }
+
         $html = '';
 
         if ($courses && is_array($courses)) {
             // Load templates to display courses.
-            $renderable = new \block_vitrina\output\main($courses);
+            $renderable = new \block_vitrina\output\main($courses, $tabs);
             $renderer = $this->page->get_renderer('block_vitrina');
             $html .= $renderer->render($renderable);
         }

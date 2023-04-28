@@ -628,3 +628,38 @@
     }
 
 }
+
+/* Tabs control */
+.block_vitrina-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #ddd;
+}
+
+.block_vitrina-tabs > [data-ref] {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+}
+
+.block_vitrina-tabs > .active {
+    cursor: default;
+}
+
+.block_vitrina-tabs > .active,
+.block_vitrina-tabs > :hover[data-ref] {
+    border-color: #aaa;
+    background-color: #ddd;
+}
+
+.block_vitrina-tabcontent {
+    padding: 10px 0;
+    display: none;
+}
+
+.block_vitrina-tabcontent.active {
+    display: inherit;
+}
+
+/* End Tabs control */

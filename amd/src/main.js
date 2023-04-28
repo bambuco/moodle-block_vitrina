@@ -73,6 +73,33 @@ define(['jquery', 'core/str', 'core/log'], function($, str, Log) {
             $(target).toggleClass(cssclass);
         });
 
+        $('.block_vitrina-content').each(function() {
+
+            var $blockcontent = $(this);
+
+            // Tabs.
+            $blockcontent.find('.block_vitrina-tabs').each(function() {
+                var $tabs = $(this);
+                var tabslist = [];
+
+                $tabs.find('[data-ref]').each(function() {
+                    var $tab = $(this);
+                    tabslist.push($tab);
+
+                    $tab.on('click', function() {
+                        tabslist.forEach(one => {
+                            $(one.data('ref')).removeClass('active');
+                        });
+
+                        $tabs.find('.active[data-ref]').removeClass('active');
+
+                        $tab.addClass('active');
+                        $($tab.data('ref')).addClass('active');
+                    });
+                });
+            });
+        });
+
     };
 
     return {

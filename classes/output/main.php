@@ -41,11 +41,16 @@ class main implements renderable, templatable {
     private $courses = null;
 
     /**
+     * @var array List of tabs to print.
+     */
+    private $tabs;
+
+    /**
      * Constructor.
      *
      * @param array $courses A courses list
      */
-    public function __construct($courses = []) {
+    public function __construct($courses = [], $tabs) {
         global $CFG, $OUTPUT;
 
         // Load the course image.
@@ -54,6 +59,7 @@ class main implements renderable, templatable {
         }
 
         $this->courses = $courses;
+        $this->tabs = $tabs;
     }
 
     /**
@@ -65,9 +71,56 @@ class main implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
+        $icons = [
+            'default' => 'address-card',
+            'premium' => 'sort-amount-desc',
+            'recents' => 'trophy',
+            'greats' => 'calendar-check-o'
+        ];
+
+        $showtabs = [];
+        foreach ($this->tabs as $k => $tab) {
+            $one = new \stdClass();
+            $one->title = get_string('tabtitle_' . $tab, 'block_vitrina');
+            $one->key = $tab;
+            $one->icon = $icons[$tab];
+            $one->state = $k == 0 ? 'active' : '';
+            $showtabs[] = $one;
+        }
+
+        $activetab = false;
+        $uniqueid = \block_vitrina\controller::get_uniqueid();
+
+        if (in_array('default', $this->tabs)) {
+            $defaultvariables['hasdefault'] = true;
+            $defaultvariables['defaultstate'] = !$activetab ? 'active' : '';
+            $activetab = true;
+        }
+
+        if (in_array('premium', $this->tabs)) {
+            $defaultvariables['haspremium'] = true;
+            $defaultvariables['premiumstate'] = !$activetab ? 'active' : '';
+            $activetab = true;
+        }
+
+        if (in_array('recents', $this->tabs)) {
+            $defaultvariables['hasrecents'] = true;
+            $defaultvariables['recentsstate'] = !$activetab ? 'active' : '';
+            $activetab = true;
+        }
+
+        if (in_array('greats', $this->tabs)) {
+            $defaultvariables['hasgreats'] = true;
+            $defaultvariables['greatsstate'] = !$activetab ? 'active' : '';
+            $activetab = true;
+        }
+
         $defaultvariables = [
             'courses' => array_values($this->courses),
-            'baseurl' => $CFG->wwwroot
+            'baseurl' => $CFG->wwwroot,
+            'hastabs' => count($this->tabs) > 1,
+            'tabs' => $showtabs,
+            'uniqueid' => $uniqueid
         ];
 
         return $defaultvariables;

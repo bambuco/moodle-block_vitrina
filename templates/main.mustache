@@ -23,9 +23,20 @@
     {}
 }}
 
-<div class="courses">
+<div class="courses block_vitrina-content">
+
+    {{#hastabs}}
+        <div class="block_ludifica-tabs">
+        {{#tabs}}
+            <div data-ref="#{{uniqueid}} .tab-{{key}}" title="{{title}}" class="{{state}}">
+                <i class="fa fa-{{icon}}"></i>
+            </div>
+        {{/tabs}}
+        </div>
+    {{/hastabs}}
+
     {{#courses}}
-{{>block_vitrina/course}}
+    {{>block_vitrina/course}}
     {{/courses}}
 </div>
 <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-primary btn-block">{{#str}}viewall, block_vitrina{{/str}}</a>
