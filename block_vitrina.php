@@ -147,23 +147,24 @@ class block_vitrina extends block_base {
 
         if (isset($this->config) && is_object($this->config)) {
             // Show all tab is printed by default if not exists the configuration parameter.
-            if (property_exists($this->config, 'tabdefault') && $this->config->tabdefault) {
-                $tabs[] = 'tabdefault';
+            if (property_exists($this->config, 'default') && $this->config->default) {
+                $tabs[] = 'default';
             }
 
-            if (property_exists($this->config, 'tabpremium') && $this->config->tabpremium) {
-                $tabs[] = 'tabpremium';
+            if (property_exists($this->config, 'greats') && $this->config->greats) {
+                $tabs[] = 'greats';
             }
 
-            if (property_exists($this->config, 'tabrecents') && $this->config->tabrecents) {
-                $tabs[] = 'tabrecents';
+            if (property_exists($this->config, 'recents') && $this->config->recents) {
+                $tabs[] = 'recents';
             }
 
-            if (property_exists($this->config, 'tabgreats') && $this->config->tabgreats) {
-                $tabs[] = 'tabgreats';
+            if (property_exists($this->config, 'premium') && $this->config->premium) {
+                $tabs[] = 'premium';
             }
+
         } else {
-            $tabs[] = 'tabdefault';
+            $tabs[] = 'default';
         }
 
         $html = '';
@@ -178,6 +179,7 @@ class block_vitrina extends block_base {
         $this->content->text = $html;
 
         \block_vitrina\controller::include_templatecss();
+        $this->page->requires->js_call_amd('block_vitrina/main', 'init');
 
         return $this->content;
     }

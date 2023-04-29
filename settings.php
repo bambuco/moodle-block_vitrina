@@ -183,6 +183,19 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_confightmleditor($name, $title, $help, '');
     $settings->add($setting);
 
+    // Tabs view.
+    $options = [
+        'default' => get_string('textandicon', 'block_vitrina'),
+        'textonly' => get_string('textonly', 'block_vitrina'),
+        'iconsonly' => get_string('iconsonly', 'block_vitrina')
+    ];
+
+    $name = 'block_vitrina/tabview';
+    $title = get_string('tabview', 'block_vitrina');
+    $help = get_string('tabview_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
+    $settings->add($setting);
+
     // Cover image type.
     $options = [
         'default' => get_string('coverimagetype_default', 'block_vitrina'),

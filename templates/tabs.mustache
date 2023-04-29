@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_vitrina/tabs
+
+    This template renders the template content area for a resource.
+
+    Example context (json):
+    {
+        "tabs": [{
+            "title": "BambuCo",
+            "text": "Ir a BambuCo",
+            "url": "https://bambuco.co",
+            "icon": "globe"
+        }],
+        "baseurl": "https://moodle_wwwroot_url"
+    }
+}}
+
+{{#hastabs}}
+<div class="block_vitrina-tabs">
+    {{#tabs}}
+    <div data-ref="#{{uniqueid}} .tab-{{key}}" title="{{title}}" class="{{state}}">
+        {{#iconsonly}}
+            <i class="fa fa-{{icon}}"></i>
+        {{/iconsonly}}
+        {{#textonly}}
+            <span>{{title}}</span>
+        {{/textonly}}
+    </div>
+    {{/tabs}}
+</div>
+{{/hastabs}}

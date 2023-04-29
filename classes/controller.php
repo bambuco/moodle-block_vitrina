@@ -462,7 +462,7 @@ class controller {
      * @return string Unique identifier.
      */
     public static function get_uniqueid() {
-        $uniqueid = 'block_ludifica_' . self::$instancescounter;
+        $uniqueid = 'block_vitrina_' . self::$instancescounter;
         self::$instancescounter++;
 
         return $uniqueid;

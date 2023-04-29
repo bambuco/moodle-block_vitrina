@@ -23,20 +23,36 @@
     {}
 }}
 
-<div class="courses block_vitrina-content">
+{{>block_vitrina/tabs}}
 
-    {{#hastabs}}
-        <div class="block_ludifica-tabs">
-        {{#tabs}}
-            <div data-ref="#{{uniqueid}} .tab-{{key}}" title="{{title}}" class="{{state}}">
-                <i class="fa fa-{{icon}}"></i>
-            </div>
-        {{/tabs}}
-        </div>
-    {{/hastabs}}
+<div id="{{uniqueid}}" class="block_vitrina-content" data-observe-resizes>
 
-    {{#courses}}
-    {{>block_vitrina/cesil/course}}
-    {{/courses}}
+    {{>block_vitrina/tabs}}
+
+    <div class="courses tab-default block_vitrina-tabcontent active {{defaultstate}}">
+        {{#courses}}
+        {{>block_vitrina/cesil/course}}
+        {{/courses}}
+    </div>
+
+    <div class="courses tab-greats block_vitrina-tabcontent {{greatsstate}}">
+        {{#courses}}
+            <p>greats</p>
+        {{/courses}}
+    </div>
+
+    <div class="courses tab-recents block_vitrina-tabcontent {{recentsstate}}">
+        {{#courses}}
+            <p>recents</p>
+        {{/courses}}
+    </div>
+
+    <div class="courses tab-premium block_vitrina-tabcontent {{premiumstate}}">
+        {{#courses}}
+            <p>premium</p>
+        {{/courses}}
+    </div>
+
+    <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-primary btn-block">{{#str}}viewall, block_vitrina{{/str}}</a>
+
 </div>
-<a href="{{baseurl}}/blocks/vitrina/" class="btn btn-primary btn-block">{{#str}}viewall, block_vitrina{{/str}}</a>

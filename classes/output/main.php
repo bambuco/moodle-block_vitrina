@@ -72,10 +72,10 @@ class main implements renderable, templatable {
         global $CFG;
 
         $icons = [
-            'default' => 'address-card',
-            'premium' => 'sort-amount-desc',
-            'recents' => 'trophy',
-            'greats' => 'calendar-check-o'
+            'default' => 'th',
+            'greats' => 'thumbs-up',
+            'recents' => 'calendar-check-o',
+            'premium' => 'star'
         ];
 
         $showtabs = [];
@@ -88,6 +88,23 @@ class main implements renderable, templatable {
             $showtabs[] = $one;
         }
 
+        // Tabs config view.
+        $tabview = get_config('block_vitrina', 'tabview');
+        $iconsonly = false;
+        $textonly = false;
+
+        if (!empty($tabview)) {
+
+            if ($tabview == 'iconsonly') {
+                $iconsonly = true;
+            } else if ($tabview == 'textonly') {
+                $textonly = true;
+            } else {
+                $iconsonly = true;
+                $textonly = true;
+            }
+        }
+
         $activetab = false;
         $uniqueid = \block_vitrina\controller::get_uniqueid();
 
@@ -97,9 +114,9 @@ class main implements renderable, templatable {
             $activetab = true;
         }
 
-        if (in_array('premium', $this->tabs)) {
-            $defaultvariables['haspremium'] = true;
-            $defaultvariables['premiumstate'] = !$activetab ? 'active' : '';
+        if (in_array('greats', $this->tabs)) {
+            $defaultvariables['hasgreats'] = true;
+            $defaultvariables['greatsstate'] = !$activetab ? 'active' : '';
             $activetab = true;
         }
 
@@ -109,9 +126,9 @@ class main implements renderable, templatable {
             $activetab = true;
         }
 
-        if (in_array('greats', $this->tabs)) {
-            $defaultvariables['hasgreats'] = true;
-            $defaultvariables['greatsstate'] = !$activetab ? 'active' : '';
+        if (in_array('premium', $this->tabs)) {
+            $defaultvariables['haspremium'] = true;
+            $defaultvariables['premiumstate'] = !$activetab ? 'active' : '';
             $activetab = true;
         }
 
@@ -120,7 +137,9 @@ class main implements renderable, templatable {
             'baseurl' => $CFG->wwwroot,
             'hastabs' => count($this->tabs) > 1,
             'tabs' => $showtabs,
-            'uniqueid' => $uniqueid
+            'uniqueid' => $uniqueid,
+            'iconsonly' => $iconsonly,
+            'textonly' => $textonly
         ];
 
         return $defaultvariables;

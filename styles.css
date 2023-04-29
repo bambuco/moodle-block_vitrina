@@ -1,9 +1,12 @@
 .path-blocks-vitrina .courses,
 .block_vitrina .courses {
-    display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding-top: 20px;
+}
+
+.path-blocks-vitrina .courses {
+    display: flex;
 }
 
 .path-blocks-vitrina .coursebox,
@@ -659,7 +662,7 @@
 }
 
 .block_vitrina-tabcontent.active {
-    display: inherit;
+    display: flex;
 }
 
 /* End Tabs control */
