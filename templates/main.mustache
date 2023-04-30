@@ -29,26 +29,26 @@
 
     <div class="courses tab-default block_vitrina-tabcontent active {{defaultstate}}">
         {{#courses}}
-        {{>block_vitrina/course}}
-        {{/courses}}
-    </div>
-
-    <div class="courses tab-greats block_vitrina-tabcontent {{greatsstate}}">
-        {{#courses}}
-            <p>greats</p>
+            {{>block_vitrina/course}}
         {{/courses}}
     </div>
 
     <div class="courses tab-recents block_vitrina-tabcontent {{recentsstate}}">
-        {{#courses}}
-            <p>recents</p>
-        {{/courses}}
+        {{#recentscourses}}
+            {{>block_vitrina/course}}
+        {{/recentscourses}}
+    </div>
+
+    <div class="courses tab-greats block_vitrina-tabcontent {{greatsstate}}">
+        {{#greatcourses}}
+            {{>block_vitrina/course}}
+        {{/greatcourses}}
     </div>
 
     <div class="courses tab-premium block_vitrina-tabcontent {{premiumstate}}">
-        {{#courses}}
-            <p>premium</p>
-        {{/courses}}
+        {{#premiumcourses}}
+            {{>block_vitrina/course}}
+        {{/premiumcourses}}
     </div>
 
     <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-primary btn-block">{{#str}}viewall, block_vitrina{{/str}}</a>

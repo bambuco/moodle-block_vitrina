@@ -10,12 +10,11 @@
 }
 
 .path-blocks-vitrina .coursebox,
-.block_vitrina .coursebox {
+.block_vitrina .coursebox.panel-default {
     max-width: 200px;
     width: 100%;
     margin: 0 10px 10px;
     overflow: hidden;
-    padding: 0 0 40px;
     position: relative;
 }
 
@@ -82,10 +81,6 @@
 .path-blocks-vitrina .coursebox .panel-foot,
 .block_vitrina .panel-foot {
     text-align: center;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     padding-bottom: 5px;
 }
 

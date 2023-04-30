@@ -41,6 +41,21 @@ class main implements renderable, templatable {
     private $courses = null;
 
     /**
+     * @var array Recents courses list to show.
+     */
+    private $recentscourses = null;
+
+    /**
+     * @var array Outstanding courses list to show.
+     */
+    private $greatcourses = null;
+
+    /**
+     * @var array Premium courses list to show.
+     */
+    private $premiumcourses = null;
+
+    /**
      * @var array List of tabs to print.
      */
     private $tabs;
@@ -50,7 +65,7 @@ class main implements renderable, templatable {
      *
      * @param array $courses A courses list
      */
-    public function __construct($courses = [], $tabs) {
+    public function __construct($courses = [], $recentscourses = [], $greatcourses = [], $premiumcourses = [], $tabs) {
         global $CFG, $OUTPUT;
 
         // Load the course image.
@@ -58,7 +73,25 @@ class main implements renderable, templatable {
             \block_vitrina\controller::course_preprocess($course);
         }
 
+        // Load the recent course image.
+        foreach ($recentscourses as $recentcourse) {
+            \block_vitrina\controller::course_preprocess($recentcourse);
+        }
+
+        // Load the outstanding course image.
+        foreach ($greatcourses as $greatcourse) {
+            \block_vitrina\controller::course_preprocess($greatcourse);
+        }
+
+        // Load the premium course image.
+        foreach ($premiumcourses as $premiumcourse) {
+            \block_vitrina\controller::course_preprocess($premiumcourse);
+        }
+
         $this->courses = $courses;
+        $this->recentscourses = $recentscourses;
+        $this->greatcourses = $greatcourses;
+        $this->premiumcourses = $premiumcourses;
         $this->tabs = $tabs;
     }
 
@@ -73,8 +106,8 @@ class main implements renderable, templatable {
 
         $icons = [
             'default' => 'th',
-            'greats' => 'thumbs-up',
             'recents' => 'calendar-check-o',
+            'greats' => 'thumbs-up',
             'premium' => 'star'
         ];
 
@@ -114,15 +147,15 @@ class main implements renderable, templatable {
             $activetab = true;
         }
 
-        if (in_array('greats', $this->tabs)) {
-            $defaultvariables['hasgreats'] = true;
-            $defaultvariables['greatsstate'] = !$activetab ? 'active' : '';
-            $activetab = true;
-        }
-
         if (in_array('recents', $this->tabs)) {
             $defaultvariables['hasrecents'] = true;
             $defaultvariables['recentsstate'] = !$activetab ? 'active' : '';
+            $activetab = true;
+        }
+
+        if (in_array('greats', $this->tabs)) {
+            $defaultvariables['hasgreats'] = true;
+            $defaultvariables['greatsstate'] = !$activetab ? 'active' : '';
             $activetab = true;
         }
 
@@ -134,6 +167,9 @@ class main implements renderable, templatable {
 
         $defaultvariables = [
             'courses' => array_values($this->courses),
+            'recentscourses' => array_values($this->recentscourses),
+            'greatcourses' => array_values($this->greatcourses),
+            'premiumcourses' => array_values($this->premiumcourses),
             'baseurl' => $CFG->wwwroot,
             'hastabs' => count($this->tabs) > 1,
             'tabs' => $showtabs,

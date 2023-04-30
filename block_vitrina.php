@@ -141,7 +141,7 @@ class block_vitrina extends block_base {
         }
 
         // End Categories filter.
-        $courses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', 0, $amount);
+        $courses = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', 0, $amount);
 
         $tabs = array();
 
@@ -151,12 +151,12 @@ class block_vitrina extends block_base {
                 $tabs[] = 'default';
             }
 
-            if (property_exists($this->config, 'greats') && $this->config->greats) {
-                $tabs[] = 'greats';
-            }
-
             if (property_exists($this->config, 'recents') && $this->config->recents) {
                 $tabs[] = 'recents';
+            }
+
+            if (property_exists($this->config, 'greats') && $this->config->greats) {
+                $tabs[] = 'greats';
             }
 
             if (property_exists($this->config, 'premium') && $this->config->premium) {
@@ -165,13 +165,40 @@ class block_vitrina extends block_base {
 
         } else {
             $tabs[] = 'default';
+            $tabs[] = 'recents';
+            $tabs[] = 'greats';
+            $tabs[] = 'premium';
         }
+
+        // Get recents courses
+        $recentscourses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', 0, $amount);
+
+        // Get outstanding courses.
+        $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
+        $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
+                    FROM {course} c
+                    INNER JOIN {block_rate_course} r ON r.course = c.id
+                    WHERE " . $selectgreats .
+                    " GROUP BY c.id HAVING rating > 3
+                    ORDER BY rating DESC";
+        $greatcourses = $DB->get_records_sql($sql, $params, 0, $amount);
+
+        // Get premium courses
+        $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
+
+        $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
+        $sql = "SELECT c.*
+                    FROM {course} c
+                    INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+                    WHERE " . $selectpremium .
+                    " ORDER BY c.fullname ASC";
+        $premiumcourses = $DB->get_records_sql($sql, $params, 0, $amount);
 
         $html = '';
 
         if ($courses && is_array($courses)) {
             // Load templates to display courses.
-            $renderable = new \block_vitrina\output\main($courses, $tabs);
+            $renderable = new \block_vitrina\output\main($courses, $recentscourses, $greatcourses, $premiumcourses, $tabs);
             $renderer = $this->page->get_renderer('block_vitrina');
             $html .= $renderer->render($renderable);
         }

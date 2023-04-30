@@ -49,24 +49,27 @@ class block_vitrina_edit_form extends block_edit_form {
         // Amount of courses shown at instance.
         $mform->addElement('text', 'config_singleamount', get_string('singleamountcourses', 'block_vitrina'), ['size' => 2]);
         $mform->setType('config_singleamount', PARAM_INT);
-        $mform->setDefault('config_singleamount', 4);
+        $mform->setDefault('config_singleamount', 0);
         $mform->addHelpButton('config_singleamount', 'singleamountcourses', 'block_vitrina');
 
         // Tabs
-
         $mform->addElement('checkbox', 'config_default', get_string('defaultsort', 'block_vitrina'));
+        $mform->setDefault('config_default', 1);
+
+        $mform->addElement('checkbox', 'config_recents', get_string('recents', 'block_vitrina'));
+        $mform->setDefault('config_recents', 1);
 
         // Show greats tab config only if rate_course block exists.
         $bmanager = new \block_manager($PAGE);
         if ($bmanager->is_known_block_type('rate_course')) {
             $mform->addElement('checkbox', 'config_greats', get_string('greats', 'block_vitrina'));
+            $mform->setDefault('config_greats', 1);
         }
-
-        $mform->addElement('checkbox', 'config_recents', get_string('recents', 'block_vitrina'));
 
         // Show premium tab config only if premium is available.
         if (\block_vitrina\controller::premium_available()) {
             $mform->addElement('checkbox', 'config_premium', get_string('premium', 'block_vitrina'));
+            $mform->setDefault('config_premium', 1);
         }
 
         // Select courses categories.
