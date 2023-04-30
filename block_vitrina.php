@@ -187,7 +187,7 @@ class block_vitrina extends block_base {
                     ORDER BY rating DESC";
         $greatcourses = $DB->get_records_sql($sql, $params, 0, $amount);
 
-        // Get premium courses
+        // Get premium courses.
         $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
 
         $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);

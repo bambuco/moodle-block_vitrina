@@ -36,6 +36,11 @@ use templatable;
 class main implements renderable, templatable {
 
     /**
+     * @var array List of tabs to print.
+     */
+    private $tabs;
+
+    /**
      * @var array Courses list to show.
      */
     private $courses = null;
@@ -56,15 +61,9 @@ class main implements renderable, templatable {
     private $premiumcourses = null;
 
     /**
-     * @var array List of tabs to print.
-     */
-    private $tabs;
-
-    /**
      * Constructor.
      *
      * @param array $tabs The tabs configuration.
-     * @param array $courses A courses list.
      * @param array $courses A courses list.
      * @param array $recentscourses A list of recent courses.
      * @param array $greatcourses A list of great courses.
