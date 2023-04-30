@@ -15,15 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class containing block base implementation for Vitrina.
+ * Form for editing vitrina block instances.
  *
  * @package   block_vitrina
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('classes/output/catalog.php');
-
+/**
+ * Class containing block base implementation for Vitrina.
+ *
+ * @copyright 2023 David Herney @ BambuCo
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_vitrina extends block_base {
 
     /**
@@ -124,7 +128,7 @@ class block_vitrina extends block_base {
         } else {
             $categoryid = [];
             $catslist = explode(',', $categories);
-            foreach($catslist as $catid) {
+            foreach ($catslist as $catid) {
                 if (is_numeric($catid)) {
                     $categoryid[] = (int)trim($catid);
                 }
@@ -170,7 +174,7 @@ class block_vitrina extends block_base {
             $tabs[] = 'premium';
         }
 
-        // Get recents courses
+        // Get recents courses.
         $recentscourses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', 0, $amount);
 
         // Get outstanding courses.
@@ -198,7 +202,7 @@ class block_vitrina extends block_base {
 
         if ($courses && is_array($courses)) {
             // Load templates to display courses.
-            $renderable = new \block_vitrina\output\main($courses, $recentscourses, $greatcourses, $premiumcourses, $tabs);
+            $renderable = new \block_vitrina\output\main($tabs, $courses, $recentscourses, $greatcourses, $premiumcourses);
             $renderer = $this->page->get_renderer('block_vitrina');
             $html .= $renderer->render($renderable);
         }

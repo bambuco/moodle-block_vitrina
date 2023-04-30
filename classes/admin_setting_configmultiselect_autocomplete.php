@@ -22,8 +22,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/lib/adminlib.php');
 
+/**
+ * Allows an autocomplete multiselect config for the admin settings block.
+ *
+ * @return string HTML for the autocomplete display.
+ */
 class admin_setting_configmultiselect_autocomplete extends admin_setting_configmultiselect {
 
     /** @var boolean $tags Should we allow typing new entries to the field? */

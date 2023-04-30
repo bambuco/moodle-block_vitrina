@@ -63,9 +63,14 @@ class main implements renderable, templatable {
     /**
      * Constructor.
      *
-     * @param array $courses A courses list
+     * @param array $tabs The tabs configuration.
+     * @param array $courses A courses list.
+     * @param array $courses A courses list.
+     * @param array $recentscourses A list of recent courses.
+     * @param array $greatcourses A list of great courses.
+     * @param array $premiumcourses A list of premium courses.
      */
-    public function __construct($courses = [], $recentscourses = [], $greatcourses = [], $premiumcourses = [], $tabs) {
+    public function __construct($tabs, $courses = [], $recentscourses = [], $greatcourses = [], $premiumcourses = []) {
         global $CFG, $OUTPUT;
 
         // Load the course image.

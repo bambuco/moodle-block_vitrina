@@ -38,7 +38,7 @@ class block_vitrina_edit_form extends block_edit_form {
      * @return void
      */
     protected function specific_definition($mform) {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB;
 
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
@@ -52,7 +52,7 @@ class block_vitrina_edit_form extends block_edit_form {
         $mform->setDefault('config_singleamount', 0);
         $mform->addHelpButton('config_singleamount', 'singleamountcourses', 'block_vitrina');
 
-        // Tabs
+        // Tabs.
         $mform->addElement('checkbox', 'config_default', get_string('defaultsort', 'block_vitrina'));
         $mform->setDefault('config_default', 1);
 
@@ -60,7 +60,7 @@ class block_vitrina_edit_form extends block_edit_form {
         $mform->setDefault('config_recents', 1);
 
         // Show greats tab config only if rate_course block exists.
-        $bmanager = new \block_manager($PAGE);
+        $bmanager = new \block_manager($this->page);
         if ($bmanager->is_known_block_type('rate_course')) {
             $mform->addElement('checkbox', 'config_greats', get_string('greats', 'block_vitrina'));
             $mform->setDefault('config_greats', 1);
@@ -80,7 +80,11 @@ class block_vitrina_edit_form extends block_edit_form {
             'noselectionstring' => get_string('selectcategories', 'block_vitrina')
         ];
 
-        $mform->addElement('autocomplete', 'config_categories', get_string('coursecategory', 'block_vitrina'), $displaylist, $options);
-
+        $mform->addElement(
+            'autocomplete',
+            'config_categories',
+            get_string('coursecategory', 'block_vitrina'),
+            $displaylist,
+            $options);
     }
 }
