@@ -56,11 +56,13 @@ function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $
     $filepath = $args ? '/'.implode('/', $args).'/' : '/';
 
     if ($filearea === 'content_header') {
-        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename)) || $file->is_directory()) {
+        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename)) ||
+              $file->is_directory()) {
             send_file_not_found();
         }
     } else if ($filearea === 'content_footer') {
-        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename)) || $file->is_directory()) {
+        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename)) ||
+              $file->is_directory()) {
             send_file_not_found();
         }
     } else {
