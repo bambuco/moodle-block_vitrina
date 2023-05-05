@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Este archivo contiene la definición de la clase block_vitrina.
+ * Manage files added to the html editors at instance config of block_vitrina.
  *
  * @package    block_vitrina
  * @copyright  2023 David Arias
@@ -40,7 +40,9 @@
 function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB, $CFG, $USER;
 
-    if ($context->contextlevel != CONTEXT_BLOCK) {
+    if ($context->contextlevel != CONTEXT_BLOCK &&
+        $context->contextlevel != CONTEXT_COURSE &&
+        $context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
 
@@ -54,13 +56,11 @@ function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $
     $filepath = $args ? '/'.implode('/', $args).'/' : '/';
 
     if ($filearea === 'content_header') {
-        if (!$file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename) ||
-             $file->is_directory()) {
+        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename)) || $file->is_directory()) {
             send_file_not_found();
         }
     } else if ($filearea === 'content_footer') {
-        if (!$file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename) ||
-             $file->is_directory()) {
+        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename)) || $file->is_directory()) {
             send_file_not_found();
         }
     } else {
