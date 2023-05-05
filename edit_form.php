@@ -86,5 +86,76 @@ class block_vitrina_edit_form extends block_edit_form {
             get_string('coursecategory', 'block_vitrina'),
             $displaylist,
             $options);
+
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->block->context);
+
+        // Header HTML editor.
+        $mform->addElement('editor', 'config_htmlheader', get_string('htmlheader', 'block_vitrina'), null, $editoroptions);
+        $mform->setType('config_htmlheader', PARAM_RAW); // XSS is prevented when printing the block contents and serving files.
+
+        // Footer HTML editor.
+        $mform->addElement('editor', 'config_htmlfooter', get_string('htmlfooter', 'block_vitrina'), null, $editoroptions);
+        $mform->setType('config_htmlfooter', PARAM_RAW); // XSS is prevented when printing the block contents and serving files.
+
+    }
+
+    function set_data($defaults) {
+
+        // Set data for header.
+        if (!empty($this->block->config) && !empty($this->block->config->htmlheader)) {
+            $htmlheader = $this->block->config->htmlheader;
+            $draftidheader = file_get_submitted_draft_itemid('config_htmlheader');
+            if (empty($htmlheader)) {
+                $currenthtmlheader = '';
+            } else {
+                $currenthtmlheader = $htmlheader;
+            }
+            $defaults->config_htmlheader['text'] = file_prepare_draft_area($draftidheader,
+                                                                           $this->block->context->id,
+                                                                           'block_vitrina',
+                                                                           'content_header',
+                                                                           0,
+                                                                           array('subdirs'=>true),
+                                                                           $currenthtmlheader);
+
+            $defaults->config_htmlheader['itemid'] = $draftidheader;
+            $defaults->config_htmlheader['format'] = $this->block->config->htmlheaderformat ?? FORMAT_MOODLE;
+        } else {
+            $htmlheader = '';
+        }
+
+        // Set data for footer.
+        if (!empty($this->block->config) && !empty($this->block->config->htmlfooter)) {
+            $htmlfooter = $this->block->config->htmlfooter;
+            $draftidfooter = file_get_submitted_draft_itemid('config_htmlfooter');
+            if (empty($htmlfooter)) {
+                $currenthtmlfooter = '';
+            } else {
+                $currenthtmlfooter = $htmlfooter;
+            }
+            $defaults->config_htmlfooter['text'] = file_prepare_draft_area($draftidfooter,
+                                                                           $this->block->context->id,
+                                                                           'block_vitrina',
+                                                                           'content_footer',
+                                                                           0,
+                                                                           array('subdirs'=>true),
+                                                                           $currenthtmlfooter);
+
+            $defaults->config_htmlfooter['itemid'] = $draftidfooter;
+            $defaults->config_htmlfooter['format'] = $this->block->config->htmlfooterformat ?? FORMAT_MOODLE;
+        } else {
+            $htmlfooter = '';
+        }
+
+        unset($this->block->config->htmlheader);
+        unset($this->block->config->htmlfooter);
+        parent::set_data($defaults);
+
+        // restore $htmlheader and $htmlfooter
+        if (!isset($this->block->config)) {
+            $this->block->config = new stdClass();
+        }
+        $this->block->config->htmlheader = $htmlheader;
+        $this->block->config->htmlfooter = $htmlfooter;
     }
 }
