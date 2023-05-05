@@ -209,7 +209,7 @@ class block_vitrina extends block_base {
         }
 
         if (isset($this->config->htmlheader)) {
-            // rewrite url
+            // Rewrite url.
             $this->config->htmlheader = file_rewrite_pluginfile_urls($this->config->htmlheader,
                                                                      'pluginfile.php',
                                                                      $this->context->id,
