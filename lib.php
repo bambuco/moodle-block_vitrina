@@ -15,14 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Este archivo contiene la definición de la clase block_vitrina.
+ *
+ * @package    block_vitrina
+ * @copyright  2023 David Arias
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
  * Form for editing VITRINA block instances.
  *
- * @copyright 2010 Petr Skoda (http://skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package   block_vitrina
  * @category  files
  * @param stdClass $course course object
- * @param stdClass $birecord_or_cm block instance record
+ * @param stdClass $birecordorcm block instance record
  * @param stdClass $context context object
  * @param string $filearea file area
  * @param array $args extra arguments
@@ -31,7 +37,7 @@
  * @return bool
  * @todo MDL-36050 improve capability check on stick blocks, so we can check user capability before sending images.
  */
-function block_vitrina_pluginfile($course, $birecord_or_cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB, $CFG, $USER;
 
     if ($context->contextlevel != CONTEXT_BLOCK) {
@@ -48,11 +54,13 @@ function block_vitrina_pluginfile($course, $birecord_or_cm, $context, $filearea,
     $filepath = $args ? '/'.implode('/', $args).'/' : '/';
 
     if ($filearea === 'content_header') {
-        if (!$file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename) or $file->is_directory()) {
+        if (!$file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename) ||
+             $file->is_directory()) {
             send_file_not_found();
         }
     } else if ($filearea === 'content_footer') {
-        if (!$file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename) or $file->is_directory()) {
+        if (!$file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename) ||
+             $file->is_directory()) {
             send_file_not_found();
         }
     } else {
@@ -65,37 +73,41 @@ function block_vitrina_pluginfile($course, $birecord_or_cm, $context, $filearea,
 
 /**
  * Perform global search replace such as when migrating site to new URL.
- * @param  $search
- * @param  $replace
- * @return void
+ *
+ * @package block_vitrina
+ * @param   string $search
+ * @param   string $replace
+ * @return  void
  */
 function block_vitrina_global_db_replace($search, $replace) {
     global $DB;
 
     $instances = $DB->get_recordset('block_instances', array('blockname' => 'vitrina'));
     foreach ($instances as $instance) {
-        // TODO: intentionally hardcoded until MDL-26800 is fixed
+
         $config = unserialize_object(base64_decode($instance->configdata));
 
-        if (isset($config->htmlheader) and is_string($config->htmlheader)) {
+        if (isset($config->htmlheader) && is_string($config->htmlheader)) {
             $config->htmlheader = str_replace($search, $replace, $config->htmlheader);
             $DB->update_record('block_instances', ['id' => $instance->id,
                     'configdata' => base64_encode(serialize($config)), 'timemodified' => time()]);
         }
 
-        if (isset($config->htmlfooter) and is_string($config->htmlfooter)) {
+        if (isset($config->htmlfooter) && is_string($config->htmlfooter)) {
             $config->htmlfooter = str_replace($search, $replace, $config->htmlfooter);
             $DB->update_record('block_instances', ['id' => $instance->id,
                     'configdata' => base64_encode(serialize($config)), 'timemodified' => time()]);
         }
 
     }
+
     $instances->close();
 }
 
 /**
  * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
  *
+ * @package block_vitrina
  * @param  string $filearea The filearea.
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.

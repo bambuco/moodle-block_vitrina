@@ -87,7 +87,7 @@ class block_vitrina_edit_form extends block_edit_form {
             $displaylist,
             $options);
 
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->block->context);
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $this->block->context);
 
         // Header HTML editor.
         $mform->addElement('editor', 'config_htmlheader', get_string('htmlheader', 'block_vitrina'), null, $editoroptions);
@@ -99,7 +99,13 @@ class block_vitrina_edit_form extends block_edit_form {
 
     }
 
-    function set_data($defaults) {
+    /**
+     * Set and prepare the data for header and footer html draft.
+     *
+     * @param array $defaults
+     * @return void
+     */
+    public function set_data($defaults) {
 
         // Set data for header.
         if (!empty($this->block->config) && !empty($this->block->config->htmlheader)) {
@@ -115,7 +121,7 @@ class block_vitrina_edit_form extends block_edit_form {
                                                                            'block_vitrina',
                                                                            'content_header',
                                                                            0,
-                                                                           array('subdirs'=>true),
+                                                                           array('subdirs' => true),
                                                                            $currenthtmlheader);
 
             $defaults->config_htmlheader['itemid'] = $draftidheader;
@@ -138,7 +144,7 @@ class block_vitrina_edit_form extends block_edit_form {
                                                                            'block_vitrina',
                                                                            'content_footer',
                                                                            0,
-                                                                           array('subdirs'=>true),
+                                                                           array('subdirs' => true),
                                                                            $currenthtmlfooter);
 
             $defaults->config_htmlfooter['itemid'] = $draftidfooter;
@@ -151,7 +157,7 @@ class block_vitrina_edit_form extends block_edit_form {
         unset($this->block->config->htmlfooter);
         parent::set_data($defaults);
 
-        // restore $htmlheader and $htmlfooter
+        // Restore html header and html footer.
         if (!isset($this->block->config)) {
             $this->block->config = new stdClass();
         }

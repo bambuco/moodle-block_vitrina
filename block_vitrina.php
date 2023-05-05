@@ -205,7 +205,6 @@ class block_vitrina extends block_base {
         $filteropt = new stdClass;
         $filteropt->overflowdiv = true;
         if ($this->content_is_trusted()) {
-            // fancy html allowed only on course, category and system blocks.
             $filteropt->noclean = true;
         }
 
@@ -216,10 +215,9 @@ class block_vitrina extends block_base {
                                                                      $this->context->id,
                                                                      'block_vitrina',
                                                                      'content_header',
-                                                                     NULL);
+                                                                     null);
 
-            // Default to FORMAT_HTML which is what will have been used before the
-            // editor was properly implemented for the block.
+            // Default to FORMAT_HTML.
             $htmlheaderformat = FORMAT_HTML;
             // Check to see if the format has been properly set on the config.
             if (isset($this->config->htmlheaderformat)) {
@@ -227,21 +225,20 @@ class block_vitrina extends block_base {
             }
             $html .= format_text($this->config->htmlheader, $htmlheaderformat, $filteropt);
 
-        }  else {
+        } else {
             $html .= '';
         }
 
         if (isset($this->config->htmlfooter)) {
-            // rewrite url
+            // Rewrite url.
             $this->config->htmlfooter = file_rewrite_pluginfile_urls($this->config->htmlfooter,
                                                                      'pluginfile.php',
                                                                      $this->context->id,
                                                                      'block_vitrina',
                                                                      'content_footer',
-                                                                     NULL);
+                                                                     null);
 
-            // Default to FORMAT_HTML which is what will have been used before the
-            // editor was properly implemented for the block.
+            // Default to FORMAT_HTML.
             $htmlfooterformat = FORMAT_HTML;
             // Check to see if the format has been properly set on the config.
             if (isset($this->config->htmlfooterformat)) {
@@ -252,7 +249,8 @@ class block_vitrina extends block_base {
             $this->content->footer = '';
         }
 
-        unset($filteropt); // memory footprint
+        // Memory footprint.
+        unset($filteropt);
 
         if ($courses && is_array($courses)) {
             // Load templates to display courses.
@@ -272,7 +270,15 @@ class block_vitrina extends block_base {
     /**
      * Serialize and store config data.
      */
-    function instance_config_save($data, $nolongerused = false) {
+
+    /**
+     * Undocumented function
+     *
+     * @param object $data
+     * @param boolean $nolongerused
+     * @return void
+     */
+    public function instance_config_save($data, $nolongerused = false) {
         global $DB;
 
         $config = clone($data);
@@ -284,7 +290,7 @@ class block_vitrina extends block_base {
                               'block_vitrina',
                               'content_header',
                               0,
-                              array('subdirs'=>true),
+                              array('subdirs' => true),
                               $data->htmlheader['text']);
 
         $config->htmlfooter = file_save_draft_area_files($data->htmlfooter['itemid'],
@@ -292,7 +298,7 @@ class block_vitrina extends block_base {
                               'block_vitrina',
                               'content_footer',
                               0,
-                              array('subdirs'=>true),
+                              array('subdirs' => true),
                               $data->htmlfooter['text']);
 
         $config->htmlheaderformat = $data->htmlheader['format'];
@@ -301,27 +307,35 @@ class block_vitrina extends block_base {
         parent::instance_config_save($config, $nolongerused);
     }
 
-    function instance_delete() {
+    /**
+     * Delete area files when the block instance is deleted.
+     *
+     * @return bool
+     */
+    public function instance_delete() {
         global $DB;
         $fs = get_file_storage();
         $fs->delete_area_files($this->context->id, 'block_vitrina');
         return true;
     }
 
-    function content_is_trusted() {
+    /**
+     * Check if the block content is trusted and avoid JS inyection.
+     *
+     * @return bool
+     */
+    public function content_is_trusted() {
         global $SCRIPT;
 
         if (!$context = context::instance_by_id($this->instance->parentcontextid, IGNORE_MISSING)) {
             return false;
         }
-        //find out if this block is on the profile page
+        // Find out if this block is on the profile page.
         if ($context->contextlevel == CONTEXT_USER) {
             if ($SCRIPT === '/my/index.php') {
-                // this is exception - page is completely private, nobody else may see content there
-                // that is why we allow JS here
                 return true;
             } else {
-                // no JS on public personal pages, it would be a big security issue
+                // No JS on public personal pages, it would be a big security issue.
                 return false;
             }
         }
