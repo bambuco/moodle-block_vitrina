@@ -48,7 +48,7 @@ class main implements renderable, templatable {
     /**
      * @var array Recents courses list to show.
      */
-    private $recentscourses = null;
+    private $nextcourses = null;
 
     /**
      * @var array Outstanding courses list to show.
@@ -65,11 +65,11 @@ class main implements renderable, templatable {
      *
      * @param array $tabs The tabs configuration.
      * @param array $courses A courses list.
-     * @param array $recentscourses A list of recent courses.
+     * @param array $nextcourses A list of recent courses.
      * @param array $greatcourses A list of great courses.
      * @param array $premiumcourses A list of premium courses.
      */
-    public function __construct($tabs, $courses = [], $recentscourses = [], $greatcourses = [], $premiumcourses = []) {
+    public function __construct($tabs, $courses = [], $nextcourses = [], $greatcourses = [], $premiumcourses = []) {
         global $CFG, $OUTPUT;
 
         // Load the course image.
@@ -77,9 +77,9 @@ class main implements renderable, templatable {
             \block_vitrina\controller::course_preprocess($course);
         }
 
-        // Load the recent course image.
-        foreach ($recentscourses as $recentcourse) {
-            \block_vitrina\controller::course_preprocess($recentcourse);
+        // Load the next course image.
+        foreach ($nextcourses as $nextcourse) {
+            \block_vitrina\controller::course_preprocess($nextcourse);
         }
 
         // Load the outstanding course image.
@@ -93,7 +93,7 @@ class main implements renderable, templatable {
         }
 
         $this->courses = $courses;
-        $this->recentscourses = $recentscourses;
+        $this->nextcourses = $nextcourses;
         $this->greatcourses = $greatcourses;
         $this->premiumcourses = $premiumcourses;
         $this->tabs = $tabs;
@@ -142,6 +142,8 @@ class main implements renderable, templatable {
             }
         }
 
+        $sortbydefaultconfig = get_config('block_vitrina', 'sortbydefault');
+
         $activetab = false;
         $uniqueid = \block_vitrina\controller::get_uniqueid();
 
@@ -171,7 +173,7 @@ class main implements renderable, templatable {
 
         $defaultvariables = [
             'courses' => array_values($this->courses),
-            'recentscourses' => array_values($this->recentscourses),
+            'nextcourses' => array_values($this->nextcourses),
             'greatcourses' => array_values($this->greatcourses),
             'premiumcourses' => array_values($this->premiumcourses),
             'baseurl' => $CFG->wwwroot,
@@ -179,7 +181,10 @@ class main implements renderable, templatable {
             'tabs' => $showtabs,
             'uniqueid' => $uniqueid,
             'iconsonly' => $iconsonly,
-            'textonly' => $textonly
+            'textonly' => $textonly,
+            'defaultsort' => $sortbydefaultconfig == 'default',
+            'sortbyfinishdate' => $sortbydefaultconfig == 'sortbyfinishdate',
+            'sortalphabetically' => $sortbydefaultconfig == 'sortalphabetically'
         ];
 
         return $defaultvariables;

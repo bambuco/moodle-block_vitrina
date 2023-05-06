@@ -138,6 +138,19 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext($name, $title, $help, 20, PARAM_INT, 5);
     $settings->add($setting);
 
+    // Sort by default.
+    $options = [
+        'default' => get_string('sortbystartdate', 'block_vitrina'),
+        'sortbyfinishdate' => get_string('sortbyfinishdate', 'block_vitrina'),
+        'sortalphabetically' => get_string('sortalphabetically', 'block_vitrina')
+    ];
+
+    $name = 'block_vitrina/sortbydefault';
+    $title = get_string('sortbydefault', 'block_vitrina');
+    $help = get_string('sortbydefault_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
+    $settings->add($setting);
+
     // Days to upcoming courses.
     $name = 'block_vitrina/daystoupcoming';
     $title = get_string('daystoupcoming', 'block_vitrina');

@@ -145,9 +145,7 @@ class block_vitrina extends block_base {
         if (count($categories) > 0) {
             $select .= ' AND category IN (' . implode(',', $categories) . ')';
         }
-
         // End Categories filter.
-        $courses = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', 0, $amount);
 
         $tabs = array();
 
@@ -176,8 +174,31 @@ class block_vitrina extends block_base {
             $tabs[] = 'premium';
         }
 
-        // Get recents courses.
-        $recentscourses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', 0, $amount);
+        $sortbydefault = get_config('block_vitrina', 'sortbydefault');
+
+        if ($sortbydefault == 'sortalphabetically') {
+            $courses = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', 0, $amount);
+
+        } else if ($sortbydefault == 'sortbyfinishdate') {
+            $courses = $DB->get_records_select('course',
+                                                $select,
+                                                $params,
+                                                "CASE WHEN enddate IS NULL THEN 3
+                                                 WHEN enddate < UNIX_TIMESTAMP() THEN 2
+                                                 ELSE 1 END ASC,
+                                                 enddate ASC,
+                                                 startdate DESC",
+                                                '*', 0, $amount);
+
+        } else {
+            $courses = $DB->get_records_select('course', $select, $params, 'startdate ASC', '*', 0, $amount);
+        }
+
+        // Get next courses.
+
+        $paramsnextcourses['current_time'] = time();
+        $selectnextcourses = 'startdate > :current_time';
+        $nextcourses = $DB->get_records_select('course', $selectnextcourses, $paramsnextcourses, 'startdate ASC', '*', 0, $amount);
 
         // Get outstanding courses.
         $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
@@ -254,7 +275,7 @@ class block_vitrina extends block_base {
 
         if ($courses && is_array($courses)) {
             // Load templates to display courses.
-            $renderable = new \block_vitrina\output\main($tabs, $courses, $recentscourses, $greatcourses, $premiumcourses);
+            $renderable = new \block_vitrina\output\main($tabs, $courses, $nextcourses, $greatcourses, $premiumcourses);
             $renderer = $this->page->get_renderer('block_vitrina');
             $html .= $renderer->render($renderable);
         }

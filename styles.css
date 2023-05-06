@@ -663,3 +663,16 @@
 }
 
 /* End Tabs control */
+
+.block_vitrina .defaultsort {
+    position: absolute;
+    margin: -37px;
+    font-size: 12px;
+    color: #6a737b;
+    text-align: left;
+    left: 70px;
+}
+
+.block_vitrina .courses.tab-default {
+    margin-top: 40px;
+}

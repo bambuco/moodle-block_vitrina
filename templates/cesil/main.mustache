@@ -30,27 +30,48 @@
     {{>block_vitrina/tabs}}
 
     <div class="courses tab-default block_vitrina-tabcontent active {{defaultstate}}">
+        <div class="defaultsort">
+            {{#defaultsort}}
+                <p>{{#pix}} t/sort_by, core {{/pix}} {{#str}}sortbystartdate, block_vitrina {{/str}}</p>
+            {{/defaultsort}}
+
+            {{#sortbyfinishdate}}
+                <p>{{#pix}} t/sort_by, core {{/pix}} {{#str}}sortbyfinishdate, block_vitrina {{/str}}</p>
+            {{/sortbyfinishdate}}
+
+            {{#sortalphabetically}}
+                <p>{{#pix}} t/sort_by, core {{/pix}} {{#str}}sortalphabetically, block_vitrina {{/str}}</p>
+            {{/sortalphabetically}}
+        </div>
+
         {{#courses}}
             {{>block_vitrina/cesil/course}}
         {{/courses}}
+
     </div>
 
     <div class="courses tab-recents block_vitrina-tabcontent {{recentsstate}}">
-        {{#recentscourses}}
+
+        {{#nextcourses}}
             {{>block_vitrina/cesil/course}}
-        {{/recentscourses}}
+        {{/nextcourses}}
+
     </div>
 
     <div class="courses tab-greats block_vitrina-tabcontent {{greatsstate}}">
+
         {{#greatcourses}}
             {{>block_vitrina/cesil/course}}
         {{/greatcourses}}
+
     </div>
 
     <div class="courses tab-premium block_vitrina-tabcontent {{premiumstate}}">
+
         {{#premiumcourses}}
             {{>block_vitrina/cesil/course}}
         {{/premiumcourses}}
+
     </div>
 
     <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-primary btn-block">{{#str}}viewall, block_vitrina{{/str}}</a>
