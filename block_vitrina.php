@@ -195,9 +195,9 @@ class block_vitrina extends block_base {
         }
 
         // Get next courses.
-
-        $paramsnextcourses['current_time'] = time();
-        $selectnextcourses = 'startdate > :current_time';
+        $paramsnextcourses['currenttime'] = time();
+        $paramsnextcourses['startdate'] = $params['startdate'];
+        $selectnextcourses = 'startdate > :currenttime AND ' . $select;
         $nextcourses = $DB->get_records_select('course', $selectnextcourses, $paramsnextcourses, 'startdate ASC', '*', 0, $amount);
 
         // Get outstanding courses.
