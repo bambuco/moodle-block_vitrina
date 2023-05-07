@@ -46,7 +46,7 @@ class main implements renderable, templatable {
     private $courses = null;
 
     /**
-     * @var array Recents courses list to show.
+     * @var array Next courses list to show.
      */
     private $nextcourses = null;
 
@@ -65,7 +65,7 @@ class main implements renderable, templatable {
      *
      * @param array $tabs The tabs configuration.
      * @param array $courses A courses list.
-     * @param array $nextcourses A list of recent courses.
+     * @param array $nextcourses A list of next courses.
      * @param array $greatcourses A list of great courses.
      * @param array $premiumcourses A list of premium courses.
      */
@@ -147,28 +147,15 @@ class main implements renderable, templatable {
         $activetab = false;
         $uniqueid = \block_vitrina\controller::get_uniqueid();
 
-        if (in_array('default', $this->tabs)) {
-            $defaultvariables['hasdefault'] = true;
-            $defaultvariables['defaultstate'] = !$activetab ? 'active' : '';
-            $activetab = true;
-        }
+        $tabbames = ['default', 'recents', 'greats', 'premium'];
+        $activetab = false;
 
-        if (in_array('recents', $this->tabs)) {
-            $defaultvariables['hasrecents'] = true;
-            $defaultvariables['recentsstate'] = !$activetab ? 'active' : '';
-            $activetab = true;
-        }
-
-        if (in_array('greats', $this->tabs)) {
-            $defaultvariables['hasgreats'] = true;
-            $defaultvariables['greatsstate'] = !$activetab ? 'active' : '';
-            $activetab = true;
-        }
-
-        if (in_array('premium', $this->tabs)) {
-            $defaultvariables['haspremium'] = true;
-            $defaultvariables['premiumstate'] = !$activetab ? 'active' : '';
-            $activetab = true;
+        foreach ($tabbames as $tabname) {
+            if (in_array($tabname, $this->tabs)) {
+                $defaultvariables["has{$tabname}"] = true;
+                $defaultvariables["{$tabname}state"] = !$activetab ? 'active' : '';
+                $activetab = true;
+            }
         }
 
         $defaultvariables = [

@@ -145,33 +145,19 @@ class block_vitrina extends block_base {
         if (count($categories) > 0) {
             $select .= ' AND category IN (' . implode(',', $categories) . ')';
         }
-        // End Categories filter.
 
-        $tabs = array();
+        // Tabs in config.
+        $tabnames = ['default', 'recents', 'greats', 'premium'];
+        $tabs = [];
 
         if (isset($this->config) && is_object($this->config)) {
-            // Show all tab is printed by default if not exists the configuration parameter.
-            if (property_exists($this->config, 'default') && $this->config->default) {
-                $tabs[] = 'default';
+            foreach ($tabnames as $tabname) {
+                if (property_exists($this->config, $tabname) && $this->config->$tabname) {
+                    $tabs[] = $tabname;
+                }
             }
-
-            if (property_exists($this->config, 'recents') && $this->config->recents) {
-                $tabs[] = 'recents';
-            }
-
-            if (property_exists($this->config, 'greats') && $this->config->greats) {
-                $tabs[] = 'greats';
-            }
-
-            if (property_exists($this->config, 'premium') && $this->config->premium) {
-                $tabs[] = 'premium';
-            }
-
         } else {
-            $tabs[] = 'default';
-            $tabs[] = 'recents';
-            $tabs[] = 'greats';
-            $tabs[] = 'premium';
+            $tabs = $tabnames;
         }
 
         $sortbydefault = get_config('block_vitrina', 'sortbydefault');
@@ -180,16 +166,16 @@ class block_vitrina extends block_base {
             $courses = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', 0, $amount);
 
         } else if ($sortbydefault == 'sortbyfinishdate') {
-            $courses = $DB->get_records_select('course',
-                                                $select,
-                                                $params,
-                                                "CASE WHEN enddate IS NULL THEN 3
-                                                 WHEN enddate < UNIX_TIMESTAMP() THEN 2
-                                                 ELSE 1 END ASC,
-                                                 enddate ASC,
-                                                 startdate DESC",
-                                                '*', 0, $amount);
-
+            $sql = "SELECT *,
+                        CASE WHEN enddate IS NULL THEN 3
+                        WHEN enddate < UNIX_TIMESTAMP() THEN 2
+                        ELSE 1 END AS date_classification
+                        FROM {course}
+                        WHERE $select
+                        ORDER BY date_classification ASC,
+                        enddate ASC,
+                        startdate DESC";
+            $courses = $DB->get_records_sql($sql, $params, 0, $amount);
         } else {
             $courses = $DB->get_records_select('course', $select, $params, 'startdate ASC', '*', 0, $amount);
         }
@@ -212,7 +198,6 @@ class block_vitrina extends block_base {
 
         // Get premium courses.
         $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
-
         $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
         $sql = "SELECT c.*
                     FROM {course} c
@@ -222,9 +207,10 @@ class block_vitrina extends block_base {
         $premiumcourses = $DB->get_records_sql($sql, $params, 0, $amount);
 
         $html = '';
-
         $filteropt = new stdClass;
         $filteropt->overflowdiv = true;
+
+        // If the content is trusted, do not clean it.
         if ($this->content_is_trusted()) {
             $filteropt->noclean = true;
         }
@@ -237,7 +223,6 @@ class block_vitrina extends block_base {
                                                                      'block_vitrina',
                                                                      'content_header',
                                                                      null);
-
             // Default to FORMAT_HTML.
             $htmlheaderformat = FORMAT_HTML;
             // Check to see if the format has been properly set on the config.
@@ -245,9 +230,6 @@ class block_vitrina extends block_base {
                 $htmlheaderformat = $this->config->htmlheaderformat;
             }
             $html .= format_text($this->config->htmlheader, $htmlheaderformat, $filteropt);
-
-        } else {
-            $html .= '';
         }
 
         if (isset($this->config->htmlfooter)) {
@@ -258,7 +240,6 @@ class block_vitrina extends block_base {
                                                                      'block_vitrina',
                                                                      'content_footer',
                                                                      null);
-
             // Default to FORMAT_HTML.
             $htmlfooterformat = FORMAT_HTML;
             // Check to see if the format has been properly set on the config.
@@ -266,10 +247,7 @@ class block_vitrina extends block_base {
                 $htmlfooterformat = $this->config->htmlfooterformat;
             }
             $this->content->footer = format_text($this->config->htmlfooter, $htmlfooterformat, $filteropt);
-        } else {
-            $this->content->footer = '';
         }
-
         // Memory footprint.
         unset($filteropt);
 
@@ -281,19 +259,13 @@ class block_vitrina extends block_base {
         }
 
         $this->content->text = $html;
-
         \block_vitrina\controller::include_templatecss();
         $this->page->requires->js_call_amd('block_vitrina/main', 'init');
-
         return $this->content;
     }
 
     /**
      * Serialize and store config data.
-     */
-
-    /**
-     * Undocumented function
      *
      * @param object $data
      * @param boolean $nolongerused
@@ -303,9 +275,7 @@ class block_vitrina extends block_base {
         global $DB;
 
         $config = clone($data);
-
         // Move embedded files into a proper filearea and adjust HTML links to match.
-
         $config->htmlheader = file_save_draft_area_files($data->htmlheader['itemid'],
                               $this->context->id,
                               'block_vitrina',
@@ -313,7 +283,6 @@ class block_vitrina extends block_base {
                               0,
                               array('subdirs' => true),
                               $data->htmlheader['text']);
-
         $config->htmlfooter = file_save_draft_area_files($data->htmlfooter['itemid'],
                               $this->context->id,
                               'block_vitrina',
@@ -321,10 +290,8 @@ class block_vitrina extends block_base {
                               0,
                               array('subdirs' => true),
                               $data->htmlfooter['text']);
-
         $config->htmlheaderformat = $data->htmlheader['format'];
         $config->htmlfooterformat = $data->htmlfooter['format'];
-
         parent::instance_config_save($config, $nolongerused);
     }
 
@@ -360,7 +327,6 @@ class block_vitrina extends block_base {
                 return false;
             }
         }
-
         return true;
     }
 

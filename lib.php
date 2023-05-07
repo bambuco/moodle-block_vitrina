@@ -25,8 +25,8 @@
 /**
  * Form for editing VITRINA block instances.
  *
- * @package   block_vitrina
- * @category  files
+ * @package block_vitrina
+ * @category files
  * @param stdClass $course course object
  * @param stdClass $birecordorcm block instance record
  * @param stdClass $context context object
@@ -77,9 +77,9 @@ function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $
  * Perform global search replace such as when migrating site to new URL.
  *
  * @package block_vitrina
- * @param   string $search
- * @param   string $replace
- * @return  void
+ * @param string $search
+ * @param string $replace
+ * @return void
  */
 function block_vitrina_global_db_replace($search, $replace) {
     global $DB;
@@ -110,8 +110,8 @@ function block_vitrina_global_db_replace($search, $replace) {
  * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
  *
  * @package block_vitrina
- * @param  string $filearea The filearea.
- * @param  array  $args The path (the part after the filearea and before the filename).
+ * @param string $filearea The filearea.
+ * @param array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.
  */
 function block_vitrina_get_path_from_pluginfile(string $filearea, array $args) : array {
