@@ -204,8 +204,6 @@ class block_vitrina extends block_base {
             $views['recents'] = array_merge($views['recents'], $newrecentview);
         }
 
-        /* var_dump($this->config); die; */
-
         // Get outstanding courses.
         $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
         $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings

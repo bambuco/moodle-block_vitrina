@@ -119,14 +119,14 @@ class main implements renderable, templatable {
         }
 
         foreach ($this->views as $view => $courses) {
-                $status = ($view === $firsttab) ? 'active' : '';
-                $sortedby = ($view === 'default') ? $sortedby : false;
-                $getviews[] = [
-                    'view' => $view,
-                    'status' => $status,
-                    'sortedby' => $sortedby,
-                    'coursesview' => $courses,
-                ];
+            $status = ($view === $firsttab) ? 'active' : '';
+            $sortedby = ($view === 'default') ? $sortedby : false;
+            $getviews[] = [
+                'view' => $view,
+                'status' => $status,
+                'sortedby' => $sortedby,
+                'coursesview' => $courses,
+            ];
 
             foreach ($courses as $course) {
                 \block_vitrina\controller::course_preprocess($course);
