@@ -41,62 +41,23 @@ class main implements renderable, templatable {
     private $tabs;
 
     /**
-     * @var array Courses list to show.
+     * @var array Courses views.
      */
-    private $courses = null;
+    private $views = null;
 
-    /**
-     * @var array Next courses list to show.
-     */
-    private $nextcourses = null;
-
-    /**
-     * @var array Outstanding courses list to show.
-     */
-    private $greatcourses = null;
-
-    /**
-     * @var array Premium courses list to show.
-     */
-    private $premiumcourses = null;
 
     /**
      * Constructor.
      *
      * @param array $tabs The tabs configuration.
      * @param array $courses A courses list.
-     * @param array $nextcourses A list of next courses.
-     * @param array $greatcourses A list of great courses.
-     * @param array $premiumcourses A list of premium courses.
+     * @param array $views The courses views.
      */
-    public function __construct($tabs, $courses = [], $nextcourses = [], $greatcourses = [], $premiumcourses = []) {
+    public function __construct($tabs, $views = []) {
         global $CFG, $OUTPUT;
 
-        // Load the course image.
-        foreach ($courses as $course) {
-            \block_vitrina\controller::course_preprocess($course);
-        }
-
-        // Load the next course image.
-        foreach ($nextcourses as $nextcourse) {
-            \block_vitrina\controller::course_preprocess($nextcourse);
-        }
-
-        // Load the outstanding course image.
-        foreach ($greatcourses as $greatcourse) {
-            \block_vitrina\controller::course_preprocess($greatcourse);
-        }
-
-        // Load the premium course image.
-        foreach ($premiumcourses as $premiumcourse) {
-            \block_vitrina\controller::course_preprocess($premiumcourse);
-        }
-
-        $this->courses = $courses;
-        $this->nextcourses = $nextcourses;
-        $this->greatcourses = $greatcourses;
-        $this->premiumcourses = $premiumcourses;
         $this->tabs = $tabs;
+        $this->views = $views;
     }
 
     /**
@@ -127,28 +88,24 @@ class main implements renderable, templatable {
 
         // Tabs config view.
         $tabview = get_config('block_vitrina', 'tabview');
-        $iconsonly = false;
-        $textonly = false;
+        $showicon = false;
+        $showtext = false;
 
         if (!empty($tabview)) {
 
-            if ($tabview == 'iconsonly') {
-                $iconsonly = true;
-            } else if ($tabview == 'textonly') {
-                $textonly = true;
+            if ($tabview == 'showicon') {
+                $showicon = true;
+            } else if ($tabview == 'showtext') {
+                $showtext = true;
             } else {
-                $iconsonly = true;
-                $textonly = true;
+                $showicon = true;
+                $showtext = true;
             }
         }
 
-        $sortbydefaultconfig = get_config('block_vitrina', 'sortbydefault');
-
-        $activetab = false;
-        $uniqueid = \block_vitrina\controller::get_uniqueid();
-
         $tabbames = ['default', 'recents', 'greats', 'premium'];
         $activetab = false;
+        $getviews = [];
 
         foreach ($tabbames as $tabname) {
             if (in_array($tabname, $this->tabs)) {
@@ -158,17 +115,45 @@ class main implements renderable, templatable {
             }
         }
 
+        $sortbydefault = get_config('block_vitrina', 'sortbydefault');
+        $sortedby = false;
+
+        if ($sortbydefault == 'default') {
+            $sortedby = get_string('sortbystartdate', 'block_vitrina');
+        } else {
+            $sortedby = get_string($sortbydefault, 'block_vitrina');
+        }
+
+        foreach ($this->views as $view => $courses) {
+
+            if (!empty($courses)) {
+                $status = ($view === 'default') ? 'active' : '';
+                $sortedby = ($view === 'default') ? $sortedby : false;
+                $getviews[] = [
+                    'view' => $view,
+                    'status' => $status,
+                    'sortedby' => $sortedby,
+                    'coursesview' => $courses,
+                ];
+            }
+
+            foreach ($courses as $course) {
+                \block_vitrina\controller::course_preprocess($course);
+            }
+        }
+
+        $uniqueid = \block_vitrina\controller::get_uniqueid();
+        $sortbydefaultconfig = get_config('block_vitrina', 'sortbydefault');
+
         $defaultvariables = [
-            'courses' => array_values($this->courses),
-            'nextcourses' => array_values($this->nextcourses),
-            'greatcourses' => array_values($this->greatcourses),
-            'premiumcourses' => array_values($this->premiumcourses),
+            'getviews' => array_values($getviews),
             'baseurl' => $CFG->wwwroot,
             'hastabs' => count($this->tabs) > 1,
             'tabs' => $showtabs,
+            'sortedby' => $sortedby,
             'uniqueid' => $uniqueid,
-            'iconsonly' => $iconsonly,
-            'textonly' => $textonly,
+            'showicon' => $showicon,
+            'showtext' => $showtext,
             'defaultsort' => $sortbydefaultconfig == 'default',
             'sortbyfinishdate' => $sortbydefaultconfig == 'sortbyfinishdate',
             'sortalphabetically' => $sortbydefaultconfig == 'sortalphabetically'

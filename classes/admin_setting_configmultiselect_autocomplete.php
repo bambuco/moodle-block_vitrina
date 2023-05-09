@@ -72,8 +72,13 @@ class admin_setting_configmultiselect_autocomplete extends admin_setting_configm
 
         $this->placeholder = get_string('search');
 
-        $params = array('#' . $this->get_id(), $this->tags, $this->ajax,
-            $this->placeholder, $this->casesensitive, $this->showsuggestions, $this->noselectionstring);
+        $params = ['#' . $this->get_id(),
+                    $this->tags,
+                    $this->ajax,
+                    $this->placeholder,
+                    $this->casesensitive,
+                    $this->showsuggestions,
+                    $this->noselectionstring];
 
         // Load autocomplete wrapper for select2 library.
         $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params);

@@ -199,8 +199,8 @@ if ($ADMIN->fulltree) {
     // Tabs view.
     $options = [
         'default' => get_string('textandicon', 'block_vitrina'),
-        'textonly' => get_string('textonly', 'block_vitrina'),
-        'iconsonly' => get_string('iconsonly', 'block_vitrina')
+        'showtext' => get_string('showtext', 'block_vitrina'),
+        'showicon' => get_string('showicon', 'block_vitrina')
     ];
 
     $name = 'block_vitrina/tabview';

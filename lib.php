@@ -37,7 +37,7 @@
  * @return bool
  * @todo MDL-36050 improve capability check on stick blocks, so we can check user capability before sending images.
  */
-function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $DB, $CFG, $USER;
 
     if ($context->contextlevel != CONTEXT_BLOCK &&
@@ -56,13 +56,15 @@ function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $
     $filepath = $args ? '/'.implode('/', $args).'/' : '/';
 
     if ($filearea === 'content_header') {
-        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename)) ||
-              $file->is_directory()) {
+        $file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename);
+
+        if (!($file && !$file->is_directory())) {
             send_file_not_found();
         }
     } else if ($filearea === 'content_footer') {
-        if (!($file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename)) ||
-              $file->is_directory()) {
+        $file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename);
+
+        if (!($file && !$file->is_directory())) {
             send_file_not_found();
         }
     } else {
@@ -84,7 +86,7 @@ function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $
 function block_vitrina_global_db_replace($search, $replace) {
     global $DB;
 
-    $instances = $DB->get_recordset('block_instances', array('blockname' => 'vitrina'));
+    $instances = $DB->get_recordset('block_instances', ['blockname' => 'vitrina']);
     foreach ($instances as $instance) {
 
         $config = unserialize_object(base64_decode($instance->configdata));

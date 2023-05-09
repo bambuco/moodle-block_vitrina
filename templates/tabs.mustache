@@ -35,12 +35,12 @@
 <div class="block_vitrina-tabs">
     {{#tabs}}
     <div data-ref="#{{uniqueid}} .tab-{{key}}" title="{{title}}" class="{{state}}">
-        {{#iconsonly}}
+        {{#showicon}}
             <i class="fa fa-{{icon}}"></i>
-        {{/iconsonly}}
-        {{#textonly}}
+        {{/showicon}}
+        {{#showtext}}
             <span>{{title}}</span>
-        {{/textonly}}
+        {{/showtext}}
     </div>
     {{/tabs}}
 </div>

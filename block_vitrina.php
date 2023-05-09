@@ -132,7 +132,7 @@ class block_vitrina extends block_base {
             $catslist = explode(',', $categories);
             foreach ($catslist as $catid) {
                 if (is_numeric($catid)) {
-                    $categoryid[] = (int)trim($catid);
+                    $categoryid[] = (int) trim($catid);
                 }
                 $categories = $categoryid;
             }
@@ -146,9 +146,10 @@ class block_vitrina extends block_base {
             $select .= ' AND category IN (' . implode(',', $categories) . ')';
         }
 
-        // Tabs in config.
+        // Load tabs and views.
         $tabnames = ['default', 'recents', 'greats', 'premium'];
         $tabs = [];
+        $views = [];
 
         if (isset($this->config) && is_object($this->config)) {
             foreach ($tabnames as $tabname) {
@@ -160,10 +161,16 @@ class block_vitrina extends block_base {
             $tabs = $tabnames;
         }
 
+        foreach ($tabnames as $tabname) {
+                $views[$tabname] = [];
+        }
+
+        // Sort and get default view.
         $sortbydefault = get_config('block_vitrina', 'sortbydefault');
 
         if ($sortbydefault == 'sortalphabetically') {
-            $courses = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', 0, $amount);
+            $newdefaultview = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', 0, $amount);
+            $views['default'] = array_merge($views['default'], $newdefaultview);
 
         } else if ($sortbydefault == 'sortbyfinishdate') {
             $sql = "SELECT *,
@@ -175,16 +182,25 @@ class block_vitrina extends block_base {
                         ORDER BY date_classification ASC,
                         enddate ASC,
                         startdate DESC";
-            $courses = $DB->get_records_sql($sql, $params, 0, $amount);
+            $newdefaultview = $DB->get_records_sql($sql, $params, 0, $amount);
+            $views['default'] = array_merge($views['default'], $newdefaultview);
         } else {
-            $courses = $DB->get_records_select('course', $select, $params, 'startdate ASC', '*', 0, $amount);
+            $newdefaultview = $DB->get_records_select('course', $select, $params, 'startdate ASC', '*', 0, $amount);
+            $views['default'] = array_merge($views['default'], $newdefaultview);
         }
 
         // Get next courses.
         $paramsnextcourses['currenttime'] = time();
         $paramsnextcourses['startdate'] = $params['startdate'];
         $selectnextcourses = 'startdate > :currenttime AND ' . $select;
-        $nextcourses = $DB->get_records_select('course', $selectnextcourses, $paramsnextcourses, 'startdate ASC', '*', 0, $amount);
+        $newrecentview = $DB->get_records_select('course',
+                                                  $selectnextcourses,
+                                                  $paramsnextcourses,
+                                                  'startdate ASC',
+                                                  '*',
+                                                  0,
+                                                  $amount);
+        $views['recents'] = array_merge($views['recents'], $newrecentview);
 
         // Get outstanding courses.
         $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
@@ -194,17 +210,22 @@ class block_vitrina extends block_base {
                     WHERE " . $selectgreats .
                     " GROUP BY c.id HAVING rating > 3
                     ORDER BY rating DESC";
-        $greatcourses = $DB->get_records_sql($sql, $params, 0, $amount);
+        $newgreatsview = $DB->get_records_sql($sql, $params, 0, $amount);
+        $views['greats'] = array_merge($views['greats'], $newgreatsview);
 
         // Get premium courses.
         $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
         $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
         $sql = "SELECT c.*
                     FROM {course} c
-                    INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+                    INNER JOIN {customfield_data} cd ON
+                    cd.fieldid = :fieldid AND
+                    cd.value != '' AND
+                    cd.instanceid = c.id
                     WHERE " . $selectpremium .
                     " ORDER BY c.fullname ASC";
-        $premiumcourses = $DB->get_records_sql($sql, $params, 0, $amount);
+        $newpremiumview = $DB->get_records_sql($sql, $params, 0, $amount);
+        $views['premium'] = array_merge($views['premium'], $newpremiumview);
 
         $html = '';
         $filteropt = new stdClass;
@@ -251,9 +272,9 @@ class block_vitrina extends block_base {
         // Memory footprint.
         unset($filteropt);
 
-        if ($courses && is_array($courses)) {
+        if ($views && is_array($views)) {
             // Load templates to display courses.
-            $renderable = new \block_vitrina\output\main($tabs, $courses, $nextcourses, $greatcourses, $premiumcourses);
+            $renderable = new \block_vitrina\output\main($tabs, $views);
             $renderer = $this->page->get_renderer('block_vitrina');
             $html .= $renderer->render($renderable);
         }
@@ -315,9 +336,11 @@ class block_vitrina extends block_base {
     public function content_is_trusted() {
         global $SCRIPT;
 
-        if (!$context = context::instance_by_id($this->instance->parentcontextid, IGNORE_MISSING)) {
+        $context = context::instance_by_id($this->instance->parentcontextid, IGNORE_MISSING);
+        if (!$context) {
             return false;
         }
+
         // Find out if this block is on the profile page.
         if ($context->contextlevel == CONTEXT_USER) {
             if ($SCRIPT === '/my/index.php') {
@@ -340,6 +363,5 @@ class block_vitrina extends block_base {
     public function instance_can_be_docked() {
         return false;
     }
-
 }
 

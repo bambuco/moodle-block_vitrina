@@ -87,7 +87,7 @@ class block_vitrina_edit_form extends block_edit_form {
             $displaylist,
             $options);
 
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $this->block->context);
+        $editoroptions = ['maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $this->block->context];
 
         // Header HTML editor.
         $mform->addElement('editor', 'config_htmlheader', get_string('htmlheader', 'block_vitrina'), null, $editoroptions);
@@ -121,10 +121,12 @@ class block_vitrina_edit_form extends block_edit_form {
                                                                            'block_vitrina',
                                                                            'content_header',
                                                                            0,
-                                                                           array('subdirs' => true),
+                                                                           ['subdirs' => true],
                                                                            $currenthtmlheader);
             $defaults->config_htmlheader['itemid'] = $draftidheader;
             $defaults->config_htmlheader['format'] = $this->block->config->htmlheaderformat ?? FORMAT_MOODLE;
+        } else {
+            $htmlheader = '';
         }
 
         // Set data for footer.
@@ -141,10 +143,12 @@ class block_vitrina_edit_form extends block_edit_form {
                                                                            'block_vitrina',
                                                                            'content_footer',
                                                                            0,
-                                                                           array('subdirs' => true),
+                                                                           ['subdirs' => true],
                                                                            $currenthtmlfooter);
             $defaults->config_htmlfooter['itemid'] = $draftidfooter;
             $defaults->config_htmlfooter['format'] = $this->block->config->htmlfooterformat ?? FORMAT_MOODLE;
+        } else {
+            $htmlfooter = '';
         }
 
         unset($this->block->config->htmlheader);
