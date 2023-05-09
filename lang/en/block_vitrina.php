@@ -81,6 +81,7 @@ $string['licensefield_help'] = 'A course field to specify the course license';
 $string['mediafield'] = 'Media field';
 $string['mediafield_help'] = 'A course field to specify a special course video URL';
 $string['newblocktitle'] = 'Showcase';
+$string['nocoursesview'] = 'No courses to display here.';
 $string['notvisible'] = 'This course is not available';
 $string['notenrollable'] = 'Course currently unavailable to enroll!';
 $string['paymentbutton'] = 'Pay course';

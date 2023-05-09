@@ -190,17 +190,21 @@ class block_vitrina extends block_base {
         }
 
         // Get next courses.
-        $paramsnextcourses['currenttime'] = time();
-        $paramsnextcourses['startdate'] = $params['startdate'];
-        $selectnextcourses = 'startdate > :currenttime AND ' . $select;
-        $newrecentview = $DB->get_records_select('course',
-                                                  $selectnextcourses,
-                                                  $paramsnextcourses,
-                                                  'startdate ASC',
-                                                  '*',
-                                                  0,
-                                                  $amount);
-        $views['recents'] = array_merge($views['recents'], $newrecentview);
+        if (isset($daystoupcoming) && is_numeric($daystoupcoming)) {
+            $paramsnextcourses['currenttime'] = time();
+            $paramsnextcourses['startdate'] = $params['startdate'];
+            $selectnextcourses = 'startdate > :currenttime AND ' . $select;
+            $newrecentview = $DB->get_records_select('course',
+                                                      $selectnextcourses,
+                                                      $paramsnextcourses,
+                                                      'startdate ASC',
+                                                      '*',
+                                                      0,
+                                                      $amount);
+            $views['recents'] = array_merge($views['recents'], $newrecentview);
+        }
+
+        /* var_dump($this->config); die; */
 
         // Get outstanding courses.
         $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);

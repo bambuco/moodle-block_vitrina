@@ -81,6 +81,7 @@ $string['license-cc-by-nc-nd'] = 'Creative Commons Atribución-NoComercial-SinOb
 $string['mediafield'] = 'Campo Medio';
 $string['mediafield_help'] = 'El nombre del campo para cargar una URL de video del curso';
 $string['newblocktitle'] = 'Vitrina de cursos';
+$string['nocoursesview'] = 'No hay cursos para mostrar aquí.';
 $string['notvisible'] = 'Este curso no está disponible';
 $string['notenrollable'] = '¡Curso no disponible para nuevas matrículas!';
 $string['paymenturlfield'] = 'Campo de URL de pago';

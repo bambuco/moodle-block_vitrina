@@ -50,7 +50,6 @@ class main implements renderable, templatable {
      * Constructor.
      *
      * @param array $tabs The tabs configuration.
-     * @param array $courses A courses list.
      * @param array $views The courses views.
      */
     public function __construct($tabs, $views = []) {
@@ -106,28 +105,21 @@ class main implements renderable, templatable {
         $tabbames = ['default', 'recents', 'greats', 'premium'];
         $activetab = false;
         $getviews = [];
-
-        foreach ($tabbames as $tabname) {
-            if (in_array($tabname, $this->tabs)) {
-                $defaultvariables["has{$tabname}"] = true;
-                $defaultvariables["{$tabname}state"] = !$activetab ? 'active' : '';
-                $activetab = true;
-            }
-        }
-
+        $firsttab = !empty($this->tabs) ? $this->tabs[0] : '';
         $sortbydefault = get_config('block_vitrina', 'sortbydefault');
         $sortedby = false;
 
-        if ($sortbydefault == 'default') {
-            $sortedby = get_string('sortbystartdate', 'block_vitrina');
-        } else {
-            $sortedby = get_string($sortbydefault, 'block_vitrina');
+        if (!empty($sortbydefault)) {
+
+            if ($sortbydefault == 'default') {
+                $sortedby = get_string('sortbystartdate', 'block_vitrina');
+            } else {
+                $sortedby = get_string($sortbydefault, 'block_vitrina');
+            }
         }
 
         foreach ($this->views as $view => $courses) {
-
-            if (!empty($courses)) {
-                $status = ($view === 'default') ? 'active' : '';
+                $status = ($view === $firsttab) ? 'active' : '';
                 $sortedby = ($view === 'default') ? $sortedby : false;
                 $getviews[] = [
                     'view' => $view,
@@ -135,7 +127,6 @@ class main implements renderable, templatable {
                     'sortedby' => $sortedby,
                     'coursesview' => $courses,
                 ];
-            }
 
             foreach ($courses as $course) {
                 \block_vitrina\controller::course_preprocess($course);

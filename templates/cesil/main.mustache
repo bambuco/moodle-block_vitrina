@@ -42,6 +42,10 @@
                 {{>block_vitrina/cesil/course}}
             {{/coursesview}}
 
+            {{^coursesview}}
+                <p class="nocoursesview">{{#str}} nocoursesview, block_vitrina {{/str}}</p>
+            {{/coursesview}}
+
         </div>
     {{/getviews}}
 
