@@ -169,7 +169,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('categories', 'block_vitrina');
     $help = get_string('categories_help', 'block_vitrina');
     $displaylist = \core_course_category::make_categories_list('moodle/category:manage');
-    $default = array_keys($displaylist);
+    $default = [];
 
     $setting = new admin_setting_configmultiselect_autocomplete (
         'block_vitrina/categories',
