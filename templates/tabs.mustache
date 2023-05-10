@@ -15,34 +15,37 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_vitrina/two_cols/main
+    @template block_vitrina/tabs
 
     This template renders the template content area for a resource.
 
     Example context (json):
     {
-        "uniqueid": "unique_id_string"
+        "tabs": [{
+            "title": "BambuCo",
+            "text": "Ir a BambuCo",
+            "icon": "globe"
+        }],
+        "baseurl": "https://moodle_wwwroot_url"
     }
 }}
 
-<div id="{{uniqueid}}" class="block_vitrina-content" data-observe-resizes>
+{{#hastabs}}
+<div class="block_vitrina-tabs">
 
-    {{>block_vitrina/tabs}}
+    {{#tabs}}
+    <div data-ref="#{{uniqueid}} .tab-{{key}}" title="{{title}}" class="{{state}}">
 
-    {{#getviews}}
-        <div class="courses tab-{{view}} block_vitrina-tabcontent {{status}}">
+        {{#showicon}}
+            <i class="fa fa-{{icon}}"></i>
+        {{/showicon}}
 
-            {{#coursesview}}
-                {{>block_vitrina/two_cols/course}}
-            {{/coursesview}}
+        {{#showtext}}
+            <span>{{title}}</span>
+        {{/showtext}}
 
-            {{^coursesview}}
-                <p class="nocoursesview">{{#str}} nocoursesview, block_vitrina {{/str}}</p>
-            {{/coursesview}}
-
-        </div>
-    {{/getviews}}
-
-    <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-primary btn-block">{{#str}}viewall, block_vitrina{{/str}}</a>
+    </div>
+    {{/tabs}}
 
 </div>
+{{/hastabs}}

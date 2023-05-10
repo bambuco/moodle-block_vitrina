@@ -42,6 +42,11 @@ class controller {
     protected static $large = false;
 
     /**
+     * @var int Instances includes in page request.
+     */
+    private static $instancescounter = 0;
+
+    /**
      * Process a specific course to be displayed.
      *
      * @param object $course Course to be processed.
@@ -449,5 +454,17 @@ class controller {
             $PAGE->requires->css('/blocks/vitrina/templates/' . $template . '/styles.css');
         }
 
+    }
+
+    /**
+     * Generate a unique id for block instance.
+     *
+     * @return string Unique identifier.
+     */
+    public static function get_uniqueid() {
+        $uniqueid = 'block_vitrina_' . self::$instancescounter;
+        self::$instancescounter++;
+
+        return $uniqueid;
     }
 }

@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->dirroot . '/blocks/vitrina/classes/admin_setting_configmultiselect_autocomplete.php');
+
 if ($ADMIN->fulltree) {
 
     // Course fields.
@@ -135,6 +137,19 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext($name, $title, $help, 20, PARAM_INT, 5);
     $settings->add($setting);
 
+    // Sort by default.
+    $options = [
+        'default' => get_string('sortbystartdate', 'block_vitrina'),
+        'sortbyfinishdate' => get_string('sortbyfinishdate', 'block_vitrina'),
+        'sortalphabetically' => get_string('sortalphabetically', 'block_vitrina')
+    ];
+
+    $name = 'block_vitrina/sortbydefault';
+    $title = get_string('sortbydefault', 'block_vitrina');
+    $help = get_string('sortbydefault_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
+    $settings->add($setting);
+
     // Days to upcoming courses.
     $name = 'block_vitrina/daystoupcoming';
     $title = get_string('daystoupcoming', 'block_vitrina');
@@ -149,11 +164,21 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtextarea($name, $title, $help, '');
     $settings->add($setting);
 
-    // Categories filter.
+    // Select courses categories.
     $name = 'block_vitrina/categories';
     $title = get_string('categories', 'block_vitrina');
     $help = get_string('categories_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $displaylist = \core_course_category::make_categories_list('moodle/category:manage');
+    $default = array_keys($displaylist);
+
+    $setting = new admin_setting_configmultiselect_autocomplete (
+        'block_vitrina/categories',
+        get_string('categories', 'block_vitrina'),
+        get_string('categories_help', 'block_vitrina'),
+        $default,
+        $displaylist
+    );
+
     $settings->add($setting);
 
     // Block summary.
@@ -168,6 +193,19 @@ if ($ADMIN->fulltree) {
     $title = get_string('detailinfo', 'block_vitrina');
     $help = get_string('detailinfo_help', 'block_vitrina');
     $setting = new admin_setting_confightmleditor($name, $title, $help, '');
+    $settings->add($setting);
+
+    // Tabs view.
+    $options = [
+        'default' => get_string('textandicon', 'block_vitrina'),
+        'showtext' => get_string('showtext', 'block_vitrina'),
+        'showicon' => get_string('showicon', 'block_vitrina')
+    ];
+
+    $name = 'block_vitrina/tabview';
+    $title = get_string('tabview', 'block_vitrina');
+    $help = get_string('tabview_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
     $settings->add($setting);
 
     // Cover image type.

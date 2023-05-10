@@ -38,7 +38,7 @@ class block_vitrina_edit_form extends block_edit_form {
      * @return void
      */
     protected function specific_definition($mform) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
@@ -46,5 +46,118 @@ class block_vitrina_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_title', get_string('customtitle', 'block_vitrina'));
         $mform->setType('config_title', PARAM_TEXT);
 
+        // Amount of courses shown at instance.
+        $mform->addElement('text', 'config_singleamount', get_string('singleamountcourses', 'block_vitrina'), ['size' => 2]);
+        $mform->setType('config_singleamount', PARAM_INT);
+        $mform->setDefault('config_singleamount', 0);
+        $mform->addHelpButton('config_singleamount', 'singleamountcourses', 'block_vitrina');
+
+        // Tabs.
+        $mform->addElement('checkbox', 'config_default', get_string('defaultsort', 'block_vitrina'));
+        $mform->setDefault('config_default', 1);
+
+        $mform->addElement('checkbox', 'config_recents', get_string('recents', 'block_vitrina'));
+
+        // Show greats tab config only if rate_course block exists.
+        $dbman = $DB->get_manager();
+        $bmanager = new \block_manager($this->page);
+        if ($bmanager->is_known_block_type('rate_course') && $dbman->table_exists('block_rate_course')) {
+            $mform->addElement('checkbox', 'config_greats', get_string('greats', 'block_vitrina'));
+        }
+
+        // Show premium tab config only if premium is available.
+        if (\block_vitrina\controller::premium_available()) {
+            $mform->addElement('checkbox', 'config_premium', get_string('premium', 'block_vitrina'));
+        }
+
+        // Select courses categories.
+        $displaylist = \core_course_category::make_categories_list('moodle/course:create');
+
+        $options = [
+            'multiple' => true,
+            'noselectionstring' => get_string('selectcategories', 'block_vitrina')
+        ];
+
+        $mform->addElement(
+            'autocomplete',
+            'config_categories',
+            get_string('coursecategory', 'block_vitrina'),
+            $displaylist,
+            $options);
+
+        $editoroptions = ['maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $this->block->context];
+
+        // Header HTML editor.
+        $mform->addElement('editor', 'config_htmlheader', get_string('htmlheader', 'block_vitrina'), null, $editoroptions);
+        $mform->setType('config_htmlheader', PARAM_RAW); // XSS is prevented when printing the block contents and serving files.
+
+        // Footer HTML editor.
+        $mform->addElement('editor', 'config_htmlfooter', get_string('htmlfooter', 'block_vitrina'), null, $editoroptions);
+        $mform->setType('config_htmlfooter', PARAM_RAW); // XSS is prevented when printing the block contents and serving files.
+
+    }
+
+    /**
+     * Set the data for header and footer html draft.
+     *
+     * @param array $defaults
+     * @return void
+     */
+    public function set_data($defaults) {
+
+        // Set data for header.
+        if (!empty($this->block->config) && !empty($this->block->config->htmlheader)) {
+            $htmlheader = $this->block->config->htmlheader;
+            $draftidheader = file_get_submitted_draft_itemid('config_htmlheader');
+            if (empty($htmlheader)) {
+                $currenthtmlheader = '';
+            } else {
+                $currenthtmlheader = $htmlheader;
+            }
+            $defaults->config_htmlheader['text'] = file_prepare_draft_area($draftidheader,
+                                                                           $this->block->context->id,
+                                                                           'block_vitrina',
+                                                                           'content_header',
+                                                                           0,
+                                                                           ['subdirs' => true],
+                                                                           $currenthtmlheader);
+            $defaults->config_htmlheader['itemid'] = $draftidheader;
+            $defaults->config_htmlheader['format'] = $this->block->config->htmlheaderformat ?? FORMAT_MOODLE;
+        } else {
+            $htmlheader = '';
+        }
+
+        // Set data for footer.
+        if (!empty($this->block->config) && !empty($this->block->config->htmlfooter)) {
+            $htmlfooter = $this->block->config->htmlfooter;
+            $draftidfooter = file_get_submitted_draft_itemid('config_htmlfooter');
+            if (empty($htmlfooter)) {
+                $currenthtmlfooter = '';
+            } else {
+                $currenthtmlfooter = $htmlfooter;
+            }
+            $defaults->config_htmlfooter['text'] = file_prepare_draft_area($draftidfooter,
+                                                                           $this->block->context->id,
+                                                                           'block_vitrina',
+                                                                           'content_footer',
+                                                                           0,
+                                                                           ['subdirs' => true],
+                                                                           $currenthtmlfooter);
+            $defaults->config_htmlfooter['itemid'] = $draftidfooter;
+            $defaults->config_htmlfooter['format'] = $this->block->config->htmlfooterformat ?? FORMAT_MOODLE;
+        } else {
+            $htmlfooter = '';
+        }
+
+        unset($this->block->config->htmlheader);
+        unset($this->block->config->htmlfooter);
+        parent::set_data($defaults);
+
+        // Restore html header and html footer.
+        if (!isset($this->block->config)) {
+            $this->block->config = new stdClass();
+        }
+        $this->block->config->htmlheader = $htmlheader;
+        $this->block->config->htmlfooter = $htmlfooter;
     }
 }

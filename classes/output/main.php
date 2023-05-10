@@ -36,24 +36,27 @@ use templatable;
 class main implements renderable, templatable {
 
     /**
-     * @var array Courses list to show.
+     * @var array List of tabs to print.
      */
-    private $courses = null;
+    private $tabs;
+
+    /**
+     * @var array Courses views.
+     */
+    private $views = null;
+
 
     /**
      * Constructor.
      *
-     * @param array $courses A courses list
+     * @param array $tabs The tabs configuration.
+     * @param array $views The courses views.
      */
-    public function __construct($courses = []) {
+    public function __construct($tabs, $views = []) {
         global $CFG, $OUTPUT;
 
-        // Load the course image.
-        foreach ($courses as $course) {
-            \block_vitrina\controller::course_preprocess($course);
-        }
-
-        $this->courses = $courses;
+        $this->tabs = $tabs;
+        $this->views = $views;
     }
 
     /**
@@ -65,9 +68,70 @@ class main implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
+        $icons = [
+            'default' => 'th',
+            'recents' => 'calendar-check-o',
+            'greats' => 'thumbs-up',
+            'premium' => 'star'
+        ];
+
+        $showtabs = [];
+        foreach ($this->tabs as $k => $tab) {
+            $one = new \stdClass();
+            $one->title = get_string('tabtitle_' . $tab, 'block_vitrina');
+            $one->key = $tab;
+            $one->icon = $icons[$tab];
+            $one->state = $k == 0 ? 'active' : '';
+            $showtabs[] = $one;
+        }
+
+        // Tabs config view.
+        $tabview = get_config('block_vitrina', 'tabview');
+        $showicon = true;
+        $showtext = true;
+
+        if (!empty($tabview)) {
+
+            if ($tabview == 'showicon') {
+                $showtext = false;
+            } else if ($tabview == 'showtext') {
+                $showicon = false;
+            } else {
+                $showicon = true;
+                $showtext = true;
+            }
+        }
+
+        $tabbames = ['default', 'recents', 'greats', 'premium'];
+        $activetab = false;
+        $getviews = [];
+        $firsttab = !empty($this->tabs) ? $this->tabs[0] : '';
+        $sortbydefault = get_config('block_vitrina', 'sortbydefault');
+
+        foreach ($this->views as $view => $courses) {
+            $status = ($view === $firsttab) ? 'active' : '';
+            $getviews[] = [
+                'view' => $view,
+                'status' => $status,
+                'coursesview' => $courses
+            ];
+
+            foreach ($courses as $course) {
+                \block_vitrina\controller::course_preprocess($course);
+            }
+        }
+
+        $uniqueid = \block_vitrina\controller::get_uniqueid();
+        $sortbydefaultconfig = get_config('block_vitrina', 'sortbydefault');
+
         $defaultvariables = [
-            'courses' => array_values($this->courses),
-            'baseurl' => $CFG->wwwroot
+            'getviews' => array_values($getviews),
+            'baseurl' => $CFG->wwwroot,
+            'hastabs' => count($this->tabs) > 1,
+            'tabs' => $showtabs,
+            'uniqueid' => $uniqueid,
+            'showicon' => $showicon,
+            'showtext' => $showtext
         ];
 
         return $defaultvariables;

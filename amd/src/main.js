@@ -20,38 +20,45 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/str', 'core/log'], function($, str, Log) {
+define(['jquery', 'core/str', 'core/log'], function($, Str, Log) {
 
     // Load strings.
     var strings = [];
-    strings.push({key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'});
-
     var s = [];
 
-    if (strings.length > 0) {
+    /**
+     * Load strings from server.
+     */
+    function loadStrings() {
 
-        strings.forEach(one => {
-            s[one.key] = one.key;
-        });
+        if (strings.length > 0) {
 
-        str.get_strings(strings).done(function(results) {
-            var pos = 0;
             strings.forEach(one => {
-                s[one.key] = results[pos];
-                pos++;
+                s[one.key] = one.key;
             });
-        }).fail(function(e) {
-            Log.debug('Error loading strings');
-            Log.debug(e);
-        });
+
+            Str.get_strings(strings).done(function(results) {
+                var pos = 0;
+                strings.forEach(one => {
+                    s[one.key] = results[pos];
+                    pos++;
+                });
+            }).fail(function(e) {
+                Log.debug('Error loading strings');
+                Log.debug(e);
+            });
+        }
+
     }
     // End of Load strings.
 
     /**
-     * Initialise all for the block.
+     * Initialise functions for the detail page block.
      *
      */
-    var init = function() {
+    var detail = function() {
+        strings.push({key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'});
+
         $('input[name="courselink"]').on('click', function() {
             var $input = $(this);
             $input.select();
@@ -65,6 +72,17 @@ define(['jquery', 'core/str', 'core/log'], function($, str, Log) {
             }, 1600);
         });
 
+        init();
+    };
+
+    /**
+     * Initialise all for the block.
+     *
+     */
+    var init = function() {
+
+        loadStrings();
+
         $('[data-vitrina-toggle]').on('click', function() {
             var $this = $(this);
             var cssclass = $this.attr('data-vitrina-toggle');
@@ -73,9 +91,49 @@ define(['jquery', 'core/str', 'core/log'], function($, str, Log) {
             $(target).toggleClass(cssclass);
         });
 
+        $('.block_vitrina-content').each(function() {
+            var $blockcontent = $(this);
+
+            // Tabs.
+            $blockcontent.find('.block_vitrina-tabs').each(function() {
+                var $tabs = $(this);
+                var tabslist = [];
+
+                $tabs.find('[data-ref]').each(function() {
+                    var $tab = $(this);
+                    tabslist.push($tab);
+
+                    $tab.on('click', function() {
+                        tabslist.forEach(one => {
+                            $(one.data('ref')).removeClass('active');
+                        });
+
+                        $tabs.find('.active[data-ref]').removeClass('active');
+                        $tab.addClass('active');
+                        $($tab.data('ref')).addClass('active');
+                    });
+                });
+
+                // Load dynamic buttons.
+                $blockcontent.find('[data-vitrina-tab]').each(function() {
+                    var $button = $(this);
+
+                    $button.on('click', function() {
+                        var key = '.tab-' + $button.data('vitrina-tab');
+
+                        tabslist.forEach($tab => {
+                            if ($tab.data('ref').indexOf(key) >= 0) {
+                                $tab.trigger('click');
+                            }
+                        });
+                    });
+                });
+            });
+        });
     };
 
     return {
-        init: init
+        init: init,
+        detail: detail
     };
 });

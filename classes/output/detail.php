@@ -239,7 +239,7 @@ class detail implements renderable, templatable {
 
         }
 
-        $PAGE->requires->js_call_amd('block_vitrina/main', 'init');
+        $PAGE->requires->js_call_amd('block_vitrina/main', 'detail');
 
         // End Check enroled status.
 
