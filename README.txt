@@ -22,5 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042601:
+New views of courses in the general presentation of the block.
+New default sort admin setting.
+
 2023042600:
 First version (fork from: https://github.com/cocreatic/moodle-block_greatcourses)
