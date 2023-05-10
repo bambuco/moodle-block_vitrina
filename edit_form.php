@@ -57,19 +57,17 @@ class block_vitrina_edit_form extends block_edit_form {
         $mform->setDefault('config_default', 1);
 
         $mform->addElement('checkbox', 'config_recents', get_string('recents', 'block_vitrina'));
-        $mform->setDefault('config_recents', 1);
 
         // Show greats tab config only if rate_course block exists.
+        $dbman = $DB->get_manager();
         $bmanager = new \block_manager($this->page);
-        if ($bmanager->is_known_block_type('rate_course')) {
+        if ($bmanager->is_known_block_type('rate_course') && $dbman->table_exists('block_rate_course')) {
             $mform->addElement('checkbox', 'config_greats', get_string('greats', 'block_vitrina'));
-            $mform->setDefault('config_greats', 1);
         }
 
         // Show premium tab config only if premium is available.
         if (\block_vitrina\controller::premium_available()) {
             $mform->addElement('checkbox', 'config_premium', get_string('premium', 'block_vitrina'));
-            $mform->setDefault('config_premium', 1);
         }
 
         // Select courses categories.

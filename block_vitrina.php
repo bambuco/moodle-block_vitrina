@@ -155,14 +155,12 @@ class block_vitrina extends block_base {
             foreach ($tabnames as $tabname) {
                 if (property_exists($this->config, $tabname) && $this->config->$tabname) {
                     $tabs[] = $tabname;
+                    $views[$tabname] = [];
                 }
             }
         } else {
-            $tabs = $tabnames;
-        }
-
-        foreach ($tabnames as $tabname) {
-                $views[$tabname] = [];
+            $tabs[] = 'default';
+            $views['default'] = [];
         }
 
         // Sort and get default view.
@@ -190,7 +188,11 @@ class block_vitrina extends block_base {
         }
 
         // Get next courses.
-        if (isset($daystoupcoming) && is_numeric($daystoupcoming)) {
+        if (isset($views['recents']) &&
+            $this->config->recents &&
+            isset($daystoupcoming) &&
+            is_numeric($daystoupcoming)) {
+
             $paramsnextcourses['currenttime'] = time();
             $paramsnextcourses['startdate'] = $params['startdate'];
             $selectnextcourses = 'startdate > :currenttime AND ' . $select;
@@ -205,20 +207,33 @@ class block_vitrina extends block_base {
         }
 
         // Get outstanding courses.
-        $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
-        $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
-                    FROM {course} c
-                    INNER JOIN {block_rate_course} r ON r.course = c.id
-                    WHERE " . $selectgreats .
-                    " GROUP BY c.id HAVING rating > 3
-                    ORDER BY rating DESC";
-        $newgreatsview = $DB->get_records_sql($sql, $params, 0, $amount);
-        $views['greats'] = array_merge($views['greats'], $newgreatsview);
+        $dbman = $DB->get_manager();
+        $bmanager = new \block_manager($this->page);
+
+        if (isset($views['greats']) &&
+            $this->config->greats &&
+            $dbman->table_exists('block_rate_course') &&
+            $bmanager->is_known_block_type('rate_course')) {
+
+            $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
+            $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
+                        FROM {course} c
+                        INNER JOIN {block_rate_course} r ON r.course = c.id
+                        WHERE " . $selectgreats .
+                        " GROUP BY c.id HAVING rating > 3
+                        ORDER BY rating DESC";
+            $newgreatsview = $DB->get_records_sql($sql, $params, 0, $amount);
+            $views['greats'] = array_merge($views['greats'], $newgreatsview);
+        }
 
         // Get premium courses.
-        $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
-        $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
-        $sql = "SELECT c.*
+        if (isset($views['premium']) &&
+            $this->config->premium &&
+            \block_vitrina\controller::premium_available()) {
+
+            $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
+            $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
+            $sql = "SELECT c.*
                     FROM {course} c
                     INNER JOIN {customfield_data} cd ON
                     cd.fieldid = :fieldid AND
@@ -226,8 +241,9 @@ class block_vitrina extends block_base {
                     cd.instanceid = c.id
                     WHERE " . $selectpremium .
                     " ORDER BY c.fullname ASC";
-        $newpremiumview = $DB->get_records_sql($sql, $params, 0, $amount);
-        $views['premium'] = array_merge($views['premium'], $newpremiumview);
+            $newpremiumview = $DB->get_records_sql($sql, $params, 0, $amount);
+            $views['premium'] = array_merge($views['premium'], $newpremiumview);
+        }
 
         $html = '';
         $filteropt = new stdClass;
