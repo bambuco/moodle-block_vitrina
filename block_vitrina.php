@@ -320,14 +320,14 @@ class block_vitrina extends block_base {
                               'block_vitrina',
                               'content_header',
                               0,
-                              array('subdirs' => true),
+                              ['subdirs' => true],
                               $data->htmlheader['text']);
         $config->htmlfooter = file_save_draft_area_files($data->htmlfooter['itemid'],
                               $this->context->id,
                               'block_vitrina',
                               'content_footer',
                               0,
-                              array('subdirs' => true),
+                              ['subdirs' => true],
                               $data->htmlfooter['text']);
         $config->htmlheaderformat = $data->htmlheader['format'];
         $config->htmlfooterformat = $data->htmlfooter['format'];

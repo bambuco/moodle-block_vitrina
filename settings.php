@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/blocks/vitrina/classes/admin_setting_configmultiselect_autocomplete.php');
 
-
 if ($ADMIN->fulltree) {
 
     // Course fields.
