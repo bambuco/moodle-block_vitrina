@@ -87,15 +87,15 @@ class main implements renderable, templatable {
 
         // Tabs config view.
         $tabview = get_config('block_vitrina', 'tabview');
-        $showicon = false;
-        $showtext = false;
+        $showicon = true;
+        $showtext = true;
 
         if (!empty($tabview)) {
 
             if ($tabview == 'showicon') {
-                $showicon = true;
+                $showtext = false;
             } else if ($tabview == 'showtext') {
-                $showtext = true;
+                $showicon = false;
             } else {
                 $showicon = true;
                 $showtext = true;
@@ -107,25 +107,13 @@ class main implements renderable, templatable {
         $getviews = [];
         $firsttab = !empty($this->tabs) ? $this->tabs[0] : '';
         $sortbydefault = get_config('block_vitrina', 'sortbydefault');
-        $sortedby = false;
-
-        if (!empty($sortbydefault)) {
-
-            if ($sortbydefault == 'default') {
-                $sortedby = get_string('sortbystartdate', 'block_vitrina');
-            } else {
-                $sortedby = get_string($sortbydefault, 'block_vitrina');
-            }
-        }
 
         foreach ($this->views as $view => $courses) {
             $status = ($view === $firsttab) ? 'active' : '';
-            $sortedby = ($view === 'default') ? $sortedby : false;
             $getviews[] = [
                 'view' => $view,
                 'status' => $status,
-                'sortedby' => $sortedby,
-                'coursesview' => $courses,
+                'coursesview' => $courses
             ];
 
             foreach ($courses as $course) {
@@ -141,13 +129,9 @@ class main implements renderable, templatable {
             'baseurl' => $CFG->wwwroot,
             'hastabs' => count($this->tabs) > 1,
             'tabs' => $showtabs,
-            'sortedby' => $sortedby,
             'uniqueid' => $uniqueid,
             'showicon' => $showicon,
-            'showtext' => $showtext,
-            'defaultsort' => $sortbydefaultconfig == 'default',
-            'sortbyfinishdate' => $sortbydefaultconfig == 'sortbyfinishdate',
-            'sortalphabetically' => $sortbydefaultconfig == 'sortalphabetically'
+            'showtext' => $showtext
         ];
 
         return $defaultvariables;

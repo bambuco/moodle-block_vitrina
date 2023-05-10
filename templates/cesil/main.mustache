@@ -31,13 +31,7 @@
 
     {{#getviews}}
         <div class="courses tab-{{view}} block_vitrina-tabcontent {{status}}">
-
-            {{#sortedby}}
-                <div class="defaultsort">
-                    <p>{{#pix}} t/sort_by, core {{/pix}} {{sortedby}}</p>
-                </div>
-            {{/sortedby}}
-
+            
             {{#coursesview}}
                 {{>block_vitrina/cesil/course}}
             {{/coursesview}}
