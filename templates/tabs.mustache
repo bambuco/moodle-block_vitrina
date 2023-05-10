@@ -32,15 +32,20 @@
 
 {{#hastabs}}
 <div class="block_vitrina-tabs">
+
     {{#tabs}}
     <div data-ref="#{{uniqueid}} .tab-{{key}}" title="{{title}}" class="{{state}}">
+
         {{#showicon}}
             <i class="fa fa-{{icon}}"></i>
         {{/showicon}}
+
         {{#showtext}}
             <span>{{title}}</span>
         {{/showtext}}
+
     </div>
     {{/tabs}}
+
 </div>
 {{/hastabs}}
