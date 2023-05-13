@@ -72,6 +72,7 @@ class controller {
         $enrolinstances = enrol_get_instances($course->id, true);
 
         $course->enrollable = false;
+        $course->enrollasguest = false;
         $course->fee = [];
         foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {
@@ -362,7 +363,7 @@ class controller {
         if (!self::$cachedpayfieldid) {
             $paymenturlfield = get_config('block_vitrina', 'paymenturl');
             if (!empty($paymenturlfield)) {
-                self::$cachedpayfieldid = $DB->get_field('customfield_field', 'id', ['shortname' => $paymenturlfield]);
+                self::$cachedpayfieldid = $DB->get_field('customfield_field', 'id', ['id' => $paymenturlfield]);
             }
         }
 
@@ -381,8 +382,9 @@ class controller {
             $user = $USER;
         }
 
-        $premiumfield = get_config('block_vitrina', 'premiumfield');
+        $premiumfieldid = get_config('block_vitrina', 'premiumfield');
         $premiumvalue = get_config('block_vitrina', 'premiumvalue');
+        $premiumfield = $DB->get_field('user_info_field', 'shortname', ['id' => $premiumfieldid]);
 
         if (empty($premiumfield)) {
             return false;

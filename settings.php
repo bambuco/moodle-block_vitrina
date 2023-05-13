@@ -39,6 +39,17 @@ if ($ADMIN->fulltree) {
         }
     }
 
+    // Get user fields.
+    $userfields = [0 => ''];
+    $customuserfields = $DB->get_records_menu('user_info_field', null, 'shortname', 'id, shortname');
+
+    if (is_array($userfields) && count($userfields) > 0) {
+
+        foreach ($customuserfields as $k => $v) {
+            $userfields[$k] = format_string($v, true);
+        }
+    }
+
     // Course fields.
     $name = 'block_vitrina/settingsheaderfields';
     $heading = get_string('settingsheaderfields', 'block_vitrina');
@@ -118,7 +129,7 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/premiumfield';
     $title = get_string('premiumfield', 'block_vitrina');
     $help = get_string('premiumfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $userfields);
     $settings->add($setting);
 
     // Premium type value.
