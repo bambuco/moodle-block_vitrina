@@ -295,6 +295,11 @@ class controller {
                 foreach ($coursesinfo as $one) {
 
                     $one->imagepath = self::get_courseimage($one);
+                    $one->active = $one->startdate <= time();
+                    if ($payfieldid) {
+                        $one->paymenturl = $DB->get_field('customfield_data', 'value',
+                                                    ['fieldid' => $payfieldid, 'instanceid' => $one->id]);
+                    }
 
                     if ($bmanager->is_known_block_type('rate_course')) {
                         $sql = "SELECT AVG(rating) AS rating, COUNT(1) AS ratings  FROM {block_rate_course} WHERE course = :cid";
