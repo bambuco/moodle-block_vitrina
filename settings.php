@@ -28,6 +28,17 @@ require_once($CFG->dirroot . '/blocks/vitrina/classes/admin_setting_configmultis
 
 if ($ADMIN->fulltree) {
 
+    // Get custom fields.
+    $fields = [0 => ''];
+    $customfields = $DB->get_records_menu('customfield_field', null, 'name', 'id, name');
+
+    if (is_array($fields) && count($fields) > 0) {
+
+        foreach ($customfields as $k => $v) {
+            $fields[$k] = format_string($v, true);
+        }
+    }
+
     // Course fields.
     $name = 'block_vitrina/settingsheaderfields';
     $heading = get_string('settingsheaderfields', 'block_vitrina');
@@ -38,56 +49,56 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/thematic';
     $title = get_string('thematicfield', 'block_vitrina');
     $help = get_string('thematicfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Content units field.
     $name = 'block_vitrina/units';
     $title = get_string('unitsfield', 'block_vitrina');
     $help = get_string('unitsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Requirements field.
     $name = 'block_vitrina/requirements';
     $title = get_string('requirementsfield', 'block_vitrina');
     $help = get_string('requirementsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // License field.
     $name = 'block_vitrina/license';
     $title = get_string('licensefield', 'block_vitrina');
     $help = get_string('licensefield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Media field.
     $name = 'block_vitrina/media';
     $title = get_string('mediafield', 'block_vitrina');
     $help = get_string('mediafield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Duration field.
     $name = 'block_vitrina/duration';
     $title = get_string('durationfield', 'block_vitrina');
     $help = get_string('durationfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Experts field.
     $name = 'block_vitrina/experts';
     $title = get_string('expertsfield', 'block_vitrina');
     $help = get_string('expertsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Short experts field.
     $name = 'block_vitrina/expertsshort';
     $title = get_string('expertsshortfield', 'block_vitrina');
     $help = get_string('expertsshortfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Payment fields.
@@ -100,14 +111,14 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/paymenturl';
     $title = get_string('paymenturlfield', 'block_vitrina');
     $help = get_string('paymenturlfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Premium type user field.
     $name = 'block_vitrina/premiumfield';
     $title = get_string('premiumfield', 'block_vitrina');
     $help = get_string('premiumfield_help', 'block_vitrina');
-    $setting = new admin_setting_configtext($name, $title, $help, '');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
     $settings->add($setting);
 
     // Premium type value.
