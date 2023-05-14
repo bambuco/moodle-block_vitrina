@@ -89,21 +89,21 @@ class detail implements renderable, templatable {
         $fields = ['thematic', 'units', 'requirements', 'license', 'media', 'duration', 'expertsshort', 'experts'];
         $custom = new \stdClass();
 
-        $fieldsnames = [];
+        $fieldids = [];
         foreach ($fields as $field) {
-            $name = get_config('block_vitrina', $field);
+            $id = get_config('block_vitrina', $field);
 
-            if (!empty($name)) {
-                $fieldsnames[$field] = $name;
+            if (!empty($id)) {
+                $fieldids[$field] = $id;
             }
         }
 
         foreach ($datas as $data) {
-            $key = $data->get_field()->get('shortname');
+            $key = $data->get_field()->get('id');
 
             $exist = false;
-            foreach ($fieldsnames as $field => $name) {
-                if ($name == $key) {
+            foreach ($fieldids as $field => $id) {
+                if ($id == $key) {
                     $c = new \stdClass();
                     $c->title = format_text($data->get_field()->get('name'), FORMAT_HTML);
 

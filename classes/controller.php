@@ -34,7 +34,7 @@ class controller {
     /**
      * @var int Cached payment field id.
      */
-    protected static $cachedpayfieldid = null;
+    protected static $cachedpayfield = null;
 
     /**
      * @var bool True if load full information about the course.
@@ -58,11 +58,12 @@ class controller {
         self::$large = $large;
         $course->haspaymentgw = false;
         $course->paymenturl = null;
-        $payfieldid = self::get_payfieldid();
 
-        if ($payfieldid) {
+        $payfield = \block_vitrina\controller::get_payfield();
+
+        if ($payfield) {
             $course->paymenturl = $DB->get_field('customfield_data', 'value',
-                                        ['fieldid' => $payfieldid, 'instanceid' => $course->id]);
+                                        ['fieldid' => $payfield->id, 'instanceid' => $course->id]);
         }
 
         // Load course context to general purpose.
@@ -72,6 +73,7 @@ class controller {
         $enrolinstances = enrol_get_instances($course->id, true);
 
         $course->enrollable = false;
+        $course->enrollasguest = false;
         $course->fee = [];
         foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {
@@ -352,26 +354,26 @@ class controller {
      */
     public static function premium_available() : bool {
 
-        $payfieldid = self::get_payfieldid();
-        return $payfieldid ? true : false;
+        $payfield = self::get_payfield();
+        return $payfield ? true : false;
     }
 
     /**
-     * Get the payment field id.
+     * Get the payment field.
      *
-     * @return int Payment id.
+     * @return object The payment field.
      */
-    public static function get_payfieldid() : int {
+    public static function get_payfield() : object {
         global $DB;
 
-        if (!self::$cachedpayfieldid) {
+        if (!self::$cachedpayfield) {
             $paymenturlfield = get_config('block_vitrina', 'paymenturl');
             if (!empty($paymenturlfield)) {
-                self::$cachedpayfieldid = $DB->get_field('customfield_field', 'id', ['shortname' => $paymenturlfield]);
+                self::$cachedpayfield = $DB->get_record('customfield_field', ['id' => $paymenturlfield]);
             }
         }
 
-        return self::$cachedpayfieldid ? self::$cachedpayfieldid : 0;
+        return self::$cachedpayfield ?? null;
     }
 
     /**
@@ -386,8 +388,14 @@ class controller {
             $user = $USER;
         }
 
-        $premiumfield = get_config('block_vitrina', 'premiumfield');
+        $premiumfieldid = get_config('block_vitrina', 'premiumfield');
         $premiumvalue = get_config('block_vitrina', 'premiumvalue');
+
+        if (empty($premiumfieldid) || empty($premiumvalue)) {
+            return false;
+        }
+
+        $premiumfield = $DB->get_field('user_info_field', 'shortname', ['id' => $premiumfieldid]);
 
         if (empty($premiumfield)) {
             return false;

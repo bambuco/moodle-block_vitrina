@@ -115,22 +115,31 @@ if ($sort == 'greats') {
 
 } else if ($sort == 'premium') {
 
-    $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
+    $payfield = \block_vitrina\controller::get_payfield();
 
-    $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
-    $sql = "SELECT c.*
-                FROM {course} c
-                INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
-                WHERE " . $selectpremium .
-                " ORDER BY c.fullname ASC";
-    $courses = $DB->get_records_sql($sql, $params, $spage * $amount, $amount);
+    if ($payfield) {
 
-    $sqlcount = "SELECT COUNT(1)
+        $params['fieldid'] = $payfield->id;
+
+        $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
+        $sql = "SELECT c.*
                     FROM {course} c
-                    INNER JOIN {customfield_data} cd ON fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
-                    WHERE " . $selectpremium;
+                    INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+                    WHERE " . $selectpremium .
+                    " ORDER BY c.fullname ASC";
+        $courses = $DB->get_records_sql($sql, $params, $spage * $amount, $amount);
 
-    $coursescount = $DB->count_records_sql($sqlcount, $params);
+        $sqlcount = "SELECT COUNT(1)
+                        FROM {course} c
+                        INNER JOIN {customfield_data} cd ON fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+                        WHERE " . $selectpremium;
+
+        $coursescount = $DB->count_records_sql($sqlcount, $params);
+    } else {
+        $courses = [];
+        $coursescount = 0;
+    }
+
 } else {
     if ($sort == 'recents') {
         $courses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', $spage * $amount, $amount);
