@@ -31,5 +31,33 @@
 function xmldb_block_vitrina_upgrade($oldversion) {
     global $CFG, $DB;
 
+    if ($oldversion < 2023042601.02) {
+        $customfields = $DB->get_records('customfield_field');
+
+        foreach ($customfields as $k => $field) {
+            $select = "plugin = 'block_vitrina' AND value = :value AND " .
+                        " name IN ('thematic', 'units', 'requirements', 'license', 'media', 'duration', 'experts', " .
+                                    " 'expertsshort', 'settingsheaderpayment', 'paymenturl')";
+
+            $params = ['value' => $field->shortname];
+
+            $DB->set_field_select('config_plugins', 'value', $field->id, $select, $params);
+        }
+
+        $fieldname = get_config('block_vitrina', 'premiumfield');
+
+        if (!empty($fieldname)) {
+            $premiumfield = $DB->get_record('user_info_field', ['shortname' => $fieldname]);
+
+            if ($premiumfield) {
+                $DB->set_field_select('config_plugins', 'value', $premiumfield->id,
+                                        "plugin = 'block_vitrina' AND name = 'premiumfield'");
+            }
+        }
+
+        // Savepoint reached.
+        upgrade_block_savepoint(true, 2023042601.02, 'vitrina');
+    }
+
     return true;
 }

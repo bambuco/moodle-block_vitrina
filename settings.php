@@ -32,22 +32,16 @@ if ($ADMIN->fulltree) {
     $fields = [0 => ''];
     $customfields = $DB->get_records_menu('customfield_field', null, 'name', 'id, name');
 
-    if (is_array($fields) && count($fields) > 0) {
-
-        foreach ($customfields as $k => $v) {
-            $fields[$k] = format_string($v, true);
-        }
+    foreach ($customfields as $k => $v) {
+        $fields[$k] = format_string($v, true);
     }
 
     // Get user fields.
     $userfields = [0 => ''];
     $customuserfields = $DB->get_records_menu('user_info_field', null, 'shortname', 'id, shortname');
 
-    if (is_array($userfields) && count($userfields) > 0) {
-
-        foreach ($customuserfields as $k => $v) {
-            $userfields[$k] = format_string($v, true);
-        }
+    foreach ($customuserfields as $k => $v) {
+        $userfields[$k] = format_string($v, true);
     }
 
     // Course fields.

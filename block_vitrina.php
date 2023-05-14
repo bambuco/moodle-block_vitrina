@@ -231,7 +231,8 @@ class block_vitrina extends block_base {
             $this->config->premium &&
             \block_vitrina\controller::premium_available()) {
 
-            $params['fieldid'] = \block_vitrina\controller::get_payfieldid();
+            $payfield = \block_vitrina\controller::get_payfield();
+            $params['fieldid'] = $payfield->id;
             $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
             $sql = "SELECT c.*
                     FROM {course} c
