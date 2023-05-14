@@ -31,7 +31,7 @@
 function xmldb_block_vitrina_upgrade($oldversion) {
     global $CFG, $DB;
 
-    if ($oldversion < 2023042601.02) {
+    if ($oldversion < 2023042602) {
         $customfields = $DB->get_records('customfield_field');
 
         foreach ($customfields as $k => $field) {
@@ -56,7 +56,7 @@ function xmldb_block_vitrina_upgrade($oldversion) {
         }
 
         // Savepoint reached.
-        upgrade_block_savepoint(true, 2023042601.02, 'vitrina');
+        upgrade_block_savepoint(true, 2023042602, 'vitrina');
     }
 
     return true;

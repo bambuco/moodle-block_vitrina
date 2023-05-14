@@ -59,7 +59,7 @@ class controller {
         $course->haspaymentgw = false;
         $course->paymenturl = null;
 
-        $payfield = \block_vitrina\controller::get_payfield();
+        $payfield = self::get_payfield();
 
         if ($payfield) {
             $course->paymenturl = $DB->get_field('customfield_data', 'value',
@@ -298,9 +298,9 @@ class controller {
 
                     $one->imagepath = self::get_courseimage($one);
                     $one->active = $one->startdate <= time();
-                    if ($payfieldid) {
+                    if ($payfield) {
                         $one->paymenturl = $DB->get_field('customfield_data', 'value',
-                                                    ['fieldid' => $payfieldid, 'instanceid' => $one->id]);
+                                                    ['fieldid' => $payfield->id, 'instanceid' => $one->id]);
                     }
 
                     if ($bmanager->is_known_block_type('rate_course')) {
