@@ -19,121 +19,249 @@
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+import $ from 'jquery';
+import {get_strings as getStrings} from 'core/str';
+import Notification from 'core/notification';
+import Log from 'core/log';
+import Ajax from 'core/ajax';
 
-define(['jquery', 'core/str', 'core/log'], function($, Str, Log) {
+/**
+ * Private functions.
+ *
+ */
 
-    // Load strings.
-    var strings = [];
-    var s = [];
+// Current instance (optional).
+var instanceid = 0;
 
-    /**
-     * Load strings from server.
-     */
-    function loadStrings() {
+// Courses by page.
+var bypage = 20;
 
-        if (strings.length > 0) {
+// Paging variable controls.
+var paging = [];
 
-            strings.forEach(one => {
-                s[one.key] = one.key;
-            });
+// Load strings.
+var strings = [
+    {key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'},
+    {key: 'nocoursesview', component: 'block_vitrina'},
+    {key: 'nomorecourses', component: 'block_vitrina'},
+];
+var s = [];
 
-            Str.get_strings(strings).done(function(results) {
-                var pos = 0;
-                strings.forEach(one => {
-                    s[one.key] = results[pos];
-                    pos++;
-                });
-            }).fail(function(e) {
-                Log.debug('Error loading strings');
-                Log.debug(e);
-            });
-        }
+/**
+ * Load strings from server.
+ */
+function loadStrings() {
 
+    strings.forEach(one => {
+        s[one.key] = one.key;
+    });
+
+    getStrings(strings).then(function(results) {
+        var pos = 0;
+        strings.forEach(one => {
+            s[one.key] = results[pos];
+            pos++;
+        });
+        return true;
+    }).fail(function(e) {
+        Log.debug('Error loading strings');
+        Log.debug(e);
+    });
+}
+// End of Load strings.
+
+/**
+ * Load courses for a tab.
+ *
+ * @param {object} $tabcontent
+ */
+function load_courses($tabcontent) {
+
+    var view = $tabcontent.data('view');
+
+    $tabcontent.addClass('loading');
+    var $coursesbox = $tabcontent.find('.courses-list');
+
+    if (paging[view] === undefined) {
+        paging[view] = {
+            loaded: 0,
+            ended: false,
+        };
     }
-    // End of Load strings.
 
-    /**
-     * Initialise functions for the detail page block.
-     *
-     */
-    var detail = function() {
-        strings.push({key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'});
+    // Not more courses.
+    if (paging[view].ended) {
+        $tabcontent.removeClass('loading');
+        return;
+    }
 
-        $('input[name="courselink"]').on('click', function() {
-            var $input = $(this);
-            $input.select();
-            document.execCommand("copy");
+    Ajax.call([{
+        methodname: 'block_vitrina_get_courses',
+        args: {'view': view, 'filters': [], 'instanceid': instanceid, 'amount': bypage, 'initial': paging[view].loaded},
+        done: function(data) {
 
-            var $msg = $('<div class="msg-courselink-copy">' + s.courselinkcopiedtoclipboard + '</div>');
+            if (data && data.length > 0) {
+                paging[view].loaded += data.length;
 
-            $input.parent().append($msg);
-            window.setTimeout(function() {
-                $msg.remove();
-            }, 1600);
-        });
+                if (data.length < bypage) {
+                    paging[view].ended = true;
+                }
 
-        init();
-    };
+                data.forEach(one => {
+                    $coursesbox.append(one.html);
+                });
+            } else {
+                paging[view].ended = true;
+            }
 
-    /**
-     * Initialise all for the block.
-     *
-     */
-    var init = function() {
+            $tabcontent.removeClass('loading');
 
-        loadStrings();
+            if (paging[view].ended) {
+                $tabcontent.addClass('ended');
+                $tabcontent.find('.loadmore').remove();
 
-        $('[data-vitrina-toggle]').on('click', function() {
-            var $this = $(this);
-            var cssclass = $this.attr('data-vitrina-toggle');
-            var target = $this.attr('data-target');
+                var nocoursesbox = $tabcontent.find('.nocourses');
+                var nocoursesmsg = '';
+                if (paging[view].loaded == 0) {
+                    nocoursesmsg = s.nocoursesview;
+                    nocoursesbox.removeClass('hidden');
+                } else {
+                    // Only show the message if not is the first call when reached the end.
+                    if (paging[view].loaded > bypage) {
+                        nocoursesmsg = s.nomorecourses;
+                        nocoursesbox.removeClass('hidden');
+                    }
+                }
+                nocoursesbox.html(nocoursesmsg);
+            }
+        },
+        fail: function(e) {
+            Notification.exception(e);
+            Log.debug(e);
+            $tabcontent.removeClass('loading');
+        }
+    }]);
 
-            $(target).toggleClass(cssclass);
-        });
+}
 
-        $('.block_vitrina-content').each(function() {
-            var $blockcontent = $(this);
+/**
+ * Component initialization.
+ *
+ * @method init
+ */
+export const init = () => {
 
-            // Tabs.
-            $blockcontent.find('.block_vitrina-tabs').each(function() {
-                var $tabs = $(this);
-                var tabslist = [];
+    loadStrings();
 
-                $tabs.find('[data-ref]').each(function() {
-                    var $tab = $(this);
-                    tabslist.push($tab);
+    $('[data-vitrina-toggle]').on('click', function() {
+        var $this = $(this);
+        var cssclass = $this.attr('data-vitrina-toggle');
+        var target = $this.attr('data-target');
 
-                    $tab.on('click', function() {
-                        tabslist.forEach(one => {
-                            $(one.data('ref')).removeClass('active');
-                        });
+        $(target).toggleClass(cssclass);
+    });
 
-                        $tabs.find('.active[data-ref]').removeClass('active');
-                        $tab.addClass('active');
-                        $($tab.data('ref')).addClass('active');
+    $('.block_vitrina-content').each(function() {
+        var $blockcontent = $(this);
+
+        // Tabs.
+        $blockcontent.find('.block_vitrina-tabs').each(function() {
+            var $tabs = $(this);
+            var tabslist = [];
+
+            $tabs.find('[data-ref]').each(function() {
+                var $tab = $(this);
+                var $tabcontent = $($tab.data('ref'));
+                tabslist.push($tab);
+
+                $tab.on('click', function() {
+                    tabslist.forEach(one => {
+                        $(one.data('ref')).removeClass('active');
                     });
+
+                    $tabs.find('.active[data-ref]').removeClass('active');
+                    $tab.addClass('active');
+
+                    if ($tabcontent) {
+                        $tabcontent.addClass('active');
+
+                        // Load courses only the first time.
+                        var view = $tabcontent.data('view');
+
+                        if (paging[view] === undefined) {
+                            load_courses($tabcontent);
+                        }
+                    }
                 });
 
-                // Load dynamic buttons.
-                $blockcontent.find('[data-vitrina-tab]').each(function() {
-                    var $button = $(this);
+                $tabcontent.find('.loadmore').on('click', function() {
+                    var $this = $(this);
 
-                    $button.on('click', function() {
-                        var key = '.tab-' + $button.data('vitrina-tab');
+                    // If is a link, do nothing. Only for buttons.
+                    if ($this.attr('href')) {
+                        return;
+                    }
 
-                        tabslist.forEach($tab => {
-                            if ($tab.data('ref').indexOf(key) >= 0) {
-                                $tab.trigger('click');
-                            }
-                        });
+                    load_courses($tabcontent);
+                });
+            });
+
+            // Load dynamic buttons.
+            $blockcontent.find('[data-vitrina-tab]').each(function() {
+                var $button = $(this);
+
+                $button.on('click', function() {
+                    var key = '.tab-' + $button.data('vitrina-tab');
+
+                    tabslist.forEach($tab => {
+                        if ($tab.data('ref').indexOf(key) >= 0) {
+                            $tab.trigger('click');
+                        }
                     });
                 });
             });
         });
-    };
+    });
+};
 
-    return {
-        init: init,
-        detail: detail
-    };
-});
+/**
+ * Initialise functions for the detail page.
+ *
+ */
+export const detail = () => {
+    strings.push({key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'});
+
+    $('input[name="courselink"]').on('click', function() {
+        var $input = $(this);
+        $input.select();
+        document.execCommand("copy");
+
+        var $msg = $('<div class="msg-courselink-copy">' + s.courselinkcopiedtoclipboard + '</div>');
+
+        $input.parent().append($msg);
+        window.setTimeout(function() {
+            $msg.remove();
+        }, 1600);
+    });
+
+    init();
+};
+
+/**
+ * Initialise functions for the catalog page.
+ *
+ * @param {string} uniqueid
+ * @param {string} view
+ * @param {integer} currentinstanceid
+ * @param {integer} currentbypage
+ */
+export const catalog = (uniqueid, view, currentinstanceid = 0, currentbypage = 20) => {
+
+    instanceid = currentinstanceid;
+    bypage = parseInt(currentbypage);
+    var $tabcontent = $('#' + uniqueid + ' .tabs-content .tab-' + view);
+
+    load_courses($tabcontent);
+
+    init();
+};

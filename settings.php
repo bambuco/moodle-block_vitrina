@@ -224,6 +224,13 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
     $settings->add($setting);
 
+    // Views icons.
+    $name = 'block_vitrina/viewsicons';
+    $title = get_string('viewsicons', 'block_vitrina');
+    $help = get_string('viewsicons_help', 'block_vitrina');
+    $setting = new admin_setting_configtextarea($name, $title, $help, '');
+    $settings->add($setting);
+
     // Cover image type.
     $options = [
         'default' => get_string('coverimagetype_default', 'block_vitrina'),

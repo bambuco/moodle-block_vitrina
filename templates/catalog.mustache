@@ -20,30 +20,29 @@
     This template renders the template content area for a resource.
 
     Example context (json):
-    {}
+    {
+        "uniqueid": "block_vitrina_1",
+    }
 }}
 
-<div class="coursessearch-box">
-    <form method="post">
-        <input type="text" name="q" value="{{query}}" />
-        <button>{{#pix}}i/search, core{{/pix}}</button>
-        <input type="hidden" value="{{sort}}" />
-    </form>
-</div>
-<div class="courses-sort sort-by-{{sort}}">
-    <ul>
-        <li><a href="?q={{query}}" data-sort="default">{{#str}}defaultsort, block_vitrina{{/str}}</a></li>
-{{#premiumavailable}}
-        <li><a href="?sort=premium&q={{query}}" data-sort="premium">{{#str}}premium, block_vitrina{{/str}}</a></li>
-{{/premiumavailable}}
-        <li><a href="?sort=recents&q={{query}}" data-sort="recents">{{#str}}recents, block_vitrina{{/str}}</a></li>
-{{#rateavailable}}
-        <li><a href="?sort=greats&q={{query}}" data-sort="greats">{{#str}}greats, block_vitrina{{/str}}</a></li>
-{{/rateavailable}}
-    </ul>
-</div>
-<div class="courses">
-    {{#courses}}
-        {{>block_vitrina/course}}
-    {{/courses}}
+<div id="{{uniqueid}}" class="block_vitrina-content">
+    <div class="coursessearch-box">
+        <form method="post">
+            <input type="text" name="q" value="{{query}}" />
+            <button>{{#pix}}i/search, core{{/pix}}</button>
+            <input type="hidden" value="{{sort}}" />
+        </form>
+    </div>
+
+    {{>block_vitrina/tabs}}
+
+    <div class="tabs-content">
+        {{#tabs}}
+            <div class="courses tab-{{key}} block_vitrina-tabcontent {{state}} loading" data-view="{{key}}">
+                <div class="courses-list"></div>
+                <div class="nocourses alert alert-dismissible alert-warning hidden"></div>
+                <button class="loadmore btn  btn-block btn-primary btn-lg"> {{#str}} loadmore, block_vitrina {{/str}} </button>
+            </div>
+        {{/tabs}}
+    </div>
 </div>

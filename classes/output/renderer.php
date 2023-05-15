@@ -96,4 +96,26 @@ class renderer extends plugin_renderer_base {
 
         return $this->render_from_template($templatefile, $detail->export_for_template($this));
     }
+
+    /**
+     * Return the template for courses in the block.
+     *
+     * @param object $course The course information
+     * @return string HTML string
+     */
+    public function render_course(object $course) : string {
+        global $CFG;
+
+        $template = get_config('block_vitrina', 'templatetype');
+        $path = $CFG->dirroot . '/blocks/vitrina/templates/' . $template . '/course.mustache';
+
+        if ($template != 'default' && file_exists($path)) {
+            $templatefile = 'block_vitrina/' . $template . '/course';
+        } else {
+            $templatefile = 'block_vitrina/course';
+        }
+
+        return $this->render_from_template($templatefile, $course);
+    }
+
 }

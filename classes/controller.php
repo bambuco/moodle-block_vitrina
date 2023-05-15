@@ -47,6 +47,31 @@ class controller {
     private static $instancescounter = 0;
 
     /**
+     * @var array List of icons for the views.
+     */
+    private static $viewsicons = null;
+
+    /**
+     * @var bool True if show icons in tabs views.
+     */
+    private static $showicons = true;
+
+    /**
+     * @var bool True if show text in tabs views.
+     */
+    private static $showtext = true;
+
+    /**
+     * @var array List of available courses views.
+     */
+    public const COURSES_VIEWS = ['default', 'recents', 'greats', 'premium'];
+
+    /**
+     * @var array List of available sorts.
+     */
+    public const COURSES_SORTS = ['default', 'alphabetically', 'startdate', 'finishdate'];
+
+    /**
      * Process a specific course to be displayed.
      *
      * @param object $course Course to be processed.
@@ -58,6 +83,7 @@ class controller {
         self::$large = $large;
         $course->haspaymentgw = false;
         $course->paymenturl = null;
+        $course->baseurl = $CFG->wwwroot;
 
         $payfield = self::get_payfield();
 
@@ -480,4 +506,243 @@ class controller {
 
         return $uniqueid;
     }
+
+    /**
+     * Get the available courses views.
+     */
+    public static function get_courses_views() : array {
+        global $PAGE;
+
+        $availablesorting = self::COURSES_VIEWS;
+
+        $bmanager = new \block_manager($PAGE);
+        if (!$bmanager->is_known_block_type('rate_course')) {
+            // Remove the greats value if the rate_course block is not available.
+            if (($key = array_search('greats', $availablesorting)) !== false) {
+                unset($availablesorting[$key]);
+            }
+        }
+
+        if (!self::premium_available()) {
+            if (($key = array_search('premium', $availablesorting)) !== false) {
+                unset($availablesorting[$key]);
+            }
+        }
+
+        return $availablesorting;
+    }
+
+    /**
+     * Get courses by view.
+     *
+     * @param string $view The view key.
+     * @param array $categoriesids The categories ids.
+     * @param array $filters A filters objects list with type and value.
+     * @param string $sort The sort.
+     * @param int $amount The amount of courses to get.
+     * @param int $initial From where to start counting the next courses to get.
+     * @return array The courses list.
+     */
+    public static function get_courses_by_view(string $view = null,
+                                                array $categoriesids = [],
+                                                array $filters = [],
+                                                string $sort = null,
+                                                int $amount = 0,
+                                                int $initial = 0) : array {
+        global $DB;
+
+        $availableviews = self::get_courses_views();
+        if (!in_array($view, $availableviews)) {
+            $view = 'default';
+        }
+
+        if (empty($sort) || !in_array($sort, self::COURSES_SORTS)) {
+            $sort = get_config('block_vitrina', 'sortbydefault');
+        }
+
+        if (empty($amount)) {
+            $amount = get_config('block_vitrina', 'singleamount');
+        }
+
+        if (count($categoriesids) == 0) {
+            $categories = get_config('block_vitrina', 'categories');
+            $catslist = explode(',', $categories);
+            foreach ($catslist as $catid) {
+                if (is_numeric($catid)) {
+                    $categoriesids[] = (int) trim($catid);
+                }
+            }
+        }
+
+        $courses = [];
+        $select = 'c.visible = 1 AND c.id != ' . SITEID;
+        $params = [];
+
+        // Add categories filter.
+        if (count($categoriesids) > 0) {
+            list($selectincats, $paramsincats) = $DB->get_in_or_equal($categoriesids, SQL_PARAMS_NAMED, 'categories');
+            $params += $paramsincats;
+            $select .= ' AND category ' . $selectincats;
+        }
+        // End of categories filter.
+
+        $sql = '';
+        $sqlcount = '';
+
+        // Create the order by according the sort.
+        switch ($sort) {
+            case 'startdate':
+                $sortby = 'c.startdate ASC';
+            break;
+            case 'finishdate':
+                $sortby = 'c.finishdate ASC';
+            break;
+            case 'alphabetically':
+                $sortby = 'c.fullname ASC';
+            break;
+            default:
+                $sortby = 'c.sortorder ASC';
+        }
+
+        switch ($view) {
+            case 'greats':
+
+                $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
+                            FROM {course} c
+                            INNER JOIN {block_rate_course} r ON r.course = c.id
+                            WHERE " . $select .
+                            " GROUP BY c.id HAVING rating > 3
+                            ORDER BY rating DESC";
+
+                $sqlcount = "SELECT COUNT(DISTINCT c.id)
+                            FROM {course} c
+                            INNER JOIN {block_rate_course} r ON r.course = c.id
+                            WHERE " . $select;
+
+            break;
+            case 'premium':
+
+                $payfield = self::get_payfield();
+
+                if ($payfield) {
+
+                    $params['fieldid'] = $payfield->id;
+
+                    $sql = "SELECT c.*
+                            FROM {course} c
+                            INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+                            WHERE " . $select .
+                            " ORDER BY " . $sortby;
+
+                    $sqlcount = "SELECT COUNT(1)
+                                FROM {course} c
+                                INNER JOIN {customfield_data} cd ON fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
+                                WHERE " . $select;
+
+                }
+            break;
+            case 'recents':
+
+                $select .= ' AND c.startdate > :now';
+                $params['now'] = time();
+                // Not break, continue to default.
+            default:
+
+                $sql = "SELECT c.*
+                        FROM {course} c
+                        WHERE " . $select .
+                        " ORDER BY " . $sortby;
+
+                $sqlcount = "SELECT COUNT(1)
+                        FROM {course} c
+                        WHERE " . $select;
+
+        }
+
+        if (!empty($sql)) {
+            $courses = $DB->get_records_sql($sql, $params, $initial, $amount);
+        }
+
+        return $courses;
+    }
+
+    /**
+     * Get the icont list for views tabs.
+     *
+     * @return array The icons list.
+     */
+    public static function get_views_icons() : array {
+
+        if (!empty(self::$viewsicons)) {
+            return self::$viewsicons;
+        }
+
+        $customicons = get_config('block_vitrina', 'viewsicons');
+
+        $icons = [
+            'default' => 'a/view_icon_active',
+            'greats' => 't/emptystar',
+            'premium' => 'i/badge',
+            'recents' => 'i/calendareventtime'
+        ];
+
+        if (!empty($customicons)) {
+            $lines = explode("\n", $customicons);
+
+            foreach ($lines as $line) {
+                $line = trim($line);
+                $options = explode('=', $line);
+                if (count($options) == 2) {
+                    $icons[trim($options[0])] = trim($options[1]);
+                }
+            }
+        }
+
+        self::$viewsicons = $icons;
+
+        return $icons;
+    }
+
+    /**
+     * Define if show icons in tabs views.
+     *
+     * @return bool If show icons.
+     */
+    public static function show_tabicon() : bool {
+
+        if (!empty(self::$showicons)) {
+            return self::$showicons;
+        }
+
+        // Tabs config view.
+        $tabview = get_config('block_vitrina', 'tabview');
+
+        if (!empty($tabview)) {
+            self::$showicons !== 'showtext';
+        }
+
+        return self::$showicons;
+    }
+
+    /**
+     * Define if show the text in tabs views.
+     *
+     * @return bool If show the text.
+     */
+    public static function show_tabtext() : bool {
+
+        if (!empty(self::$showtext)) {
+            return self::$showtext;
+        }
+
+        // Tabs config view.
+        $tabview = get_config('block_vitrina', 'tabview');
+
+        if (!empty($tabview)) {
+            self::$showtext !== 'showicon';
+        }
+
+        return self::$showtext;
+    }
+
 }

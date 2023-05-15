@@ -1,26 +1,20 @@
-.path-blocks-vitrina .courses,
-.block_vitrina .courses {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding-top: 20px;
-}
-
-.path-blocks-vitrina .courses {
-    display: flex;
-    align-items: self-start;
-}
-
-.path-blocks-vitrina .coursebox,
-.block_vitrina .coursebox.panel-default {
-    max-width: 200px;
-    width: 100%;
+.tabs-content .coursebox.panel {
+    width: 200px;
     margin: 0 10px 10px;
     overflow: hidden;
     position: relative;
+    border: 1px solid #eee;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
 }
 
-.path-blocks-vitrina .coursebox .courseimage,
-.block_vitrina .courses .courseimage {
+.tabs-content .coursebox.panel > div {
+    width: 100%;
+    margin: 0;
+}
+
+.tabs-content .coursebox .courseimage {
     height: 160px;
     overflow: hidden;
     background-position: center center;
@@ -28,13 +22,11 @@
     background-size: cover;
 }
 
-.path-blocks-vitrina .coursebox.state-waiting,
-.block_vitrina .courses .coursebox.state-waiting {
+.tabs-content .coursebox.state-waiting {
     filter: grayscale(1);
 }
 
-.path-blocks-vitrina .coursebox .waiting-label,
-.block_vitrina .waiting-label {
+.tabs-content .coursebox .waiting-label {
     position: absolute;
     background-color: #595959;
     color: #fff;
@@ -45,8 +37,7 @@
     top: 20%;
 }
 
-.path-blocks-vitrina .coursebox.type-premium:after,
-.block_vitrina .coursebox.type-premium:after {
+.tabs-content .coursebox.type-premium:after {
     content: "";
     position: absolute;
     right: 10px;
@@ -56,35 +47,32 @@
     height: 60px;
 }
 
-.path-blocks-vitrina .coursebox.type-premium .panel-heading,
-.block_vitrina .courses .coursebox.type-premium .panel-heading {
+.tabs-content .coursebox.type-premium .panel-heading {
     padding-right: 60px;
 }
 
-.path-blocks-vitrina .coursebox .panel-body,
-.block_vitrina .panel-body {
-    padding: 5px;
+.tabs-content .coursebox .panel-body {
+    padding: 5px 0;
     text-align: center;
+    line-height: 120%;
 }
 
-.path-blocks-vitrina .coursebox .panel-body a,
-.block_vitrina .panel-body a {
+.tabs-content .coursebox .panel-body a {
     color: #4c6295;
     font-weight: bold;
 }
 
-.path-blocks-vitrina .coursebox .panel-body label,
-.block_vitrina .panel-body label {
+.tabs-content .coursebox .panel-body label {
     font-weight: bold;
     font-size: 12px;
 }
 
-.path-blocks-vitrina .coursebox .panel-foot,
-.block_vitrina .panel-foot {
+.tabs-content .coursebox .panel-foot {
     text-align: center;
     padding-bottom: 5px;
 }
 
+/* Course detail */
 #page-blocks-vitrina-detail .content-layout {
     max-width: 940px;
     margin: auto;
@@ -105,6 +93,7 @@
     border-radius: 10px;
     display: inline-block;
 }
+/* End course detail */
 
 .path-blocks-vitrina .coursessearch-box {
     width: 100%;
@@ -655,11 +644,31 @@
 .block_vitrina-tabcontent {
     padding: 10px 0;
     display: none;
-    align-items: self-start;
-}
+ }
 
 .block_vitrina-tabcontent.active {
+    display: block;
+}
+
+.block_vitrina-tabcontent .courses-list {
     display: flex;
+    align-items: stretch;
+    min-height: 100px;
+    flex-wrap: wrap;
+}
+
+.block_vitrina-tabcontent.loading .courses-list {
+    background-image: url([[pix:block_vitrina|loading]]);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.block_vitrina-tabcontent .loadmore {
+    width: 100%;
+}
+
+.block_vitrina-tabcontent .nocourses {
+    width: 100%;
 }
 
 /* End Tabs control */
