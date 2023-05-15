@@ -67,6 +67,7 @@ class external extends \external_api {
      *
      * @param string $view Courses view type
      * @param array $filters List of filters to search the courses
+     * @param int $instanceid Block instance id
      * @param int $amount Amount of courses
      * @param int $initial From where to start
      * @return array Courses list

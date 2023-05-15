@@ -75,7 +75,7 @@ function loadStrings() {
  *
  * @param {object} $tabcontent
  */
-function load_courses($tabcontent) {
+function loadCourses($tabcontent) {
 
     var view = $tabcontent.data('view');
 
@@ -189,7 +189,7 @@ export const init = () => {
                         var view = $tabcontent.data('view');
 
                         if (paging[view] === undefined) {
-                            load_courses($tabcontent);
+                            loadCourses($tabcontent);
                         }
                     }
                 });
@@ -202,7 +202,7 @@ export const init = () => {
                         return;
                     }
 
-                    load_courses($tabcontent);
+                    loadCourses($tabcontent);
                 });
             });
 
@@ -261,7 +261,7 @@ export const catalog = (uniqueid, view, currentinstanceid = 0, currentbypage = 2
     bypage = parseInt(currentbypage);
     var $tabcontent = $('#' + uniqueid + ' .tabs-content .tab-' + view);
 
-    load_courses($tabcontent);
+    loadCourses($tabcontent);
 
     init();
 };

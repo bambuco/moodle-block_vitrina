@@ -644,7 +644,7 @@
 .block_vitrina-tabcontent {
     padding: 10px 0;
     display: none;
- }
+}
 
 .block_vitrina-tabcontent.active {
     display: block;

@@ -122,6 +122,7 @@ $string['sortbydefault'] = 'Sort by default';
 $string['sortbydefault_help'] = 'Choose the order in which the courses are displayed in all courses tab view.';
 $string['sortbystartdate'] = 'By start date';
 $string['sortbyfinishdate'] = 'By finish date';
+$string['sortdefault'] = 'Course order';
 $string['summary'] = 'Summary';
 $string['summary_help'] = 'The content is displayed in page top of courses list and course detail.';
 $string['tabtitle_default'] = 'All courses';

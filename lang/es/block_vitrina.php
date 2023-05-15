@@ -122,6 +122,7 @@ $string['sortbydefault'] = 'Orden por defecto';
 $string['sortbydefault_help'] = 'Elija el orden en que se mostrarán los cursos en la vista de la pestaña Todos los cursos.';
 $string['sortbystartdate'] = 'Por fecha de inicio';
 $string['sortbyfinishdate'] = 'Por fecha de finalización';
+$string['sortdefault'] = 'Orden del curso';
 $string['summary'] = 'Resumen';
 $string['summary_help'] = 'El contenido es mostrado en la parte superior de la lista de cursos.';
 $string['tabtitle_default'] = 'Todos los cursos';

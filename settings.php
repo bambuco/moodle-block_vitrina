@@ -155,9 +155,10 @@ if ($ADMIN->fulltree) {
 
     // Sort by default.
     $options = [
-        'default' => get_string('sortbystartdate', 'block_vitrina'),
-        'sortbyfinishdate' => get_string('sortbyfinishdate', 'block_vitrina'),
-        'sortalphabetically' => get_string('sortalphabetically', 'block_vitrina')
+        'default' => get_string('sortdefault', 'block_vitrina'),
+        'startdate' => get_string('sortbystartdate', 'block_vitrina'),
+        'finishdate' => get_string('sortbyfinishdate', 'block_vitrina'),
+        'alphabetically' => get_string('sortalphabetically', 'block_vitrina')
     ];
 
     $name = 'block_vitrina/sortbydefault';

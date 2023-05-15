@@ -63,7 +63,7 @@ class main implements renderable, templatable {
      * @param int $instanceid The block instance id.
      * @param array $tabs The tabs configuration.
      */
-    public function __construct($uniqueid, $view = 'default', int $instanceid, array $tabs = []) {
+    public function __construct($uniqueid, $view = 'default', int $instanceid = 0, array $tabs = []) {
         global $CFG, $OUTPUT;
 
         $this->uniqueid = $uniqueid;

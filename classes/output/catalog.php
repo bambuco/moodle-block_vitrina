@@ -48,9 +48,8 @@ class catalog implements renderable, templatable {
     /**
      * Constructor.
      *
-     * @param array $courses A courses list
-     * @param string $query A query to filter the courses list
-     * @param string $sort A sort type
+     * @param string $uniqueid The uniqueid of the block instance.
+     * @param string $view The view type.
      */
     public function __construct($uniqueid, $view = 'default') {
 
