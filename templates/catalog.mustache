@@ -22,8 +22,22 @@
     Example context (json):
     {
         "uniqueid": "block_vitrina_1",
-        "query": "test",
-        "sort": "name",
+        "filterproperties": {
+            "fulltext": true
+        },
+        "filtercontrols": [
+            {
+                "key": "key value",
+                "title": "title value",
+                "options": [
+                    {
+                        "value": "value",
+                        "label": "label value",
+                        "selected": true
+                    }
+                ]
+            }
+        ],
         "tabs": [
             {
                 "key": "default",
@@ -38,23 +52,47 @@
 }}
 
 <div id="{{uniqueid}}" class="block_vitrina-content">
-    <div class="coursessearch-box">
-        <form method="post">
-            <input type="text" name="q" value="{{query}}" />
-            <button>{{#pix}}i/search, core{{/pix}}</button>
-            <input type="hidden" value="{{sort}}" />
-        </form>
+
+    <div id="vitrina-filtercol">
+        {{#filterproperties}}
+            {{#fulltext}}
+                <div class="filterfulltext">
+                    <input type="text" name="q" />
+                    <button>{{#pix}}i/search, core{{/pix}}</button>
+                </div>
+            {{/fulltext}}
+
+            {{#filtercontrols}}
+                <div class="filtercontrol" data-key="{{key}}">
+                    <h5>{{title}}</h5>
+                    <ul class="filteroptions">
+                        {{#options}}
+                            <li>
+                                <input id="option-{{key}}_{{value}}"
+                                        type="checkbox"
+                                        value="{{value}}"
+                                        {{#selected}}checked{{/selected}} />
+                                <label for="option-{{key}}_{{value}}">{{label}}</label>
+                            </li>
+                        {{/options}}
+                    </ul>
+                </div>
+            {{/filtercontrols}}
+        {{/filterproperties}}
     </div>
 
-    {{>block_vitrina/tabs}}
+    <div id="vitrina-resultscol">
 
-    <div class="tabs-content">
-        {{#tabs}}
-            <div class="courses tab-{{key}} block_vitrina-tabcontent {{state}} loading" data-view="{{key}}">
-                <div class="courses-list"></div>
-                <div class="nocourses alert alert-dismissible alert-warning hidden"></div>
-                <button class="loadmore btn  btn-block btn-primary btn-lg"> {{#str}} loadmore, block_vitrina {{/str}} </button>
-            </div>
-        {{/tabs}}
+        {{>block_vitrina/tabs}}
+
+        <div class="tabs-content block_vitrina-courseslist">
+            {{#tabs}}
+                <div class="courses tab-{{key}} block_vitrina-tabcontent {{state}} loading" data-view="{{key}}">
+                    <div class="courses-list"></div>
+                    <div class="nocourses alert alert-dismissible alert-warning hidden"></div>
+                    <button class="loadmore btn  btn-block btn-primary btn-lg"> {{#str}} loadmore, block_vitrina {{/str}} </button>
+                </div>
+            {{/tabs}}
+        </div>
     </div>
 </div>

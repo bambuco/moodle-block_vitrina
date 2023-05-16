@@ -47,6 +47,7 @@ if (empty($bypage)) {
 }
 
 $PAGE->requires->js_call_amd('block_vitrina/main', 'catalog', [$uniqueid, $view, $instanceid, $bypage]);
+$PAGE->requires->js_call_amd('block_vitrina/main', 'filters', [$uniqueid]);
 
 echo $OUTPUT->header();
 

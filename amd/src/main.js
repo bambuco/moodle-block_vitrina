@@ -39,6 +39,12 @@ var bypage = 20;
 // Paging variable controls.
 var paging = [];
 
+// Filters box.
+var $filtersbox = null;
+
+// Loading courses.
+var loading = false;
+
 // Load strings.
 var strings = [
     {key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'},
@@ -95,9 +101,42 @@ function loadCourses($tabcontent) {
         return;
     }
 
+    // Check active filters.
+    var filters = [];
+
+    if ($filtersbox) {
+        var $fulltext = $filtersbox.find('.filterfulltext input[name=q]').val().trim();
+
+        if ($fulltext) {
+            filters.push({
+                'values': [$fulltext],
+                'type': 'fulltext',
+            });
+        }
+
+        $filtersbox.find('.filtercontrol').each(function() {
+            var $control = $(this);
+            var values = [];
+
+            $control.find('.filteroptions input:checked').each(function() {
+                var $option = $(this);
+                values.push($option.val());
+            });
+
+            if (values.length > 0) {
+                filters.push({
+                    'values': values,
+                    'type': $control.data('key')
+                });
+            }
+        });
+    }
+    // End of check active filters.
+
+    loading = true;
     Ajax.call([{
         methodname: 'block_vitrina_get_courses',
-        args: {'view': view, 'filters': [], 'instanceid': instanceid, 'amount': bypage, 'initial': paging[view].loaded},
+        args: {'view': view, 'filters': filters, 'instanceid': instanceid, 'amount': bypage, 'initial': paging[view].loaded},
         done: function(data) {
 
             if (data && data.length > 0) {
@@ -114,11 +153,12 @@ function loadCourses($tabcontent) {
                 paging[view].ended = true;
             }
 
+            loading = false;
             $tabcontent.removeClass('loading');
 
             if (paging[view].ended) {
                 $tabcontent.addClass('ended');
-                $tabcontent.find('.loadmore').remove();
+                $tabcontent.find('.loadmore').hide();
 
                 var nocoursesbox = $tabcontent.find('.nocourses');
                 var nocoursesmsg = '';
@@ -136,12 +176,30 @@ function loadCourses($tabcontent) {
             }
         },
         fail: function(e) {
+            loading = false;
+            $tabcontent.removeClass('loading');
             Notification.exception(e);
             Log.debug(e);
-            $tabcontent.removeClass('loading');
         }
     }]);
 
+}
+
+/**
+ * Restart all controls to new course load.
+ *
+ * @param {integer} uniqueid
+ */
+function restartSearch(uniqueid) {
+    paging = [];
+    $('#' + uniqueid + ' .block_vitrina-tabs [data-ref]').each(function() {
+        var $tab = $(this);
+        var $tabcontent = $($tab.attr('data-ref'));
+        $tabcontent.removeClass('ended');
+        $tabcontent.find('.loadmore').show();
+        $tabcontent.find('.nocourses').addClass('hidden');
+        $tabcontent.find('.courses-list').empty();
+    });
 }
 
 /**
@@ -225,7 +283,7 @@ export const init = () => {
 };
 
 /**
- * Initialise functions for the detail page.
+ * Initialize functions for the detail page.
  *
  */
 export const detail = () => {
@@ -248,7 +306,7 @@ export const detail = () => {
 };
 
 /**
- * Initialise functions for the catalog page.
+ * Initialize functions for the catalog page.
  *
  * @param {string} uniqueid
  * @param {string} view
@@ -264,4 +322,26 @@ export const catalog = (uniqueid, view, currentinstanceid = 0, currentbypage = 2
     loadCourses($tabcontent);
 
     init();
+};
+
+/**
+ * Initialize the filter controls.
+ *
+ * @param {integer} uniqueid
+ */
+export const filters = (uniqueid) => {
+
+    $filtersbox = $('#' + uniqueid);
+
+    var applyFilters = function() {
+
+        if (!loading) {
+            restartSearch(uniqueid);
+            loadCourses($filtersbox.find('.block_vitrina-tabcontent.active'));
+        }
+    };
+
+    $filtersbox.find('.filtercontrol .filteroptions input').on('change', applyFilters);
+
+    $filtersbox.find('.filterfulltext button').on('click', applyFilters);
 };

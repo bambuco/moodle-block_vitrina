@@ -94,14 +94,39 @@ class external extends \external_api {
             ]
         );
 
-        // Read the categories if is a block instance call.
+        // Read the categories if is a block instance call or the filter by categories is defined.
         $categoriesids = [];
 
-        if (!empty($params['instanceid'])) {
-            $block = block_instance_by_id($params['instanceid']);
+        foreach ($params['filters'] as $filter) {
+            if ($filter['type'] == 'categories') {
+                $categoriesids = $filter['values'];
 
-            if ($block->config && count($block->config->categories) > 0) {
-                $categoriesids = $block->config->categories;
+                // Remove filter.
+                $params['filters'] = array_filter($params['filters'], function ($filter) {
+                    return $filter['type'] != 'categories';
+                });
+
+                // Cast to int.
+                $categoriesids = array_map('intval', $categoriesids);
+
+                // Remove duplicates.
+                $categoriesids = array_unique($categoriesids);
+
+                // Remove empty values.
+                $categoriesids = array_filter($categoriesids);
+
+                break;
+            }
+        }
+
+        if (count($categoriesids) == 0) {
+
+            if (!empty($params['instanceid'])) {
+                $block = block_instance_by_id($params['instanceid']);
+
+                if ($block->config && count($block->config->categories) > 0) {
+                    $categoriesids = $block->config->categories;
+                }
             }
         }
         // End of read categories.

@@ -34,17 +34,17 @@
 <div class="block_vitrina-tabs">
 
     {{#tabs}}
-    <div data-ref="#{{uniqueid}} .tabs-content .tab-{{key}}" title="{{title}}" class="{{state}}">
+        <div data-ref="#{{uniqueid}} .tabs-content .tab-{{key}}" title="{{title}}" class="{{state}}">
 
-        {{#showicon}}
-            {{{icon}}}
-        {{/showicon}}
+            {{#showicon}}
+                {{{icon}}}
+            {{/showicon}}
 
-        {{#showtext}}
-            <span>{{title}}</span>
-        {{/showtext}}
+            {{#showtext}}
+                <span>{{title}}</span>
+            {{/showtext}}
 
-    </div>
+        </div>
     {{/tabs}}
 
 </div>

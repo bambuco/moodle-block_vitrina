@@ -549,7 +549,7 @@ class controller {
                                                 string $sort = null,
                                                 int $amount = 0,
                                                 int $initial = 0) : array {
-        global $DB;
+        global $DB, $CFG;
 
         $availableviews = self::get_courses_views();
         if (!in_array($view, $availableviews)) {
@@ -575,8 +575,8 @@ class controller {
         }
 
         $courses = [];
-        $select = 'c.visible = 1 AND c.id != ' . SITEID;
-        $params = [];
+        $select = 'c.visible = 1 AND c.id != :siteid AND (c.enddate > :now OR c.enddate = 0)';
+        $params = ['siteid' => SITEID, 'now' => time()];
 
         // Add categories filter.
         if (count($categoriesids) > 0) {
@@ -586,8 +586,34 @@ class controller {
         }
         // End of categories filter.
 
+        // Add filters.
+        foreach ($filters as $filter) {
+
+            switch ($filter['type']) {
+                case 'langs':
+                    $langs = $filter['values'];
+                    $defaultlang = $CFG->lang;
+
+                    if (in_array($defaultlang, $langs)) {
+                        $langs[] = '';
+                    } else {
+                        // Remove empty values.
+                        $langs = array_filter($langs);
+                    }
+
+                    if (count($langs) > 0) {
+                        list($selectinlangs, $paramsinlangs) = $DB->get_in_or_equal($langs, SQL_PARAMS_NAMED, 'langs');
+                        $params += $paramsinlangs;
+                        $select .= ' AND c.lang ' . $selectinlangs;
+                    }
+
+                break;
+            }
+        }
+        // End of filters.
+
         $sql = '';
-        $sqlcount = '';
+        $specialfields = '';
 
         // Create the order by according the sort.
         switch ($sort) {
@@ -595,7 +621,8 @@ class controller {
                 $sortby = 'c.startdate ASC';
             break;
             case 'finishdate':
-                $sortby = 'c.finishdate ASC';
+                $sortby = 'endtype ASC, c.enddate ASC, c.startdate DESC';
+                $specialfields = ", CASE WHEN c.enddate = 0 THEN 2 ELSE 1 END AS endtype";
             break;
             case 'alphabetically':
                 $sortby = 'c.fullname ASC';
@@ -613,12 +640,6 @@ class controller {
                             WHERE " . $select .
                             " GROUP BY c.id HAVING rating > 3
                             ORDER BY rating DESC";
-
-                $sqlcount = "SELECT COUNT(DISTINCT c.id)
-                            FROM {course} c
-                            INNER JOIN {block_rate_course} r ON r.course = c.id
-                            WHERE " . $select;
-
             break;
             case 'premium':
 
@@ -628,35 +649,24 @@ class controller {
 
                     $params['fieldid'] = $payfield->id;
 
-                    $sql = "SELECT c.*
+                    $sql = "SELECT c.* $specialfields
                             FROM {course} c
                             INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
                             WHERE " . $select .
                             " ORDER BY " . $sortby;
-
-                    $sqlcount = "SELECT COUNT(1)
-                                FROM {course} c
-                                INNER JOIN {customfield_data} cd ON fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
-                                WHERE " . $select;
-
                 }
             break;
             case 'recents':
 
-                $select .= ' AND c.startdate > :now';
-                $params['now'] = time();
+                $select .= ' AND c.startdate > :nowtostart';
+                $params['nowtostart'] = time();
                 // Not break, continue to default.
             default:
 
-                $sql = "SELECT c.*
+                $sql = "SELECT c.* $specialfields
                         FROM {course} c
                         WHERE " . $select .
                         " ORDER BY " . $sortby;
-
-                $sqlcount = "SELECT COUNT(1)
-                        FROM {course} c
-                        WHERE " . $select;
-
         }
 
         if (!empty($sql)) {
@@ -743,6 +753,66 @@ class controller {
         }
 
         return self::$showtext;
+    }
+
+    /**
+     * Get the available languages list.
+     */
+    public static function get_languages(array $selectedlist = []) : array {
+        $langs = get_string_manager()->get_list_of_translations();
+
+        $response = [];
+
+        foreach ($langs as $lang => $name) {
+            $selected = in_array($lang, $selectedlist);
+            $response[] = [
+                'value' => $lang,
+                'label' => $name,
+                'selected' => $selected
+            ];
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get the available categories list.
+     */
+    public static function get_categories(array $selectedlist = []) : array {
+        global $DB;
+
+        $select = 'visible = 1';
+        $params = [];
+
+        $categoriesids = [];
+        $categories = get_config('block_vitrina', 'categories');
+        $catslist = explode(',', $categories);
+        foreach ($catslist as $catid) {
+            if (is_numeric($catid)) {
+                $categoriesids[] = (int) trim($catid);
+            }
+        }
+
+        if (count($categoriesids) > 0) {
+            list($selectincats, $paramsincats) = $DB->get_in_or_equal($categoriesids, SQL_PARAMS_NAMED, 'categories');
+            $params += $paramsincats;
+            $select .= ' AND category ' . $selectincats;
+        }
+
+        $categories = $DB->get_records_select('course_categories', $select, $params, 'sortorder ASC');
+
+        $response = [];
+
+        foreach ($categories as $category) {
+            $selected = in_array($category->id, $selectedlist);
+            $response[] = [
+                'value' => $category->id,
+                'label' => $category->name,
+                'selected' => $selected
+            ];
+        }
+
+        return $response;
     }
 
 }

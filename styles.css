@@ -1,4 +1,4 @@
-.tabs-content .coursebox.panel {
+.block_vitrina-courseslist .coursebox.panel {
     width: 200px;
     margin: 0 10px 10px;
     overflow: hidden;
@@ -9,12 +9,12 @@
     align-content: space-between;
 }
 
-.tabs-content .coursebox.panel > div {
+.block_vitrina-courseslist .coursebox.panel > div {
     width: 100%;
     margin: 0;
 }
 
-.tabs-content .coursebox .courseimage {
+.block_vitrina-courseslist .coursebox .courseimage {
     height: 160px;
     overflow: hidden;
     background-position: center center;
@@ -22,11 +22,11 @@
     background-size: cover;
 }
 
-.tabs-content .coursebox.state-waiting {
+.block_vitrina-courseslist .coursebox.state-waiting {
     filter: grayscale(1);
 }
 
-.tabs-content .coursebox .waiting-label {
+.block_vitrina-courseslist .coursebox .waiting-label {
     position: absolute;
     background-color: #595959;
     color: #fff;
@@ -37,7 +37,7 @@
     top: 20%;
 }
 
-.tabs-content .coursebox.type-premium:after {
+.block_vitrina-courseslist .coursebox.type-premium:after {
     content: "";
     position: absolute;
     right: 10px;
@@ -47,27 +47,27 @@
     height: 60px;
 }
 
-.tabs-content .coursebox.type-premium .panel-heading {
+.block_vitrina-courseslist .coursebox.type-premium .panel-heading {
     padding-right: 60px;
 }
 
-.tabs-content .coursebox .panel-body {
+.block_vitrina-courseslist .coursebox .panel-body {
     padding: 5px 0;
     text-align: center;
     line-height: 120%;
 }
 
-.tabs-content .coursebox .panel-body a {
+.block_vitrina-courseslist .coursebox .panel-body a {
     color: #4c6295;
     font-weight: bold;
 }
 
-.tabs-content .coursebox .panel-body label {
+.block_vitrina-courseslist .coursebox .panel-body label {
     font-weight: bold;
     font-size: 12px;
 }
 
-.tabs-content .coursebox .panel-foot {
+.block_vitrina-courseslist .coursebox .panel-foot {
     text-align: center;
     padding-bottom: 5px;
 }
@@ -94,38 +94,6 @@
     display: inline-block;
 }
 /* End course detail */
-
-.path-blocks-vitrina .coursessearch-box {
-    width: 100%;
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.path-blocks-vitrina .coursessearch-box form {
-    display: block;
-    border-radius: 10px;
-    padding: 0 10px;
-}
-
-.path-blocks-vitrina .coursessearch-box input {
-    width: calc(100% - 40px);
-    outline: none;
-}
-
-.path-blocks-vitrina .coursessearch-box button {
-    width: 30px;
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-}
-
-.path-blocks-vitrina .coursessearch-box button:hover {
-    opacity: 0.8;
-}
 
 #page-blocks-vitrina-index .courses-sort {
     margin: 20px 0;
@@ -625,20 +593,21 @@
 }
 
 .block_vitrina-tabs > [data-ref] {
-    padding: 5px 10px;
+    padding: 10px;
     cursor: pointer;
-    border: 1px solid transparent;
-    border-bottom: none;
+    border: none;
+    border-bottom: 3px solid transparent;
 }
 
+.block_vitrina-tabs > :hover[data-ref] {
+    border-bottom-color: var(--secondary);
+}
+
+.block_vitrina-tabs > .active:hover[data-ref],
 .block_vitrina-tabs > .active {
     cursor: default;
-}
-
-.block_vitrina-tabs > .active,
-.block_vitrina-tabs > :hover[data-ref] {
-    border-color: #aaa;
-    background-color: #ddd;
+    font-weight: bold;
+    border-bottom-color: var(--primary);
 }
 
 .block_vitrina-tabcontent {
@@ -653,11 +622,11 @@
 .block_vitrina-tabcontent .courses-list {
     display: flex;
     align-items: stretch;
-    min-height: 100px;
     flex-wrap: wrap;
 }
 
 .block_vitrina-tabcontent.loading .courses-list {
+    min-height: 100px;
     background-image: url([[pix:block_vitrina|loading]]);
     background-repeat: no-repeat;
     background-position: center;
@@ -673,15 +642,89 @@
 
 /* End Tabs control */
 
-.block_vitrina .defaultsort {
-    position: absolute;
-    margin: -37px;
-    font-size: 12px;
-    color: #6a737b;
-    text-align: left;
-    left: 70px;
+/* Catalog filter layout */
+#page-blocks-vitrina-index .block_vitrina-content {
+    display: flex;
 }
 
-.block_vitrina .courses.tab-default {
-    margin-top: 40px;
+#page-blocks-vitrina-index .block_vitrina-content.loading .over-loading {
+    background-image: url([[pix:block_vitrina|loading]]);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 300px;
+    background-color: #5558;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
+
+#vitrina-filtercol {
+    border-right: 1px solid #eee;
+    padding-right: 10px;
+}
+
+#vitrina-resultscol {
+    padding-left: 20px;
+    width: 100%;
+}
+/* End of catalog filter layout */
+
+/* Filter controls */
+.path-blocks-vitrina .filterfulltext {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 0 10px;
+    border-radius: 10px;
+}
+
+.path-blocks-vitrina .filterfulltext input {
+    width: calc(100% - 40px);
+    outline: none;
+}
+
+.path-blocks-vitrina .filterfulltext button {
+    width: 30px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.path-blocks-vitrina .filterfulltext button:hover {
+    opacity: 0.8;
+}
+
+.path-blocks-vitrina .filtercontrol > h5 {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions {
+    list-style: none;
+    padding: 0;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions > li {
+    padding-bottom: 5px;
+    max-width: 200px;
+    display: flex;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions > li > label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-left: 5px;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* End of Filter controls */

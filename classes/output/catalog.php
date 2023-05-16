@@ -80,6 +80,26 @@ class catalog implements renderable, templatable {
             $showtabs[] = $one;
         }
 
+        // Filter controls.
+        $filtercontrols = [];
+
+        // Filter by language.
+        $control = new \stdClass();
+        $control->title = get_string('language');
+        $control->key = 'langs';
+        $control->options = \block_vitrina\controller::get_languages();
+        $filtercontrols[] = $control;
+
+        $control = new \stdClass();
+        $control->title = get_string('category');
+        $control->key = 'categories';
+        $control->options = \block_vitrina\controller::get_categories();
+        $filtercontrols[] = $control;
+
+        $filterproperties = new \stdClass();
+        $filterproperties->fulltext = true;
+        // End of filter controls.
+
         $defaultvariables = [
             'uniqueid' => $this->uniqueid,
             'baseurl' => $CFG->wwwroot,
@@ -87,6 +107,8 @@ class catalog implements renderable, templatable {
             'tabs' => $showtabs,
             'showicon' => \block_vitrina\controller::show_tabicon(),
             'showtext' => \block_vitrina\controller::show_tabtext(),
+            'filtercontrols' => $filtercontrols,
+            'filterproperties' => $filterproperties,
         ];
 
         return $defaultvariables;
