@@ -79,8 +79,9 @@ class external extends \external_api {
                                         int $initial = 0) : array {
         global $DB, $USER, $PAGE;
 
+        require_login(null, true);
         $syscontext = \context_system::instance();
-        self::validate_context($syscontext);
+        $PAGE->set_context($syscontext);
 
         // Parameter validation.
         $params = self::validate_parameters(
