@@ -22,12 +22,16 @@ FEATURES
 
 IN VERSION
 =============
+2023042603:
+- Filters in the catalog page.
+- Full custom fields support in the detail page.
+
 2023042602:
-Improve in settings fields selection.
+- Improve in settings fields selection.
 
 2023042601:
-New views of courses in the general presentation of the block.
-New default sort admin setting.
+- New views of courses in the general presentation of the block.
+- New default sort admin setting.
 
 2023042600:
-First version (fork from: https://github.com/cocreatic/moodle-block_greatcourses)
+- First version (fork from: https://github.com/cocreatic/moodle-block_greatcourses)
