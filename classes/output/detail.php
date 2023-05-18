@@ -89,6 +89,7 @@ class detail implements renderable, templatable {
         $fields = ['thematic', 'units', 'requirements', 'license', 'media', 'duration', 'expertsshort', 'experts'];
         $custom = new \stdClass();
 
+        // Select specific fields to display.
         $fieldids = [];
         foreach ($fields as $field) {
             $id = get_config('block_vitrina', $field);
@@ -96,6 +97,33 @@ class detail implements renderable, templatable {
             if (!empty($id)) {
                 $fieldids[$field] = $id;
             }
+        }
+
+        $custom->customfields = [];
+        $custom->longcustomfields = [];
+        $custom->hascustomfields = false;
+        $custom->haslongcustomfields = false;
+
+        // Select generic short fields to display.
+        $showcustomfields = get_config('block_vitrina', 'showcustomfields');
+
+        if (!empty($showcustomfields)) {
+            $showcustomfields = explode(',', $showcustomfields);
+        }
+
+        if (!$showcustomfields || count($showcustomfields) == 0) {
+            $showcustomfields = [];
+        }
+
+        // Select generic long fields to display.
+        $showlongfields = get_config('block_vitrina', 'showlongcustomfields');
+
+        if (!empty($showlongfields)) {
+            $showlongfields = explode(',', $showlongfields);
+        }
+
+        if (!$showlongfields || count($showlongfields) == 0) {
+            $showlongfields = [];
         }
 
         foreach ($datas as $data) {
@@ -140,10 +168,21 @@ class detail implements renderable, templatable {
                     $c = new \stdClass();
                     $c->title = format_text($data->get_field()->get('name'), FORMAT_HTML);
                     $c->value = $value;
-                    $custom->$key = $c;
+                    $c->key = $key;
+
+                    if (in_array($key, $showcustomfields)) {
+                        $custom->customfields[] = $c;
+                    } else if (in_array($key, $showlongfields)) {
+                        $custom->longcustomfields[] = $c;
+                    } else {
+                        $custom->$key = $c;
+                    }
                 }
             }
         }
+
+        $custom->hascustomfields = count($custom->customfields) > 0;
+        $custom->haslongcustomfields = count($custom->longcustomfields) > 0;
 
         // End Load custom course fields.
 

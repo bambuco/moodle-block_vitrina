@@ -25,9 +25,9 @@
 require_once('../../config.php');
 require_once('classes/output/catalog.php');
 
-$query = optional_param('q', '', PARAM_TEXT);
-$spage = optional_param('spage', 0, PARAM_INT);
-$sort = optional_param('sort', '', PARAM_TEXT);
+$instanceid = optional_param('id', 0, PARAM_INT);
+$view = optional_param('view', 'default', PARAM_TEXT);
+$filters = optional_param('filters', '', PARAM_TEXT);
 
 require_login(null, true);
 
@@ -39,7 +39,66 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_heading(get_string('catalog', 'block_vitrina'));
 $PAGE->set_title(get_string('catalog', 'block_vitrina'));
 
+$uniqueid = \block_vitrina\controller::get_uniqueid();
 \block_vitrina\controller::include_templatecss();
+
+$bypage = get_config('block_vitrina', 'amount');
+if (empty($bypage)) {
+    $bypage = 20;
+}
+
+$filtersselected = [];
+
+if (!empty($filters)) {
+    $filters = explode(';', $filters);
+
+    $configuredcustomfields = \block_vitrina\controller::get_configuredcustomfields();
+    $staticfilters = \block_vitrina\controller::get_staticfilters();
+
+    foreach ($filters as $filter) {
+        $filter = explode(':', $filter);
+
+        if (count($filter) == 2) {
+
+            $key = trim($filter[0]);
+
+            // If the filter is categories and the block is configured to show specific categories, we ignore the filter.
+            if ($key == 'categories' && !empty($instanceid)) {
+                continue;
+            }
+
+            if (!in_array($key, $staticfilters) && !is_numeric($key)) {
+
+                foreach ($configuredcustomfields as $customfield) {
+                    if ($customfield->shortname == $key) {
+                        $key = $customfield->id;
+                        break;
+                    }
+                }
+            }
+
+            if ($key) {
+                $filtersselected[] = (object) ['key' => $key, 'values' => explode(',', $filter[1])];
+            }
+        }
+    }
+}
+
+$categoriesids = [];
+if (!empty($instanceid)) {
+    $block = block_instance_by_id($instanceid);
+
+    if ($block->config && count($block->config->categories) > 0) {
+        $categoriesids = $block->config->categories;
+    }
+}
+
+if (count($categoriesids) > 0) {
+    $filtersselected[] = (object) ['key' => 'categories', 'values' => $categoriesids];
+}
+
+$PAGE->requires->js_call_amd('block_vitrina/main', 'filters', [$uniqueid, $filtersselected]);
+$PAGE->requires->js_call_amd('block_vitrina/main', 'catalog', [$uniqueid, $view, $instanceid, $bypage]);
 
 echo $OUTPUT->header();
 
@@ -47,116 +106,9 @@ $summary = get_config('block_vitrina', 'summary');
 
 echo format_text($summary, FORMAT_HTML, ['trusted' => true, 'noclean' => true]);
 
-$amount = get_config('block_vitrina', 'amount');
-
-if (!$amount || !is_numeric($amount)) {
-    $amount = 20;
-}
-
-$availablesorting = ['default', 'recents'];
-
-$bmanager = new \block_manager($PAGE);
-if ($bmanager->is_known_block_type('rate_course')) {
-    $availablesorting[] = 'greats';
-}
-
-if (\block_vitrina\controller::premium_available()) {
-    $availablesorting[] = 'premium';
-}
-
-if (empty($sort) || !in_array($sort, $availablesorting)) {
-    $sort = 'default';
-}
-
-$select = 'visible = 1 AND id != ' . SITEID;
-$params = [];
-
-// Categories filter.
-$categories = get_config('block_vitrina', 'categories');
-
-$categoriesids = [];
-$catslist = explode(',', $categories);
-foreach ($catslist as $catid) {
-    if (is_numeric($catid)) {
-        $categoriesids[] = (int)trim($catid);
-    }
-}
-
-if (count($categoriesids) > 0) {
-    $select .= ' AND category IN (' . implode(',', $categoriesids) . ')';
-}
-// End Categories filter.
-
-if (!empty($query)) {
-    $q = trim($query);
-    $q = str_replace(' ', '%', $q);
-    $q = '%' . $q . '%';
-    $select .= " AND (fullname LIKE :query1 OR summary LIKE :query2)";
-    $params['query1'] = $q;
-    $params['query2'] = $q;
-}
-
-if ($sort == 'greats') {
-    $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
-    $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
-                FROM {course} c
-                INNER JOIN {block_rate_course} r ON r.course = c.id
-                WHERE " . $selectgreats .
-                " GROUP BY c.id HAVING rating > 3
-                ORDER BY rating DESC";
-    $courses = $DB->get_records_sql($sql, $params, $spage * $amount, $amount);
-
-    $sqlcount = "SELECT COUNT(DISTINCT c.id)
-                FROM {course} c
-                INNER JOIN {block_rate_course} r ON r.course = c.id
-                WHERE " . $selectgreats;
-
-    $coursescount = $DB->count_records_sql($sqlcount, $params);
-
-} else if ($sort == 'premium') {
-
-    $payfield = \block_vitrina\controller::get_payfield();
-
-    if ($payfield) {
-
-        $params['fieldid'] = $payfield->id;
-
-        $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
-        $sql = "SELECT c.*
-                    FROM {course} c
-                    INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
-                    WHERE " . $selectpremium .
-                    " ORDER BY c.fullname ASC";
-        $courses = $DB->get_records_sql($sql, $params, $spage * $amount, $amount);
-
-        $sqlcount = "SELECT COUNT(1)
-                        FROM {course} c
-                        INNER JOIN {customfield_data} cd ON fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
-                        WHERE " . $selectpremium;
-
-        $coursescount = $DB->count_records_sql($sqlcount, $params);
-    } else {
-        $courses = [];
-        $coursescount = 0;
-    }
-
-} else {
-    if ($sort == 'recents') {
-        $courses = $DB->get_records_select('course', $select, $params, 'startdate DESC', '*', $spage * $amount, $amount);
-    } else {
-        $courses = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', $spage * $amount, $amount);
-    }
-    $coursescount = $DB->count_records_select('course', $select, $params);
-}
-
-$pagingbar = new paging_bar($coursescount, $spage, $amount, "/blocks/vitrina/index.php?q={$query}&amp;sort={$sort}&amp;");
-$pagingbar->pagevar = 'spage';
-
-$renderable = new \block_vitrina\output\catalog($courses, $query, $sort);
+$renderable = new \block_vitrina\output\catalog($uniqueid, $view);
 $renderer = $PAGE->get_renderer('block_vitrina');
 
 echo $renderer->render($renderable);
-
-echo $OUTPUT->render($pagingbar);
 
 echo $OUTPUT->footer();

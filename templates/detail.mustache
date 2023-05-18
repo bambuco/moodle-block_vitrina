@@ -82,6 +82,17 @@
                     </div>
                 {{/thematic}}
             {{/custom}}
+
+            {{#custom}}
+                {{#hascustomfields}}
+                    {{#customfields}}
+                        <div class="customfield-box {{key}}-box">
+                            <h3>{{title}}</h3>
+                            <span>{{{value}}}</span>
+                        </div>
+                    {{/customfields}}
+                {{/hascustomfields}}
+            {{/custom}}
         </div>
 
     </div>
@@ -204,6 +215,19 @@
         {{/custom}}
 
         {{#custom}}
+            {{#haslongcustomfields}}
+                {{#longcustomfields}}
+                    <div class="content-layout longcustomfields-box {{key}}-box">
+                        <h3>{{title}}</h3>
+                        <div class="content-box {{key}}">
+                            {{{value}}}
+                        </div>
+                    </div>
+                {{/longcustomfields}}
+            {{/haslongcustomfields}}
+        {{/custom}}
+
+        {{#custom}}
             {{#license}}
                 <div class="content-layout">
                     <h3>{{title}}</h3>
@@ -235,7 +259,7 @@
     {{#hasrelated}}
         <div class="relatedcourses">
             <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
-            <div class="courses">
+            <div class="block_vitrina-courseslist">
                 {{#related}}
                     {{>block_vitrina/course}}
                 {{/related}}

@@ -113,43 +113,9 @@ class block_vitrina extends block_base {
             $amount = $this->config->singleamount;
         }
 
-        $params = [];
-        $select = 'visible = 1 AND id != ' . SITEID;
-
-        $daystoupcoming = get_config('block_vitrina', 'daystoupcoming');
-        if (isset($daystoupcoming) && is_numeric($daystoupcoming)) {
-            $select .= ' AND startdate < :startdate ';
-            $params['startdate'] = time() + ($daystoupcoming * 24 * 60 * 60);
-        }
-
-        // Categories filter.
-        $categories = get_config('block_vitrina', 'categories');
-
-        if (!empty($this->config->categories)) {
-            $categories = $this->config->categories;
-        } else {
-            $categoryid = [];
-            $catslist = explode(',', $categories);
-            foreach ($catslist as $catid) {
-                if (is_numeric($catid)) {
-                    $categoryid[] = (int) trim($catid);
-                }
-                $categories = $categoryid;
-            }
-        }
-
-        foreach ($categories as $key => $id) {
-            $categories[$key] = intval($id);
-        }
-
-        if (count($categories) > 0) {
-            $select .= ' AND category IN (' . implode(',', $categories) . ')';
-        }
-
         // Load tabs and views.
-        $tabnames = ['default', 'recents', 'greats', 'premium'];
+        $tabnames = \block_vitrina\controller::get_courses_views();
         $tabs = [];
-        $views = [];
 
         if (isset($this->config) && is_object($this->config)) {
             foreach ($tabnames as $tabname) {
@@ -160,90 +126,6 @@ class block_vitrina extends block_base {
             }
         } else {
             $tabs[] = 'default';
-            $views['default'] = [];
-        }
-
-        // Sort and get default view.
-        $sortbydefault = get_config('block_vitrina', 'sortbydefault');
-
-        if ($sortbydefault == 'sortalphabetically') {
-            $newdefaultview = $DB->get_records_select('course', $select, $params, 'fullname ASC', '*', 0, $amount);
-            $views['default'] = array_merge($views['default'], $newdefaultview);
-
-        } else if ($sortbydefault == 'sortbyfinishdate') {
-            $sql = "SELECT *,
-                        CASE WHEN enddate IS NULL THEN 3
-                        WHEN enddate < UNIX_TIMESTAMP() THEN 2
-                        ELSE 1 END AS date_classification
-                        FROM {course}
-                        WHERE $select
-                        ORDER BY date_classification ASC,
-                        enddate ASC,
-                        startdate DESC";
-            $newdefaultview = $DB->get_records_sql($sql, $params, 0, $amount);
-            $views['default'] = array_merge($views['default'], $newdefaultview);
-        } else {
-            $newdefaultview = $DB->get_records_select('course', $select, $params, 'startdate ASC', '*', 0, $amount);
-            $views['default'] = array_merge($views['default'], $newdefaultview);
-        }
-
-        // Get next courses.
-        if (isset($views['recents']) &&
-            $this->config->recents &&
-            isset($daystoupcoming) &&
-            is_numeric($daystoupcoming)) {
-
-            $paramsnextcourses['currenttime'] = time();
-            $paramsnextcourses['startdate'] = $params['startdate'];
-            $selectnextcourses = 'startdate > :currenttime AND ' . $select;
-            $newrecentview = $DB->get_records_select('course',
-                                                      $selectnextcourses,
-                                                      $paramsnextcourses,
-                                                      'startdate ASC',
-                                                      '*',
-                                                      0,
-                                                      $amount);
-            $views['recents'] = array_merge($views['recents'], $newrecentview);
-        }
-
-        // Get outstanding courses.
-        $dbman = $DB->get_manager();
-        $bmanager = new \block_manager($this->page);
-
-        if (isset($views['greats']) &&
-            $this->config->greats &&
-            $dbman->table_exists('block_rate_course') &&
-            $bmanager->is_known_block_type('rate_course')) {
-
-            $selectgreats = str_replace(' AND id ', ' AND c.id ', $select);
-            $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
-                        FROM {course} c
-                        INNER JOIN {block_rate_course} r ON r.course = c.id
-                        WHERE " . $selectgreats .
-                        " GROUP BY c.id HAVING rating > 3
-                        ORDER BY rating DESC";
-            $newgreatsview = $DB->get_records_sql($sql, $params, 0, $amount);
-            $views['greats'] = array_merge($views['greats'], $newgreatsview);
-        }
-
-        // Get premium courses.
-        if (isset($views['premium']) &&
-            $this->config->premium &&
-            \block_vitrina\controller::premium_available()) {
-
-            $payfield = \block_vitrina\controller::get_payfield();
-            $params['fieldid'] = $payfield->id;
-            $selectpremium = str_replace(' AND id ', ' AND c.id ', $select);
-            $sql = "SELECT c.*
-                    FROM {course} c
-                    INNER JOIN {customfield_data} cd ON
-                    cd.fieldid = :fieldid AND
-                    cd.value != '' AND
-                    cd.instanceid = c.id
-                    WHERE " . $selectpremium .
-                    " ORDER BY c.fullname ASC";
-            $newpremiumview = $DB->get_records_sql($sql, $params, 0, $amount);
-            $views['premium'] = array_merge($views['premium'], $newpremiumview);
         }
 
         $html = '';
@@ -291,16 +173,18 @@ class block_vitrina extends block_base {
         // Memory footprint.
         unset($filteropt);
 
-        if ($views && is_array($views)) {
-            // Load templates to display courses.
-            $renderable = new \block_vitrina\output\main($tabs, $views);
-            $renderer = $this->page->get_renderer('block_vitrina');
-            $html .= $renderer->render($renderable);
-        }
+        $uniqueid = \block_vitrina\controller::get_uniqueid();
+
+        // Load templates to display courses.
+        $renderable = new \block_vitrina\output\main($uniqueid, $tabs[0], $this->instance->id, $tabs);
+        $renderer = $this->page->get_renderer('block_vitrina');
+        $html .= $renderer->render($renderable);
 
         $this->content->text = $html;
+
         \block_vitrina\controller::include_templatecss();
-        $this->page->requires->js_call_amd('block_vitrina/main', 'init');
+        $this->page->requires->js_call_amd('block_vitrina/main', 'catalog', [$uniqueid, $tabs[0], $this->instance->id, $amount]);
+
         return $this->content;
     }
 
@@ -344,6 +228,32 @@ class block_vitrina extends block_base {
         global $DB;
         $fs = get_file_storage();
         $fs->delete_area_files($this->context->id, 'block_vitrina');
+        return true;
+    }
+
+    /**
+     * Copy any block-specific data when copying to a new block instance.
+     * @param int $fromid the id number of the block instance to copy from
+     * @return boolean
+     */
+    public function instance_copy($fromid) {
+        $fromcontext = context_block::instance($fromid);
+        $fs = get_file_storage();
+
+        // This extra check if file area is empty adds one query if it is not empty but saves several if it is.
+        if (!$fs->is_area_empty($fromcontext->id, 'block_vitrina', 'content_header', 0, false)) {
+            $draftitemid = 0;
+            file_prepare_draft_area($draftitemid, $fromcontext->id, 'block_html', 'content_header', 0, ['subdirs' => true]);
+            file_save_draft_area_files($draftitemid, $this->context->id, 'block_html', 'content_header', 0, ['subdirs' => true]);
+        }
+
+        // This extra check if file area is empty adds one query if it is not empty but saves several if it is.
+        if (!$fs->is_area_empty($fromcontext->id, 'block_vitrina', 'content_footer', 0, false)) {
+            $draftitemid = 0;
+            file_prepare_draft_area($draftitemid, $fromcontext->id, 'block_html', 'content_footer', 0, ['subdirs' => true]);
+            file_save_draft_area_files($draftitemid, $this->context->id, 'block_html', 'content_footer', 0, ['subdirs' => true]);
+        }
+
         return true;
     }
 

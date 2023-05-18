@@ -29,12 +29,20 @@ require_once($CFG->dirroot . '/blocks/vitrina/classes/admin_setting_configmultis
 if ($ADMIN->fulltree) {
 
     // Get custom fields.
-    $fields = [0 => ''];
-    $customfields = $DB->get_records_menu('customfield_field', null, 'name', 'id, name');
+    $fields = [];
+    $fieldstofilter = [];
+
+    $customfields = $DB->get_records('customfield_field', [], 'name', 'id, name, type');
 
     foreach ($customfields as $k => $v) {
-        $fields[$k] = format_string($v, true);
+        $fields[$k] = format_string($v->name, true);
+
+        if (in_array($v->type, \block_vitrina\controller::CUSTOMFIELDS_SUPPORTED)) {
+            $fieldstofilter[$k] = format_string($v->name, true);
+        }
     }
+
+    $fieldswithempty = [0 => ''] + $fields;
 
     // Get user fields.
     $userfields = [0 => ''];
@@ -50,60 +58,74 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_heading($name, $heading, '');
     $settings->add($setting);
 
+    // Short fields.
+    $name = 'block_vitrina/showcustomfields';
+    $title = get_string('showcustomfields', 'block_vitrina');
+    $help = get_string('showcustomfields_help', 'block_vitrina');
+    $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fields);
+    $settings->add($setting);
+
+    // Long fields.
+    $name = 'block_vitrina/showlongcustomfields';
+    $title = get_string('showlongcustomfields', 'block_vitrina');
+    $help = get_string('showlongcustomfields_help', 'block_vitrina');
+    $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fields);
+    $settings->add($setting);
+
     // Thematic field.
     $name = 'block_vitrina/thematic';
     $title = get_string('thematicfield', 'block_vitrina');
     $help = get_string('thematicfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Content units field.
     $name = 'block_vitrina/units';
     $title = get_string('unitsfield', 'block_vitrina');
     $help = get_string('unitsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Requirements field.
     $name = 'block_vitrina/requirements';
     $title = get_string('requirementsfield', 'block_vitrina');
     $help = get_string('requirementsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // License field.
     $name = 'block_vitrina/license';
     $title = get_string('licensefield', 'block_vitrina');
     $help = get_string('licensefield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Media field.
     $name = 'block_vitrina/media';
     $title = get_string('mediafield', 'block_vitrina');
     $help = get_string('mediafield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Duration field.
     $name = 'block_vitrina/duration';
     $title = get_string('durationfield', 'block_vitrina');
     $help = get_string('durationfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Experts field.
     $name = 'block_vitrina/experts';
     $title = get_string('expertsfield', 'block_vitrina');
     $help = get_string('expertsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Short experts field.
     $name = 'block_vitrina/expertsshort';
     $title = get_string('expertsshortfield', 'block_vitrina');
     $help = get_string('expertsshortfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Payment fields.
@@ -116,7 +138,7 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/paymenturl';
     $title = get_string('paymenturlfield', 'block_vitrina');
     $help = get_string('paymenturlfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fields);
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
     // Premium type user field.
@@ -131,6 +153,36 @@ if ($ADMIN->fulltree) {
     $title = get_string('premiumvalue', 'block_vitrina');
     $help = get_string('premiumvalue_help', 'block_vitrina');
     $setting = new admin_setting_configtext($name, $title, $help, '');
+    $settings->add($setting);
+
+    // Filtering.
+    $name = 'block_vitrina/settingsheaderfiltering';
+    $heading = get_string('settingsheaderfiltering', 'block_vitrina');
+    $setting = new admin_setting_heading($name, $heading, '');
+    $settings->add($setting);
+
+    // Select courses categories.
+    $name = 'block_vitrina/categories';
+    $title = get_string('categories', 'block_vitrina');
+    $help = get_string('categories_help', 'block_vitrina');
+    $displaylist = \core_course_category::make_categories_list('moodle/category:manage');
+    $default = [];
+
+    $setting = new admin_setting_configmultiselect_autocomplete (
+        'block_vitrina/categories',
+        get_string('categories', 'block_vitrina'),
+        get_string('categories_help', 'block_vitrina'),
+        $default,
+        $displaylist
+    );
+
+    $settings->add($setting);
+
+    // Custom fields to filter.
+    $name = 'block_vitrina/filtercustomfields';
+    $title = get_string('filtercustomfields', 'block_vitrina');
+    $help = get_string('filtercustomfields_help', 'block_vitrina');
+    $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fieldstofilter);
     $settings->add($setting);
 
     // Appearance.
@@ -155,9 +207,10 @@ if ($ADMIN->fulltree) {
 
     // Sort by default.
     $options = [
-        'default' => get_string('sortbystartdate', 'block_vitrina'),
-        'sortbyfinishdate' => get_string('sortbyfinishdate', 'block_vitrina'),
-        'sortalphabetically' => get_string('sortalphabetically', 'block_vitrina')
+        'default' => get_string('sortdefault', 'block_vitrina'),
+        'startdate' => get_string('sortbystartdate', 'block_vitrina'),
+        'finishdate' => get_string('sortbyfinishdate', 'block_vitrina'),
+        'alphabetically' => get_string('sortalphabetically', 'block_vitrina')
     ];
 
     $name = 'block_vitrina/sortbydefault';
@@ -178,23 +231,6 @@ if ($ADMIN->fulltree) {
     $title = get_string('socialnetworks', 'block_vitrina');
     $help = get_string('socialnetworks_help', 'block_vitrina');
     $setting = new admin_setting_configtextarea($name, $title, $help, '');
-    $settings->add($setting);
-
-    // Select courses categories.
-    $name = 'block_vitrina/categories';
-    $title = get_string('categories', 'block_vitrina');
-    $help = get_string('categories_help', 'block_vitrina');
-    $displaylist = \core_course_category::make_categories_list('moodle/category:manage');
-    $default = [];
-
-    $setting = new admin_setting_configmultiselect_autocomplete (
-        'block_vitrina/categories',
-        get_string('categories', 'block_vitrina'),
-        get_string('categories_help', 'block_vitrina'),
-        $default,
-        $displaylist
-    );
-
     $settings->add($setting);
 
     // Block summary.
@@ -222,6 +258,13 @@ if ($ADMIN->fulltree) {
     $title = get_string('tabview', 'block_vitrina');
     $help = get_string('tabview_help', 'block_vitrina');
     $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
+    $settings->add($setting);
+
+    // Views icons.
+    $name = 'block_vitrina/viewsicons';
+    $title = get_string('viewsicons', 'block_vitrina');
+    $help = get_string('viewsicons_help', 'block_vitrina');
+    $setting = new admin_setting_configtextarea($name, $title, $help, '');
     $settings->add($setting);
 
     // Cover image type.

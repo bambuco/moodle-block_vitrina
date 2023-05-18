@@ -36,38 +36,25 @@ use templatable;
 class catalog implements renderable, templatable {
 
     /**
-     * @var array Courses list to show.
+     * @var string The uniqueid of the block instance.
      */
-    private $courses = null;
+    private $uniqueid;
 
     /**
-     * @var array Query to filter the courses list.
+     * @var string The view type.
      */
-    private $query = null;
-
-    /**
-     * @var array Sort type.
-     */
-    private $sort = null;
+    private $view;
 
     /**
      * Constructor.
      *
-     * @param array $courses A courses list
-     * @param string $query A query to filter the courses list
-     * @param string $sort A sort type
+     * @param string $uniqueid The uniqueid of the block instance.
+     * @param string $view The view type.
      */
-    public function __construct($courses = [], $query = '', $sort = '') {
-        global $CFG, $OUTPUT;
+    public function __construct($uniqueid, $view = 'default') {
 
-        // Load the course image.
-        foreach ($courses as $course) {
-            \block_vitrina\controller::course_preprocess($course);
-        }
-
-        $this->courses = $courses;
-        $this->query = $query;
-        $this->sort = $sort;
+        $this->uniqueid = $uniqueid;
+        $this->view = $view;
     }
 
     /**
@@ -79,19 +66,60 @@ class catalog implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG, $PAGE;
 
-        $defaultvariables = [
-            'courses' => array_values($this->courses),
-            'baseurl' => $CFG->wwwroot,
-            'query' => $this->query,
-            'sort' => $this->sort
-        ];
+        $availableviews = \block_vitrina\controller::get_courses_views();
 
-        $bmanager = new \block_manager($PAGE);
-        if ($bmanager->is_known_block_type('rate_course')) {
-            $defaultvariables['rateavailable'] = true;
+        $icons = \block_vitrina\controller::get_views_icons();
+
+        $showtabs = [];
+        foreach ($availableviews as $k => $view) {
+            $one = new \stdClass();
+            $one->title = get_string('tabtitle_' . $view, 'block_vitrina');
+            $one->key = $view;
+            $one->icon = $output->image_icon($icons[$view], $one->title);
+            $one->state = $view == $this->view ? 'active' : '';
+            $showtabs[] = $one;
         }
 
-        $defaultvariables['premiumavailable'] = \block_vitrina\controller::premium_available();
+        // Filter controls.
+        $filtercontrols = [];
+
+        // Filter by category.
+        $control = new \stdClass();
+        $control->title = get_string('category');
+        $control->key = 'categories';
+        $control->options = \block_vitrina\controller::get_categories();
+        $filtercontrols[] = $control;
+
+        // Filter by language.
+        $options = \block_vitrina\controller::get_languages();
+
+        if (count($options) > 1) {
+            $control = new \stdClass();
+            $control->title = get_string('language');
+            $control->key = 'langs';
+            $control->options = $options;
+            $filtercontrols[] = $control;
+        }
+
+        // Filter by custom fields.
+
+        // Add to filtercontrols the array returned by the method get_customfieldsfilters.
+        $filtercontrols = array_merge($filtercontrols, \block_vitrina\controller::get_customfieldsfilters());
+
+        $filterproperties = new \stdClass();
+        $filterproperties->fulltext = true;
+        // End of filter controls.
+
+        $defaultvariables = [
+            'uniqueid' => $this->uniqueid,
+            'baseurl' => $CFG->wwwroot,
+            'hastabs' => count($showtabs) > 1,
+            'tabs' => $showtabs,
+            'showicon' => \block_vitrina\controller::show_tabicon(),
+            'showtext' => \block_vitrina\controller::show_tabtext(),
+            'filtercontrols' => $filtercontrols,
+            'filterproperties' => $filterproperties,
+        ];
 
         return $defaultvariables;
     }

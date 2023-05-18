@@ -19,79 +19,216 @@
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+import $ from 'jquery';
+import {get_strings as getStrings} from 'core/str';
+import Notification from 'core/notification';
+import Log from 'core/log';
+import Ajax from 'core/ajax';
 
-define(['jquery', 'core/str', 'core/log'], function($, Str, Log) {
+/**
+ * Private functions.
+ *
+ */
 
-    // Load strings.
-    var strings = [];
-    var s = [];
+// Current instance (optional).
+var instanceid = [];
 
-    /**
-     * Load strings from server.
-     */
-    function loadStrings() {
+// Courses by page.
+var bypage = [];
 
-        if (strings.length > 0) {
+// Paging variable controls.
+var paging = [];
 
-            strings.forEach(one => {
-                s[one.key] = one.key;
-            });
+// Filters box.
+var $filtersbox = null;
 
-            Str.get_strings(strings).done(function(results) {
-                var pos = 0;
-                strings.forEach(one => {
-                    s[one.key] = results[pos];
-                    pos++;
-                });
-            }).fail(function(e) {
-                Log.debug('Error loading strings');
-                Log.debug(e);
+// Loading courses.
+var loading = false;
+
+// Load strings.
+var strings = [
+    {key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'},
+    {key: 'nocoursesview', component: 'block_vitrina'},
+    {key: 'nomorecourses', component: 'block_vitrina'},
+];
+var s = [];
+
+/**
+ * Load strings from server.
+ */
+function loadStrings() {
+
+    strings.forEach(one => {
+        s[one.key] = one.key;
+    });
+
+    getStrings(strings).then(function(results) {
+        var pos = 0;
+        strings.forEach(one => {
+            s[one.key] = results[pos];
+            pos++;
+        });
+        return true;
+    }).fail(function(e) {
+        Log.debug('Error loading strings');
+        Log.debug(e);
+    });
+}
+// End of Load strings.
+
+/**
+ * Load courses for a tab.
+ *
+ * @param {integer} uniqueid
+ * @param {object} $tabcontent
+ */
+function loadCourses(uniqueid, $tabcontent) {
+
+    var view = $tabcontent.data('view');
+
+    $tabcontent.addClass('loading');
+    var $coursesbox = $tabcontent.find('.courses-list');
+
+    if (paging[uniqueid] === undefined) {
+        paging[uniqueid] = [];
+    }
+
+    if (paging[uniqueid][view] === undefined) {
+        paging[uniqueid][view] = {
+            loaded: 0,
+            ended: false,
+        };
+    }
+
+    // Not more courses.
+    if (paging[uniqueid][view].ended) {
+        $tabcontent.removeClass('loading');
+        return;
+    }
+
+    // Check active filters.
+    var filters = [];
+
+    if ($filtersbox) {
+        var $fulltext = $filtersbox.find('.filterfulltext input[name=q]').val().trim();
+
+        if ($fulltext) {
+            filters.push({
+                'values': [$fulltext],
+                'type': 'fulltext',
             });
         }
 
+        $filtersbox.find('.filtercontrol').each(function() {
+            var $control = $(this);
+            var values = [];
+
+            $control.find('.filteroptions input:checked').each(function() {
+                var $option = $(this);
+                values.push($option.val());
+            });
+
+            if (values.length > 0) {
+                filters.push({
+                    'values': values,
+                    'type': $control.data('key')
+                });
+            }
+        });
     }
-    // End of Load strings.
+    // End of check active filters.
 
-    /**
-     * Initialise functions for the detail page block.
-     *
-     */
-    var detail = function() {
-        strings.push({key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'});
+    loading = true;
+    Ajax.call([{
+        methodname: 'block_vitrina_get_courses',
+        args: {'view': view, 'filters': filters, 'instanceid': instanceid[uniqueid],
+                'amount': bypage[uniqueid], 'initial': paging[uniqueid][view].loaded},
+        done: function(data) {
 
-        $('input[name="courselink"]').on('click', function() {
-            var $input = $(this);
-            $input.select();
-            document.execCommand("copy");
+            if (data && data.length > 0) {
+                paging[uniqueid][view].loaded += data.length;
 
-            var $msg = $('<div class="msg-courselink-copy">' + s.courselinkcopiedtoclipboard + '</div>');
+                if (data.length < bypage[uniqueid]) {
+                    paging[uniqueid][view].ended = true;
+                }
 
-            $input.parent().append($msg);
-            window.setTimeout(function() {
-                $msg.remove();
-            }, 1600);
-        });
+                data.forEach(one => {
+                    $coursesbox.append(one.html);
+                });
+            } else {
+                paging[uniqueid][view].ended = true;
+            }
 
-        init();
-    };
+            loading = false;
+            $tabcontent.removeClass('loading');
 
-    /**
-     * Initialise all for the block.
-     *
-     */
-    var init = function() {
+            if (paging[uniqueid][view].ended) {
+                $tabcontent.addClass('ended');
+                $tabcontent.find('.loadmore').hide();
 
-        loadStrings();
+                var nocoursesbox = $tabcontent.find('.nocourses');
+                var nocoursesmsg = '';
+                if (paging[uniqueid][view].loaded == 0) {
+                    nocoursesmsg = s.nocoursesview;
+                    nocoursesbox.removeClass('hidden');
+                } else {
+                    // Only show the message if not is the first call when reached the end.
+                    if (paging[uniqueid][view].loaded > bypage[uniqueid]) {
+                        nocoursesmsg = s.nomorecourses;
+                        nocoursesbox.removeClass('hidden');
+                    }
+                }
+                nocoursesbox.html(nocoursesmsg);
+            }
+        },
+        fail: function(e) {
+            loading = false;
+            $tabcontent.removeClass('loading');
+            Notification.exception(e);
+            Log.debug(e);
+        }
+    }]);
 
-        $('[data-vitrina-toggle]').on('click', function() {
-            var $this = $(this);
-            var cssclass = $this.attr('data-vitrina-toggle');
-            var target = $this.attr('data-target');
+}
 
-            $(target).toggleClass(cssclass);
-        });
+/**
+ * Restart all controls to new course load.
+ *
+ * @param {integer} uniqueid
+ */
+function restartSearch(uniqueid) {
+    paging[uniqueid] = [];
+    $('#' + uniqueid + ' .block_vitrina-tabs [data-ref]').each(function() {
+        var $tab = $(this);
+        var $tabcontent = $($tab.attr('data-ref'));
+        $tabcontent.removeClass('ended');
+        $tabcontent.find('.loadmore').show();
+        $tabcontent.find('.nocourses').addClass('hidden');
+        $tabcontent.find('.courses-list').empty();
+    });
+}
 
-        $('.block_vitrina-content').each(function() {
+/**
+ * Component initialization.
+ *
+ * @method init
+ *
+ * @param {integer} uniqueid
+ */
+export const init = (uniqueid = null) => {
+
+    loadStrings();
+
+    $('[data-vitrina-toggle]').on('click', function() {
+        var $this = $(this);
+        var cssclass = $this.attr('data-vitrina-toggle');
+        var target = $this.attr('data-target');
+
+        $(target).toggleClass(cssclass);
+    });
+
+    if (uniqueid) {
+        $('#' + uniqueid + '.block_vitrina-content').each(function() {
             var $blockcontent = $(this);
 
             // Tabs.
@@ -101,6 +238,7 @@ define(['jquery', 'core/str', 'core/log'], function($, Str, Log) {
 
                 $tabs.find('[data-ref]').each(function() {
                     var $tab = $(this);
+                    var $tabcontent = $($tab.data('ref'));
                     tabslist.push($tab);
 
                     $tab.on('click', function() {
@@ -110,7 +248,28 @@ define(['jquery', 'core/str', 'core/log'], function($, Str, Log) {
 
                         $tabs.find('.active[data-ref]').removeClass('active');
                         $tab.addClass('active');
-                        $($tab.data('ref')).addClass('active');
+
+                        if ($tabcontent) {
+                            $tabcontent.addClass('active');
+
+                            // Load courses only the first time.
+                            var view = $tabcontent.data('view');
+
+                            if (paging[uniqueid][view] === undefined) {
+                                loadCourses(uniqueid, $tabcontent);
+                            }
+                        }
+                    });
+
+                    $tabcontent.find('.loadmore').on('click', function() {
+                        var $this = $(this);
+
+                        // If is a link, do nothing. Only for buttons.
+                        if ($this.attr('href')) {
+                            return;
+                        }
+
+                        loadCourses(uniqueid, $tabcontent);
                     });
                 });
 
@@ -130,10 +289,95 @@ define(['jquery', 'core/str', 'core/log'], function($, Str, Log) {
                 });
             });
         });
+    }
+};
+
+/**
+ * Initialize functions for the detail page.
+ *
+ */
+export const detail = () => {
+    strings.push({key: 'courselinkcopiedtoclipboard', component: 'block_vitrina'});
+
+    $('input[name="courselink"]').on('click', function() {
+        var $input = $(this);
+        $input.select();
+        document.execCommand("copy");
+
+        var $msg = $('<div class="msg-courselink-copy">' + s.courselinkcopiedtoclipboard + '</div>');
+
+        $input.parent().append($msg);
+        window.setTimeout(function() {
+            $msg.remove();
+        }, 1600);
+    });
+
+    init();
+};
+
+/**
+ * Initialize functions for the catalog page.
+ *
+ * @param {string} uniqueid
+ * @param {string} view
+ * @param {integer} currentinstanceid
+ * @param {integer} currentbypage
+ */
+export const catalog = (uniqueid, view, currentinstanceid = 0, currentbypage = 20) => {
+
+    instanceid[uniqueid] = currentinstanceid;
+    bypage[uniqueid] = parseInt(currentbypage);
+    var $tabcontent = $('#' + uniqueid + ' .tabs-content .tab-' + view);
+
+    loadCourses(uniqueid, $tabcontent);
+
+    init(uniqueid);
+};
+
+/**
+ * Initialize the filter controls.
+ *
+ * @param {integer} uniqueid
+ * @param {array} selectedfilters
+ */
+export const filters = (uniqueid, selectedfilters = []) => {
+
+    $filtersbox = $('#' + uniqueid);
+
+    var applyFilters = function() {
+
+        if (!loading) {
+            restartSearch(uniqueid);
+            loadCourses(uniqueid, $filtersbox.find('.block_vitrina-tabcontent.active'));
+        }
     };
 
-    return {
-        init: init,
-        detail: detail
-    };
-});
+    selectedfilters.forEach(filter => {
+
+        if (filter.key === 'fulltext') {
+            $filtersbox.find('.filterfulltext input[name="q"]').val(filter.values.join(' '));
+            return;
+        }
+
+        $filtersbox.find('.filtercontrol[data-key="' + filter.key + '"] .filteroptions').each(function() {
+            var $filteroptions = $(this);
+
+            filter.values.forEach(value => {
+                $filteroptions.find('input[value="' + value + '"]').prop('checked', true);
+            });
+        });
+    });
+
+    $filtersbox.find('.filtercontrol .filteroptions input').on('change', applyFilters);
+
+    $filtersbox.find('.filterfulltext button').on('click', applyFilters);
+
+    $filtersbox.find('.vitrina-filter-responsivebutton').on('click', function() {
+        $filtersbox.addClass('opened-popup');
+    });
+
+    $filtersbox.find('.vitrina-filter-closebutton').on('click', function() {
+        $filtersbox.removeClass('opened-popup');
+    });
+
+};

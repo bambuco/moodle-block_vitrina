@@ -1,22 +1,17 @@
-#page-blocks-vitrina-index .courses {
-    border-top: 1px solid #e7e7e7;
-}
-
-#page-blocks-vitrina-index #region-main>.card {
+#page-blocks-vitrina-index #region-main >.card {
     border: none;
 }
 
-#page-blocks-vitrina-index #region-main>.card>.card-body {
+#page-blocks-vitrina-index #region-main > .card > .card-body {
     padding: 0;
 }
 
-.block_vitrina .courses,
-.path-blocks-vitrina .courses {
+.block_vitrina-courseslist {
     background-color: #f9f9f9;
+    border-top: 1px solid #e7e7e7;
 }
 
-.block_vitrina .courses .coursebox,
-.path-blocks-vitrina .courses .coursebox {
+.block_vitrina-courseslist .coursebox {
     background-color: #fff;
     width: 100%;
     max-width: 330px;
@@ -25,26 +20,30 @@
     border-radius: 5px;
 }
 
-.block_vitrina .courses .coursebox .panel-body,
-.path-blocks-vitrina .courses .coursebox .panel-body {
+.block_vitrina-courseslist .coursebox .panel-body {
     padding: 0;
     text-align: left;
 }
 
-.block_vitrina .courses .coursebox .panel-body .coursesummary,
-.path-blocks-vitrina .courses .coursebox .panel-body .coursesummary {
+.block_vitrina-courseslist .coursebox .panel-body a {
+    color: #fff;
+}
+
+.block_vitrina-courseslist .coursebox .panel-body a:hover {
+    filter: opacity(0.9);
+}
+
+.block_vitrina-courseslist .coursebox .panel-body .coursesummary {
     max-height: 200px;
     overflow: auto;
     padding: 0 20px 10px;
 }
 
-.block_vitrina .courses .coursebox .panel-body .courseimage,
-.path-blocks-vitrina .courses .coursebox .panel-body .courseimage {
+.block_vitrina-courseslist .coursebox .panel-body .courseimage {
     margin-bottom: 20px;
 }
 
-.block_vitrina .courses .coursebox .coursebtn,
-.path-blocks-vitrina .courses .coursebox .coursebtn {
+.block_vitrina-courseslist .coursebox .coursebtn {
     background-color: #000;
     color: #fff;
     border-radius: 5px;
@@ -55,15 +54,14 @@
     font-size: 16px;
     border: none;
     text-align: center;
+    position: relative;
 }
 
-.block_vitrina .courses .coursebox .panel-foot,
-.path-blocks-vitrina .courses .coursebox .panel-foot {
+.block_vitrina-courseslist .coursebox .panel-foot {
     padding-bottom: 0;
 }
 
-.block_vitrina .courses .coursebox .panel-foot .btn,
-.path-blocks-vitrina .courses .coursebox .panel-foot .btn {
+.block_vitrina-courseslist .coursebox .panel-foot .btn {
     width: 100%;
     background-color: transparent;
     color: #666666;
@@ -80,27 +78,26 @@
     left: 0;
 }
 
-.block_vitrina .courses .coursebox.state-waiting .panel-body::after,
-.path-blocks-vitrina .courses .coursebox.state-waiting .panel-body::after {
+.block_vitrina-courseslist .coursebox.state-waiting .panel-body::after {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    height: 145px;
     background-color: rgba(20, 20, 20, 0.6);
 }
 
-.block_vitrina .courses .coursebox.state-waiting .waiting-label,
-.path-blocks-vitrina .courses .coursebox.state-waiting .waiting-label {
+.block_vitrina-courseslist .coursebox.state-waiting .waiting-label {
     background-color: transparent;
     text-transform: uppercase;
-    font-size: 28px;
+    font-size: 23px;
     font-weight: bold;
     border-top: 2px solid;
     border-bottom: 2px solid;
     left: 30px;
     right: 30px;
+    width: calc(100% - 60px);
 }
 
 #page-blocks-vitrina-index .courses-sort li a {
@@ -122,7 +119,7 @@
     display: none;
 }
 
-#page-blocks-vitrina-detail #region-main>.card {
+#page-blocks-vitrina-detail #region-main > .card {
     border: none;
 }
 
@@ -155,11 +152,11 @@
     align-items: flex-start;
 }
 
-#page-blocks-vitrina-detail .course-specific-info>div {
+#page-blocks-vitrina-detail .course-specific-info > div {
     margin-bottom: 50px;
 }
 
-#page-blocks-vitrina-detail .course-specific-info>div h3 {
+#page-blocks-vitrina-detail .course-specific-info > div h3 {
     margin-bottom: 30px;
 }
 
@@ -221,6 +218,12 @@
     color: inherit;
 }
 
+#page-blocks-vitrina-detail .course-detail .enroll-container a.btn {
+    font-size: 22px;
+    background-color: #000;
+    border-radius: 5px;
+}
+
 #page-blocks-vitrina-detail .course-general-info .enroll-content {
     margin: 0 -40px;
 }
@@ -253,7 +256,7 @@
     white-space: nowrap;
 }
 
-#page-blocks-vitrina-detail .list-info li>* {
+#page-blocks-vitrina-detail .list-info li > * {
     margin-right: 5px;
 }
 
@@ -399,6 +402,7 @@
 #page-blocks-vitrina-detail .course-detail .detail-foot .course-comments > div .comment-body img.userpicture {
     width: 130px;
     height: 130px;
+    max-width: unset;
     border: 5px solid #fff;
     box-shadow: -5px 5px 10px #aaa;
     margin-right: 80px;
@@ -465,6 +469,12 @@
     font-style: unset;
     font-weight: 300;
     font-size: 17px;
+}
+
+.path-blocks-vitrina .filtercontrol > h5 {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
 }
 
 @media (min-width: 1281px) {
@@ -694,11 +704,11 @@
         padding: 0;
     }
 
-    #page-blocks-vitrina-detail .course-detail .detail-foot>div {
+    #page-blocks-vitrina-detail .course-detail .detail-foot > div {
         flex-direction: column;
     }
 
-    #page-blocks-vitrina-detail .course-detail .detail-foot>div>div {
+    #page-blocks-vitrina-detail .course-detail .detail-foot > div > div {
         width: 100%;
     }
 
@@ -706,20 +716,20 @@
         padding: 10px;
     }
 
-    #page-blocks-vitrina-detail .course-detail .detail-foot .course-comments>div {
+    #page-blocks-vitrina-detail .course-detail .detail-foot .course-comments > div {
         margin-left: 0;
     }
 
-    #page-blocks-vitrina-detail .course-detail .detail-foot .course-comments>div label {
+    #page-blocks-vitrina-detail .course-detail .detail-foot .course-comments > div label {
         font-size: 14px;
     }
 
-    #page-blocks-vitrina-detail.course-detail .detail-foot .course-comments>div .comment-body {
+    #page-blocks-vitrina-detail.course-detail .detail-foot .course-comments > div .comment-body {
         font-size: 12px;
 
     }
 
-    #page-blocks-vitrina-detail .course-detail .detail-foot .course-comments>div .comment-body img.userpicture {
+    #page-blocks-vitrina-detail .course-detail .detail-foot .course-comments > div .comment-body img.userpicture {
         width: 80px;
         height: 80px;
         margin-right: 20px;

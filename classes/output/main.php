@@ -36,27 +36,40 @@ use templatable;
 class main implements renderable, templatable {
 
     /**
+     * @var string The uniqueid of the block instance.
+     */
+    private $uniqueid;
+
+    /**
+     * @var string The view type.
+     */
+    private $view;
+
+    /**
+     * @var int The block instance id.
+     */
+    private $instanceid;
+
+    /**
      * @var array List of tabs to print.
      */
     private $tabs;
 
     /**
-     * @var array Courses views.
-     */
-    private $views = null;
-
-
-    /**
      * Constructor.
      *
+     * @param string $uniqueid The uniqueid of the block instance.
+     * @param string $view The view type.
+     * @param int $instanceid The block instance id.
      * @param array $tabs The tabs configuration.
-     * @param array $views The courses views.
      */
-    public function __construct($tabs, $views = []) {
+    public function __construct($uniqueid, $view = 'default', int $instanceid = 0, array $tabs = []) {
         global $CFG, $OUTPUT;
 
+        $this->uniqueid = $uniqueid;
+        $this->view = $view;
+        $this->instanceid = $instanceid;
         $this->tabs = $tabs;
-        $this->views = $views;
     }
 
     /**
@@ -68,70 +81,26 @@ class main implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
-        $icons = [
-            'default' => 'th',
-            'recents' => 'calendar-check-o',
-            'greats' => 'thumbs-up',
-            'premium' => 'star'
-        ];
+        $icons = \block_vitrina\controller::get_views_icons();
 
         $showtabs = [];
-        foreach ($this->tabs as $k => $tab) {
+        foreach ($this->tabs as $k => $view) {
             $one = new \stdClass();
-            $one->title = get_string('tabtitle_' . $tab, 'block_vitrina');
-            $one->key = $tab;
-            $one->icon = $icons[$tab];
-            $one->state = $k == 0 ? 'active' : '';
+            $one->title = get_string('tabtitle_' . $view, 'block_vitrina');
+            $one->key = $view;
+            $one->icon = $output->image_icon($icons[$view], $one->title);
+            $one->state = $view == $this->view ? 'active' : '';
             $showtabs[] = $one;
         }
 
-        // Tabs config view.
-        $tabview = get_config('block_vitrina', 'tabview');
-        $showicon = true;
-        $showtext = true;
-
-        if (!empty($tabview)) {
-
-            if ($tabview == 'showicon') {
-                $showtext = false;
-            } else if ($tabview == 'showtext') {
-                $showicon = false;
-            } else {
-                $showicon = true;
-                $showtext = true;
-            }
-        }
-
-        $tabbames = ['default', 'recents', 'greats', 'premium'];
-        $activetab = false;
-        $getviews = [];
-        $firsttab = !empty($this->tabs) ? $this->tabs[0] : '';
-        $sortbydefault = get_config('block_vitrina', 'sortbydefault');
-
-        foreach ($this->views as $view => $courses) {
-            $status = ($view === $firsttab) ? 'active' : '';
-            $getviews[] = [
-                'view' => $view,
-                'status' => $status,
-                'coursesview' => $courses
-            ];
-
-            foreach ($courses as $course) {
-                \block_vitrina\controller::course_preprocess($course);
-            }
-        }
-
-        $uniqueid = \block_vitrina\controller::get_uniqueid();
-        $sortbydefaultconfig = get_config('block_vitrina', 'sortbydefault');
-
         $defaultvariables = [
-            'getviews' => array_values($getviews),
+            'uniqueid' => $this->uniqueid,
             'baseurl' => $CFG->wwwroot,
-            'hastabs' => count($this->tabs) > 1,
+            'hastabs' => count($showtabs) > 1,
             'tabs' => $showtabs,
-            'uniqueid' => $uniqueid,
-            'showicon' => $showicon,
-            'showtext' => $showtext
+            'showicon' => \block_vitrina\controller::show_tabicon(),
+            'showtext' => \block_vitrina\controller::show_tabtext(),
+            'instanceid' => $this->instanceid,
         ];
 
         return $defaultvariables;
