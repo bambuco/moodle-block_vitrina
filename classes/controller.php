@@ -401,7 +401,7 @@ class controller {
      *
      * @return object The payment field.
      */
-    public static function get_payfield() : object {
+    public static function get_payfield() : ?object {
         global $DB;
 
         if (!self::$cachedpayfield) {
