@@ -59,10 +59,13 @@ $string['durationfield'] = 'Duration field';
 $string['enroll'] = 'Enroll';
 $string['enrolled'] = 'You are enrolled currently!';
 $string['enrollrequired'] = 'You need to enroll to take the course!';
-$string['expertsfield'] = 'Experts field';
-$string['expertsshortfield_help'] = 'A course field to specify the course experts in a short format.';
-$string['expertsfield_help'] = 'A course field to specify the course experts.';
-$string['expertsshortfield'] = 'Experts short field';
+$string['expertsfield'] = 'Experts profile field';
+$string['expertsshortfield_help'] = 'A course field to specify the course experts in a short format. The full names is recommended.';
+$string['expertsfield_help'] = 'A course field to specify the course experts profiles.';
+$string['expertsshortfield'] = 'Experts names field';
+$string['filtercustomfields'] = "Custom fields to filter";
+$string['filtercustomfields_help'] = "Select the custom fields to filter the courses in the catalog.
+Only select and check fields are available to filter.";
 $string['gotocourse'] = 'Go to course';
 $string['greats'] = 'Greats';
 $string['hascourseview'] = 'You have access to this course!';
@@ -105,6 +108,7 @@ $string['requireauth'] = 'You need <a href="{$a}">login</a> in order to enroll t
 $string['selectcategories'] = 'Choose a course category';
 $string['settingsheaderappearance'] = 'Appearance';
 $string['settingsheaderfields'] = 'Course fields';
+$string['settingsheaderfiltering'] = 'Filtering';
 $string['settingsheaderpayment'] = 'Related to payment options';
 $string['sharecoursedesc'] = 'Do you know someone who might like this course?<br />
 <strong>Tell him about it</strong>';
@@ -131,6 +135,10 @@ $string['tabtitle_premium'] = 'Premium courses';
 $string['tabtitle_recents'] = 'Next courses';
 $string['tabview'] = 'Views tabs';
 $string['tabview_help'] = 'Choose tab layout when more than one view is available.';
+$string['showcustomfields'] = 'Show custom fields';
+$string['showcustomfields_help'] = 'Show the custom fields in the course detail page.';
+$string['showlongcustomfields'] = 'Show long custom fields';
+$string['showlongcustomfields_help'] = 'Show the custom fields in the dfescription section of the course detail page.';
 $string['showtext'] = 'Text only';
 $string['textandicon'] = 'Text and icons';
 $string['templatetype'] = 'Template type';

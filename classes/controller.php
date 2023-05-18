@@ -54,12 +54,12 @@ class controller {
     /**
      * @var bool True if show icons in tabs views.
      */
-    private static $showicons = true;
+    private static $showicons = null;
 
     /**
      * @var bool True if show text in tabs views.
      */
-    private static $showtext = true;
+    private static $showtext = null;
 
     /**
      * @var array List of available courses views.
@@ -70,6 +70,16 @@ class controller {
      * @var array List of available sorts.
      */
     public const COURSES_SORTS = ['default', 'alphabetically', 'startdate', 'finishdate'];
+
+    /**
+     * @var array List of available types in custom fields to filter.
+     */
+    public const CUSTOMFIELDS_SUPPORTED = ['select', 'checkbox'];
+
+    /**
+     * @var array List of available static filters (not include filters by custom fields).
+     */
+    public const STATICFILTERS = ['langs', 'categories', 'fulltext'];
 
     /**
      * Process a specific course to be displayed.
@@ -84,6 +94,7 @@ class controller {
         $course->haspaymentgw = false;
         $course->paymenturl = null;
         $course->baseurl = $CFG->wwwroot;
+        $course->hassummary = !empty($course->summary);
 
         $payfield = self::get_payfield();
 
@@ -322,6 +333,7 @@ class controller {
                 // Load other info about the courses.
                 foreach ($coursesinfo as $one) {
 
+                    $one->hassummary = !empty($one->summary);
                     $one->imagepath = self::get_courseimage($one);
                     $one->active = $one->startdate <= time();
                     if ($payfield) {
@@ -575,7 +587,7 @@ class controller {
         }
 
         $courses = [];
-        $select = 'c.visible = 1 AND c.id != :siteid AND (c.enddate > :now OR c.enddate = 0)';
+        $select = 'c.visible = 1 AND c.id <> :siteid AND (c.enddate > :now OR c.enddate = 0)';
         $params = ['siteid' => SITEID, 'now' => time()];
 
         // Add categories filter.
@@ -586,10 +598,34 @@ class controller {
         }
         // End of categories filter.
 
+        $joincustomfields = '';
+
         // Add filters.
         foreach ($filters as $filter) {
 
             switch ($filter['type']) {
+                case 'fulltext':
+                    $text = trim(implode('%', $filter['values']));
+
+                    if (!empty($text)) {
+
+                        $text = $DB->sql_like_escape($text);
+                        $text = str_replace(' ', '%', $text);
+
+                        // To search in basic course fields.
+                        $fieldstosearch = $DB->sql_concat_join("' '", ['c.fullname', 'c.shortname', 'c.summary']);
+                        $like = $DB->sql_like($fieldstosearch, ':text', false);
+                        $select .= ' AND ' . $like;
+                        $params['text'] = '%' . $text . '%';
+
+                        // To search in custom fields.
+                        $like = $DB->sql_like('cfd.value', ':cftext', false);
+                        $params['cftext'] = '%' . $text . '%';
+
+                        $joincustomfields .= " LEFT JOIN {customfield_data} cfd ON c.id = cfd.instanceid AND " . $like;
+                    }
+
+                break;
                 case 'langs':
                     $langs = $filter['values'];
                     $defaultlang = $CFG->lang;
@@ -603,9 +639,58 @@ class controller {
 
                     if (count($langs) > 0) {
                         list($selectinlangs, $paramsinlangs) = $DB->get_in_or_equal($langs, SQL_PARAMS_NAMED, 'langs');
-                        $params += $paramsinlangs;
+                        $params = array_merge($params, $paramsinlangs);
                         $select .= ' AND c.lang ' . $selectinlangs;
                     }
+
+                break;
+                default:
+                    // Custom fields filters values.
+
+                    // Cast to int.
+                    $customfieldid = (int) $filter['type'];
+
+                    if (empty($customfieldid)) {
+                        break;
+                    }
+
+                    $customfields = self::get_configuredcustomfields();
+
+                    // By security. Only allow to filter by selected custom fields.
+                    if (!isset($customfields[$customfieldid])) {
+                        break;
+                    }
+
+                    $currentfield = $customfields[$customfieldid];
+
+                    $values = array_map('intval', $filter['values']);
+
+                    // If all values are selected, not include in filter.
+                    if ($currentfield->type == 'checkbox' && in_array(0, $values) && in_array(1, $values)) {
+                        break;
+                    }
+
+                    $orifnull = '';
+
+                    $alias = 'cfdf' . $customfieldid;
+                    $prefix = 'byfield' . $customfieldid;
+                    list($selectin, $paramsin) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, $prefix);
+
+                    // Include "is null" if it is a checkbox and include the 0/not value.
+                    if ($currentfield->type == 'checkbox' && in_array(0, $values)) {
+                        $prefix = 'bynf' . $customfieldid;
+                        list($selectnull, $paramsnull) = $DB->get_in_or_equal([], SQL_PARAMS_NAMED, $prefix, true, null);
+                        $orifnull = " OR $alias.id " . $selectnull;
+                        $params = array_merge($params, $paramsnull);
+                    }
+
+                    $select .= " AND ($alias.intvalue " . $selectin . $orifnull . ')';
+
+                    $params = array_merge($params, $paramsin);
+
+                    $joincustomfields .= " LEFT JOIN {customfield_data} $alias ON " .
+                                        " c.id = $alias.instanceid AND $alias.fieldid = :fieldid$customfieldid";
+                    $params['fieldid' . $customfieldid] = $customfieldid;
 
                 break;
             }
@@ -634,12 +719,13 @@ class controller {
         switch ($view) {
             case 'greats':
 
-                $sql = "SELECT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings
-                            FROM {course} c
-                            INNER JOIN {block_rate_course} r ON r.course = c.id
-                            WHERE " . $select .
-                            " GROUP BY c.id HAVING rating > 3
-                            ORDER BY rating DESC";
+                $sql = "SELECT DISTINCT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings " .
+                            " FROM {course} c " .
+                            " INNER JOIN {block_rate_course} r ON r.course = c.id " .
+                            $joincustomfields .
+                            " WHERE " . $select .
+                            " GROUP BY c.id HAVING rating > 3 " .
+                            " ORDER BY rating DESC";
             break;
             case 'premium':
 
@@ -649,11 +735,12 @@ class controller {
 
                     $params['fieldid'] = $payfield->id;
 
-                    $sql = "SELECT c.* $specialfields
-                            FROM {course} c
-                            INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value != '' AND cd.instanceid = c.id
-                            WHERE " . $select .
-                            " ORDER BY " . $sortby;
+                    $sql = "SELECT DISTINCT c.* $specialfields " .
+                        " FROM {course} c" .
+                        " INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value <> '' AND cd.instanceid = c.id" .
+                        $joincustomfields .
+                        " WHERE " . $select .
+                        " ORDER BY " . $sortby;
                 }
             break;
             case 'recents':
@@ -663,9 +750,10 @@ class controller {
                 // Not break, continue to default.
             default:
 
-                $sql = "SELECT c.* $specialfields
-                        FROM {course} c
-                        WHERE " . $select .
+                $sql = "SELECT DISTINCT c.* $specialfields " .
+                        " FROM {course} c" .
+                        $joincustomfields .
+                        " WHERE " . $select .
                         " ORDER BY " . $sortby;
         }
 
@@ -720,16 +808,14 @@ class controller {
      */
     public static function show_tabicon() : bool {
 
-        if (!empty(self::$showicons)) {
+        if (self::$showicons !== null) {
             return self::$showicons;
         }
 
         // Tabs config view.
         $tabview = get_config('block_vitrina', 'tabview');
 
-        if (!empty($tabview)) {
-            self::$showicons !== 'showtext';
-        }
+        self::$showicons = !empty($tabview) ? $tabview !== 'showtext' : false;
 
         return self::$showicons;
     }
@@ -741,22 +827,23 @@ class controller {
      */
     public static function show_tabtext() : bool {
 
-        if (!empty(self::$showtext)) {
+        if (self::$showtext !== null) {
             return self::$showtext;
         }
 
         // Tabs config view.
         $tabview = get_config('block_vitrina', 'tabview');
 
-        if (!empty($tabview)) {
-            self::$showtext !== 'showicon';
-        }
+        self::$showtext = !empty($tabview) ? $tabview !== 'showicon' : false;
 
         return self::$showtext;
     }
 
     /**
      * Get the available languages list.
+     *
+     * @param array $selectedlist The selected languages.
+     * @return array The languages list.
      */
     public static function get_languages(array $selectedlist = []) : array {
         $langs = get_string_manager()->get_list_of_translations();
@@ -777,6 +864,9 @@ class controller {
 
     /**
      * Get the available categories list.
+     *
+     * @param array $selectedlist The selected categories.
+     * @return array The categories list.
      */
     public static function get_categories(array $selectedlist = []) : array {
         global $DB;
@@ -807,7 +897,7 @@ class controller {
             $selected = in_array($category->id, $selectedlist);
             $response[] = [
                 'value' => $category->id,
-                'label' => $category->name,
+                'label' => format_string($category->name, true),
                 'selected' => $selected
             ];
         }
@@ -815,4 +905,106 @@ class controller {
         return $response;
     }
 
+    /**
+     * Get the available custom fields to filter.
+     *
+     * @param array $selectedvalues The selected values.
+     * @return array The custom fields to filter.
+     */
+    public static function get_customfieldsfilters(array $selectedvalues = []) : array {
+        global $DB;
+
+        $filtercontrols = [];
+
+        $customfields = self::get_configuredcustomfields();
+
+        foreach ($customfields as $key => $customfield) {
+
+            $options = [];
+            $selectedinfield = [];
+
+            if (!empty($selectedvalues[$customfield->id])) {
+                $selectedinfield = $selectedvalues[$customfield->id];
+            }
+
+            switch ($customfield->type) {
+                case 'checkbox':
+                    $options[] = [
+                        'value' => 1,
+                        'label' => get_string('yes'),
+                        'selected' => in_array(1, $selectedinfield)
+                    ];
+                    $options[] = [
+                        'value' => 0,
+                        'label' => get_string('no'),
+                        'selected' => in_array(0, $selectedinfield)
+                    ];
+                break;
+                case 'select':
+                    $data = @json_decode($customfield->configdata);
+
+                    $parsedoptions = explode("\n", $data->options);
+                    foreach ($parsedoptions as $pos => $value) {
+                        $index = $pos + 1;
+                        $selected = in_array($index, $selectedinfield);
+                        $options[] = [
+                            'value' => $index,
+                            'label' => format_string($value, true),
+                            'selected' => $selected
+                        ];
+                    }
+                break;
+            }
+
+            if (count($options) > 0) {
+                $control = new \stdClass();
+                $control->title = format_string($customfield->name, true);
+                $control->key = $customfield->id;
+                $control->options = $options;
+                $filtercontrols[] = $control;
+            }
+
+        }
+
+        return $filtercontrols;
+    }
+
+    /**
+     * Return confugured custom field to filter.
+     *
+     * @return array The custom fields objects selected to filter.
+     */
+    public static function get_configuredcustomfields() : array {
+        global $DB;
+
+        $filtercustomfields = get_config('block_vitrina', 'filtercustomfields');
+
+        if (!empty($filtercustomfields)) {
+            $filtercustomfields = explode(',', $filtercustomfields);
+        }
+
+        if (!$filtercustomfields || count($filtercustomfields) == 0) {
+            return [];
+        }
+
+        // Cast to int.
+        $filtercustomfields = array_map('intval', $filtercustomfields);
+
+        list($selectin, $params) = $DB->get_in_or_equal($filtercustomfields, SQL_PARAMS_NAMED, 'ids');
+        $select = ' id ' . $selectin;
+
+        $customfields = $DB->get_records_select('customfield_field', $select, $params, 'sortorder ASC');
+
+        return $customfields;
+    }
+
+    /**
+     * Get the available static filters.
+     *
+     * @return array The static filters.
+     */
+    public static function get_staticfilters() : array {
+
+        return self::STATICFILTERS;
+    }
 }

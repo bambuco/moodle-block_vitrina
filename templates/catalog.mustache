@@ -27,11 +27,11 @@
         },
         "filtercontrols": [
             {
-                "key": "key value",
-                "title": "title value",
+                "key": "keyvalue1",
+                "title": "Title value",
                 "options": [
                     {
-                        "value": "value",
+                        "value": "value1",
                         "label": "label value",
                         "selected": true
                     }
@@ -53,32 +53,40 @@
 
 <div id="{{uniqueid}}" class="block_vitrina-content">
 
-    <div id="vitrina-filtercol">
-        {{#filterproperties}}
-            {{#fulltext}}
-                <div class="filterfulltext">
-                    <input type="text" name="q" />
-                    <button>{{#pix}}i/search, core{{/pix}}</button>
-                </div>
-            {{/fulltext}}
+    <div class="vitrina-filter-responsivebutton">
+        {{#pix}} i/filter, core {{/pix}}
+    </div>
 
-            {{#filtercontrols}}
-                <div class="filtercontrol" data-key="{{key}}">
-                    <h5>{{title}}</h5>
-                    <ul class="filteroptions">
-                        {{#options}}
-                            <li>
-                                <input id="option-{{key}}_{{value}}"
-                                        type="checkbox"
-                                        value="{{value}}"
-                                        {{#selected}}checked{{/selected}} />
-                                <label for="option-{{key}}_{{value}}">{{label}}</label>
-                            </li>
-                        {{/options}}
-                    </ul>
-                </div>
-            {{/filtercontrols}}
-        {{/filterproperties}}
+    <div id="vitrina-filtercol">
+        <div class="vitrina-filter-closebutton">{{#pix}} i/window_close, core {{/pix}}</div>
+        <div class="filterscolbox">
+            {{#filterproperties}}
+                {{#fulltext}}
+                    <div class="filterfulltext">
+                        <input type="text" name="q" />
+                        <button>{{#pix}}i/search, core{{/pix}}</button>
+                    </div>
+                {{/fulltext}}
+
+                {{#filtercontrols}}
+                    <div class="filtercontrol" data-key="{{key}}">
+                        <h5>{{title}}</h5>
+                        <ul class="filteroptions">
+                            {{#options}}
+                                <li>
+                                    <input id="option-{{key}}_{{value}}"
+                                            type="checkbox"
+                                            value="{{value}}"
+                                            class="filteroption"
+                                            {{#selected}}checked{{/selected}} />
+                                    <label for="option-{{key}}_{{value}}">{{label}}</label>
+                                </li>
+                            {{/options}}
+                        </ul>
+                    </div>
+                {{/filtercontrols}}
+            {{/filterproperties}}
+        </div>
     </div>
 
     <div id="vitrina-resultscol">

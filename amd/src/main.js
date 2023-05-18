@@ -31,10 +31,10 @@ import Ajax from 'core/ajax';
  */
 
 // Current instance (optional).
-var instanceid = 0;
+var instanceid = [];
 
 // Courses by page.
-var bypage = 20;
+var bypage = [];
 
 // Paging variable controls.
 var paging = [];
@@ -79,24 +79,29 @@ function loadStrings() {
 /**
  * Load courses for a tab.
  *
+ * @param {integer} uniqueid
  * @param {object} $tabcontent
  */
-function loadCourses($tabcontent) {
+function loadCourses(uniqueid, $tabcontent) {
 
     var view = $tabcontent.data('view');
 
     $tabcontent.addClass('loading');
     var $coursesbox = $tabcontent.find('.courses-list');
 
-    if (paging[view] === undefined) {
-        paging[view] = {
+    if (paging[uniqueid] === undefined) {
+        paging[uniqueid] = [];
+    }
+
+    if (paging[uniqueid][view] === undefined) {
+        paging[uniqueid][view] = {
             loaded: 0,
             ended: false,
         };
     }
 
     // Not more courses.
-    if (paging[view].ended) {
+    if (paging[uniqueid][view].ended) {
         $tabcontent.removeClass('loading');
         return;
     }
@@ -136,38 +141,39 @@ function loadCourses($tabcontent) {
     loading = true;
     Ajax.call([{
         methodname: 'block_vitrina_get_courses',
-        args: {'view': view, 'filters': filters, 'instanceid': instanceid, 'amount': bypage, 'initial': paging[view].loaded},
+        args: {'view': view, 'filters': filters, 'instanceid': instanceid[uniqueid],
+                'amount': bypage[uniqueid], 'initial': paging[uniqueid][view].loaded},
         done: function(data) {
 
             if (data && data.length > 0) {
-                paging[view].loaded += data.length;
+                paging[uniqueid][view].loaded += data.length;
 
-                if (data.length < bypage) {
-                    paging[view].ended = true;
+                if (data.length < bypage[uniqueid]) {
+                    paging[uniqueid][view].ended = true;
                 }
 
                 data.forEach(one => {
                     $coursesbox.append(one.html);
                 });
             } else {
-                paging[view].ended = true;
+                paging[uniqueid][view].ended = true;
             }
 
             loading = false;
             $tabcontent.removeClass('loading');
 
-            if (paging[view].ended) {
+            if (paging[uniqueid][view].ended) {
                 $tabcontent.addClass('ended');
                 $tabcontent.find('.loadmore').hide();
 
                 var nocoursesbox = $tabcontent.find('.nocourses');
                 var nocoursesmsg = '';
-                if (paging[view].loaded == 0) {
+                if (paging[uniqueid][view].loaded == 0) {
                     nocoursesmsg = s.nocoursesview;
                     nocoursesbox.removeClass('hidden');
                 } else {
                     // Only show the message if not is the first call when reached the end.
-                    if (paging[view].loaded > bypage) {
+                    if (paging[uniqueid][view].loaded > bypage[uniqueid]) {
                         nocoursesmsg = s.nomorecourses;
                         nocoursesbox.removeClass('hidden');
                     }
@@ -191,7 +197,7 @@ function loadCourses($tabcontent) {
  * @param {integer} uniqueid
  */
 function restartSearch(uniqueid) {
-    paging = [];
+    paging[uniqueid] = [];
     $('#' + uniqueid + ' .block_vitrina-tabs [data-ref]').each(function() {
         var $tab = $(this);
         var $tabcontent = $($tab.attr('data-ref'));
@@ -206,8 +212,10 @@ function restartSearch(uniqueid) {
  * Component initialization.
  *
  * @method init
+ *
+ * @param {integer} uniqueid
  */
-export const init = () => {
+export const init = (uniqueid = null) => {
 
     loadStrings();
 
@@ -219,67 +227,69 @@ export const init = () => {
         $(target).toggleClass(cssclass);
     });
 
-    $('.block_vitrina-content').each(function() {
-        var $blockcontent = $(this);
+    if (uniqueid) {
+        $('#' + uniqueid + '.block_vitrina-content').each(function() {
+            var $blockcontent = $(this);
 
-        // Tabs.
-        $blockcontent.find('.block_vitrina-tabs').each(function() {
-            var $tabs = $(this);
-            var tabslist = [];
+            // Tabs.
+            $blockcontent.find('.block_vitrina-tabs').each(function() {
+                var $tabs = $(this);
+                var tabslist = [];
 
-            $tabs.find('[data-ref]').each(function() {
-                var $tab = $(this);
-                var $tabcontent = $($tab.data('ref'));
-                tabslist.push($tab);
+                $tabs.find('[data-ref]').each(function() {
+                    var $tab = $(this);
+                    var $tabcontent = $($tab.data('ref'));
+                    tabslist.push($tab);
 
-                $tab.on('click', function() {
-                    tabslist.forEach(one => {
-                        $(one.data('ref')).removeClass('active');
+                    $tab.on('click', function() {
+                        tabslist.forEach(one => {
+                            $(one.data('ref')).removeClass('active');
+                        });
+
+                        $tabs.find('.active[data-ref]').removeClass('active');
+                        $tab.addClass('active');
+
+                        if ($tabcontent) {
+                            $tabcontent.addClass('active');
+
+                            // Load courses only the first time.
+                            var view = $tabcontent.data('view');
+
+                            if (paging[uniqueid][view] === undefined) {
+                                loadCourses(uniqueid, $tabcontent);
+                            }
+                        }
                     });
 
-                    $tabs.find('.active[data-ref]').removeClass('active');
-                    $tab.addClass('active');
+                    $tabcontent.find('.loadmore').on('click', function() {
+                        var $this = $(this);
 
-                    if ($tabcontent) {
-                        $tabcontent.addClass('active');
-
-                        // Load courses only the first time.
-                        var view = $tabcontent.data('view');
-
-                        if (paging[view] === undefined) {
-                            loadCourses($tabcontent);
+                        // If is a link, do nothing. Only for buttons.
+                        if ($this.attr('href')) {
+                            return;
                         }
-                    }
+
+                        loadCourses(uniqueid, $tabcontent);
+                    });
                 });
 
-                $tabcontent.find('.loadmore').on('click', function() {
-                    var $this = $(this);
+                // Load dynamic buttons.
+                $blockcontent.find('[data-vitrina-tab]').each(function() {
+                    var $button = $(this);
 
-                    // If is a link, do nothing. Only for buttons.
-                    if ($this.attr('href')) {
-                        return;
-                    }
+                    $button.on('click', function() {
+                        var key = '.tab-' + $button.data('vitrina-tab');
 
-                    loadCourses($tabcontent);
-                });
-            });
-
-            // Load dynamic buttons.
-            $blockcontent.find('[data-vitrina-tab]').each(function() {
-                var $button = $(this);
-
-                $button.on('click', function() {
-                    var key = '.tab-' + $button.data('vitrina-tab');
-
-                    tabslist.forEach($tab => {
-                        if ($tab.data('ref').indexOf(key) >= 0) {
-                            $tab.trigger('click');
-                        }
+                        tabslist.forEach($tab => {
+                            if ($tab.data('ref').indexOf(key) >= 0) {
+                                $tab.trigger('click');
+                            }
+                        });
                     });
                 });
             });
         });
-    });
+    }
 };
 
 /**
@@ -315,21 +325,22 @@ export const detail = () => {
  */
 export const catalog = (uniqueid, view, currentinstanceid = 0, currentbypage = 20) => {
 
-    instanceid = currentinstanceid;
-    bypage = parseInt(currentbypage);
+    instanceid[uniqueid] = currentinstanceid;
+    bypage[uniqueid] = parseInt(currentbypage);
     var $tabcontent = $('#' + uniqueid + ' .tabs-content .tab-' + view);
 
-    loadCourses($tabcontent);
+    loadCourses(uniqueid, $tabcontent);
 
-    init();
+    init(uniqueid);
 };
 
 /**
  * Initialize the filter controls.
  *
  * @param {integer} uniqueid
+ * @param {array} selectedfilters
  */
-export const filters = (uniqueid) => {
+export const filters = (uniqueid, selectedfilters = []) => {
 
     $filtersbox = $('#' + uniqueid);
 
@@ -337,11 +348,36 @@ export const filters = (uniqueid) => {
 
         if (!loading) {
             restartSearch(uniqueid);
-            loadCourses($filtersbox.find('.block_vitrina-tabcontent.active'));
+            loadCourses(uniqueid, $filtersbox.find('.block_vitrina-tabcontent.active'));
         }
     };
+
+    selectedfilters.forEach(filter => {
+
+        if (filter.key === 'fulltext') {
+            $filtersbox.find('.filterfulltext input[name="q"]').val(filter.values.join(' '));
+            return;
+        }
+
+        $filtersbox.find('.filtercontrol[data-key="' + filter.key + '"] .filteroptions').each(function() {
+            var $filteroptions = $(this);
+
+            filter.values.forEach(value => {
+                $filteroptions.find('input[value="' + value + '"]').prop('checked', true);
+            });
+        });
+    });
 
     $filtersbox.find('.filtercontrol .filteroptions input').on('change', applyFilters);
 
     $filtersbox.find('.filterfulltext button').on('click', applyFilters);
+
+    $filtersbox.find('.vitrina-filter-responsivebutton').on('click', function() {
+        $filtersbox.addClass('opened-popup');
+    });
+
+    $filtersbox.find('.vitrina-filter-closebutton').on('click', function() {
+        $filtersbox.removeClass('opened-popup');
+    });
+
 };

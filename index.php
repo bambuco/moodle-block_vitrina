@@ -27,6 +27,7 @@ require_once('classes/output/catalog.php');
 
 $instanceid = optional_param('id', 0, PARAM_INT);
 $view = optional_param('view', 'default', PARAM_TEXT);
+$filters = optional_param('filters', '', PARAM_TEXT);
 
 require_login(null, true);
 
@@ -46,8 +47,58 @@ if (empty($bypage)) {
     $bypage = 20;
 }
 
+$filtersselected = [];
+
+if (!empty($filters)) {
+    $filters = explode(';', $filters);
+
+    $configuredcustomfields = \block_vitrina\controller::get_configuredcustomfields();
+    $staticfilters = \block_vitrina\controller::get_staticfilters();
+
+    foreach ($filters as $filter) {
+        $filter = explode(':', $filter);
+
+        if (count($filter) == 2) {
+
+            $key = trim($filter[0]);
+
+            // If the filter is categories and the block is configured to show specific categories, we ignore the filter.
+            if ($key == 'categories' && !empty($instanceid)) {
+                continue;
+            }
+
+            if (!in_array($key, $staticfilters) && !is_numeric($key)) {
+
+                foreach ($configuredcustomfields as $customfield) {
+                    if ($customfield->shortname == $key) {
+                        $key = $customfield->id;
+                        break;
+                    }
+                }
+            }
+
+            if ($key) {
+                $filtersselected[] = (object) ['key' => $key, 'values' => explode(',', $filter[1])];
+            }
+        }
+    }
+}
+
+$categoriesids = [];
+if (!empty($instanceid)) {
+    $block = block_instance_by_id($instanceid);
+
+    if ($block->config && count($block->config->categories) > 0) {
+        $categoriesids = $block->config->categories;
+    }
+}
+
+if (count($categoriesids) > 0) {
+    $filtersselected[] = (object) ['key' => 'categories', 'values' => $categoriesids];
+}
+
+$PAGE->requires->js_call_amd('block_vitrina/main', 'filters', [$uniqueid, $filtersselected]);
 $PAGE->requires->js_call_amd('block_vitrina/main', 'catalog', [$uniqueid, $view, $instanceid, $bypage]);
-$PAGE->requires->js_call_amd('block_vitrina/main', 'filters', [$uniqueid]);
 
 echo $OUTPUT->header();
 

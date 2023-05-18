@@ -83,18 +83,28 @@ class catalog implements renderable, templatable {
         // Filter controls.
         $filtercontrols = [];
 
-        // Filter by language.
-        $control = new \stdClass();
-        $control->title = get_string('language');
-        $control->key = 'langs';
-        $control->options = \block_vitrina\controller::get_languages();
-        $filtercontrols[] = $control;
-
+        // Filter by category.
         $control = new \stdClass();
         $control->title = get_string('category');
         $control->key = 'categories';
         $control->options = \block_vitrina\controller::get_categories();
         $filtercontrols[] = $control;
+
+        // Filter by language.
+        $options = \block_vitrina\controller::get_languages();
+
+        if (count($options) > 1) {
+            $control = new \stdClass();
+            $control->title = get_string('language');
+            $control->key = 'langs';
+            $control->options = $options;
+            $filtercontrols[] = $control;
+        }
+
+        // Filter by custom fields.
+
+        // Add to filtercontrols the array returned by the method get_customfieldsfilters.
+        $filtercontrols = array_merge($filtercontrols, \block_vitrina\controller::get_customfieldsfilters());
 
         $filterproperties = new \stdClass();
         $filterproperties->fulltext = true;

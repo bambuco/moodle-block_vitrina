@@ -56,9 +56,7 @@
                         </div>
                     </div>
                 {{/units}}
-            {{/custom}}
 
-            {{#custom}}
                 {{#requirements}}
                     <div class="requirements-box">
                         <h3>{{title}}</h3>
@@ -67,15 +65,20 @@
                         </div>
                     </div>
                 {{/requirements}}
-            {{/custom}}
 
-            {{#custom}}
                 {{#thematic}}
                     <div class="thematic-box">
                         <h3>{{title}}</h3>
                         <span>{{{value}}}</span>
                     </div>
                 {{/thematic}}
+
+                {{#longcustomfields}}
+                    <div class="{{key}}-box">
+                        <h3>{{title}}</h3>
+                        <span>{{{value}}}</span>
+                    </div>
+                {{/longcustomfields}}
             {{/custom}}
 
         </div>
@@ -155,19 +158,19 @@
                     <ul class="list-info">
                     {{#custom}}
                         {{#duration}}
-                            <li>
+                            <li class="duration-item">
                                 <strong>{{title}}:</strong>
                                 <span>{{value}}</span>
                             </li>
                         {{/duration}}
                         {{#expertsshort}}
-                            <li>
+                            <li class="expertsshort-item">
                                 <strong>{{title}}:</strong>
                                 <span>{{value}}</span>
                             </li>
                         {{/expertsshort}}
                         {{#license}}
-                            <li>
+                            <li class="license-item">
                                 <strong>{{title}}:</strong>
                                 <span class="content-box license">
                                     {{#path}}
@@ -181,6 +184,12 @@
                                 </span>
                             </li>
                         {{/license}}
+                        {{#customfields}}
+                            <li class="customfield-item {{key}}-item">
+                                <strong>{{title}}:</strong>
+                                <span>{{{value}}}</span>
+                            </li>
+                        {{/customfields}}
                     {{/custom}}
                     </ul>
                 </div>
@@ -219,7 +228,7 @@
     {{#hasrelated}}
         <div class="relatedcourses">
             <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
-            <div class="courses">
+            <div class="block_vitrina-courseslist">
                 {{#related}}
                     {{>block_vitrina/two_cols/course}}
                 {{/related}}
