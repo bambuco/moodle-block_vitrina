@@ -102,6 +102,11 @@ class block_vitrina extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
+        // Security validation. If not is logged in and guest login button is disabled, do not show courses.
+        if (!isloggedin() && empty($CFG->guestloginbutton) && empty($CFG->autologinguests)) {
+            return $this->content;
+        }
+
         $amount = get_config('block_vitrina', 'singleamount');
 
         if (!$amount || !is_numeric($amount)) {
@@ -124,7 +129,9 @@ class block_vitrina extends block_base {
                     $views[$tabname] = [];
                 }
             }
-        } else {
+        }
+
+        if (empty($tabs)) {
             $tabs[] = 'default';
         }
 
