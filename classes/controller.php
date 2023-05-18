@@ -886,7 +886,7 @@ class controller {
         if (count($categoriesids) > 0) {
             list($selectincats, $paramsincats) = $DB->get_in_or_equal($categoriesids, SQL_PARAMS_NAMED, 'categories');
             $params += $paramsincats;
-            $select .= ' AND category ' . $selectincats;
+            $select .= ' AND id ' . $selectincats;
         }
 
         $categories = $DB->get_records_select('course_categories', $select, $params, 'sortorder ASC');
@@ -956,7 +956,7 @@ class controller {
                 break;
             }
 
-            if (count($options) > 0) {
+            if (count($options) > 1) {
                 $control = new \stdClass();
                 $control->title = format_string($customfield->name, true);
                 $control->key = $customfield->id;
