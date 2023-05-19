@@ -36,14 +36,20 @@
     border-bottom: 1px solid #e7e7e7;
     padding: 0;
     font-size: 18px;
-    height: 50px;
+    height: 70px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     line-height: 120%;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.block_vitrina-courseslist .coursebox .panel-heading .vitrina-ranking-stars {
+    text-align: left;
+    font-size: 0;
 }
 
 .block_vitrina-courseslist .coursebox .panel-heading a {
@@ -249,6 +255,10 @@
     border: 1px solid #e7e7e7;
     text-align: center;
 }
+
+/* .vitrina-ranking-stars-bar::after {
+    margin-left: -66px;
+} */
 
 @media (max-width: 512px) {
     #page-blocks-vitrina-detail .share-container .share-content {
