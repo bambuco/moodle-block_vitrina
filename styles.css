@@ -636,6 +636,7 @@
     display: flex;
     align-items: stretch;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .block_vitrina-tabcontent.loading .courses-list {
