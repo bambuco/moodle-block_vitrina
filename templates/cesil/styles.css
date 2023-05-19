@@ -256,10 +256,6 @@
     text-align: center;
 }
 
-/* .vitrina-ranking-stars-bar::after {
-    margin-left: -66px;
-} */
-
 @media (max-width: 512px) {
     #page-blocks-vitrina-detail .share-container .share-content {
         display: block;
