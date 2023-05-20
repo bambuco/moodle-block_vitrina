@@ -195,10 +195,6 @@
     content: "";
 }
 
-.path-blocks-vitrina {
-    padding: 40px 10px;
-}
-
 #page-blocks-vitrina-detail .context-detail {
     display: flex;
     flex-wrap: wrap;
@@ -594,6 +590,7 @@
 
 .relatedcourses > div {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     margin-top: 30px;
 }

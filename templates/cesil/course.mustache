@@ -28,15 +28,15 @@
         <a class="" title="{{{shortname}}}" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}">
             {{{fullname}}}
         </a>
+    </div>
+    <div class="panel-body clearfix">
+        <div class="courseimage" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}></div>
         {{#rating}}
         <div class="vitrina-ranking-stars">
             <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
             {{#pix}}stars_empty, block_vitrina{{/pix}}
         </div>
         {{/rating}}
-    </div>
-    <div class="panel-body clearfix">
-        <div class="courseimage" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}></div>
         <div class="course-summary">
          {{{summary}}}
         </div>

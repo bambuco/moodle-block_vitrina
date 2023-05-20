@@ -32,7 +32,10 @@ if ($ADMIN->fulltree) {
     $fields = [];
     $fieldstofilter = [];
 
-    $customfields = $DB->get_records('customfield_field', [], 'name', 'id, name, type');
+    $sql = "SELECT cf.id, cf.name, cf.type FROM {customfield_field} cf " .
+            " INNER JOIN {customfield_category} cc ON cc.id = cf.categoryid AND cc.component = 'core_course'" .
+            " ORDER BY cf.name";
+    $customfields = $DB->get_records_sql($sql);
 
     foreach ($customfields as $k => $v) {
         $fields[$k] = format_string($v->name, true);
@@ -58,19 +61,22 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_heading($name, $heading, '');
     $settings->add($setting);
 
-    // Short fields.
-    $name = 'block_vitrina/showcustomfields';
-    $title = get_string('showcustomfields', 'block_vitrina');
-    $help = get_string('showcustomfields_help', 'block_vitrina');
-    $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fields);
-    $settings->add($setting);
+    // Only available if exist course custom fields.
+    if (count($fields) > 0) {
+        // Short fields.
+        $name = 'block_vitrina/showcustomfields';
+        $title = get_string('showcustomfields', 'block_vitrina');
+        $help = get_string('showcustomfields_help', 'block_vitrina');
+        $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fields);
+        $settings->add($setting);
 
-    // Long fields.
-    $name = 'block_vitrina/showlongcustomfields';
-    $title = get_string('showlongcustomfields', 'block_vitrina');
-    $help = get_string('showlongcustomfields_help', 'block_vitrina');
-    $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fields);
-    $settings->add($setting);
+        // Long fields.
+        $name = 'block_vitrina/showlongcustomfields';
+        $title = get_string('showlongcustomfields', 'block_vitrina');
+        $help = get_string('showlongcustomfields_help', 'block_vitrina');
+        $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fields);
+        $settings->add($setting);
+    }
 
     // Thematic field.
     $name = 'block_vitrina/thematic';
@@ -178,12 +184,15 @@ if ($ADMIN->fulltree) {
 
     $settings->add($setting);
 
-    // Custom fields to filter.
-    $name = 'block_vitrina/filtercustomfields';
-    $title = get_string('filtercustomfields', 'block_vitrina');
-    $help = get_string('filtercustomfields_help', 'block_vitrina');
-    $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fieldstofilter);
-    $settings->add($setting);
+    // Only availabe if exist fields to filter.
+    if (count($fieldstofilter) > 0) {
+        // Custom fields to filter.
+        $name = 'block_vitrina/filtercustomfields';
+        $title = get_string('filtercustomfields', 'block_vitrina');
+        $help = get_string('filtercustomfields_help', 'block_vitrina');
+        $setting = new admin_setting_configmultiselect($name, $title, $help, [], $fieldstofilter);
+        $settings->add($setting);
+    }
 
     // Appearance.
     $name = 'block_vitrina/settingsheaderappearance';
@@ -281,7 +290,7 @@ if ($ADMIN->fulltree) {
     $settings->add($setting);
 
     // Template type.
-    $options = ['default' => ''];
+    $options = ['default' => get_string('default')];
 
     $path = $CFG->dirroot . '/blocks/vitrina/templates/';
     $files = array_diff(scandir($path), ['..', '.']);

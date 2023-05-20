@@ -991,9 +991,13 @@ class controller {
         $filtercustomfields = array_map('intval', $filtercustomfields);
 
         list($selectin, $params) = $DB->get_in_or_equal($filtercustomfields, SQL_PARAMS_NAMED, 'ids');
-        $select = ' id ' . $selectin;
+        $select = ' cf.id ' . $selectin;
 
-        $customfields = $DB->get_records_select('customfield_field', $select, $params, 'sortorder ASC');
+        $sql = "SELECT cf.* FROM {customfield_field} cf " .
+        " INNER JOIN {customfield_category} cc ON cc.id = cf.categoryid AND cc.component = 'core_course'" .
+        " WHERE " . $select .
+        " ORDER BY cf.sortorder ASC";
+        $customfields = $DB->get_records_sql($sql, $params);
 
         return $customfields;
     }

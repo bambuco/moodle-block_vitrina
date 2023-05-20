@@ -36,11 +36,11 @@
     border-bottom: 1px solid #e7e7e7;
     padding: 0;
     font-size: 18px;
-    height: 50px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-    line-height: 120%;
+    line-height: 100%;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -58,7 +58,7 @@
 }
 
 .block_vitrina-courseslist .coursebox .panel-body .courseimage {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .block_vitrina-courseslist .coursebox .panel-foot {
@@ -248,6 +248,10 @@
     background-color: #f1f1f1;
     border: 1px solid #e7e7e7;
     text-align: center;
+}
+
+.vitrina-ranking-stars {
+    margin-bottom: 5px;
 }
 
 @media (max-width: 512px) {

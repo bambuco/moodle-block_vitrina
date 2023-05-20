@@ -695,11 +695,6 @@
         clear: both;
     }
 
-    #page-blocks-vitrina-detail .course-detail {
-        padding-left: 0;
-        padding-right: 0;
-    }
-
     #page-blocks-vitrina-detail .course-detail .detail-foot {
         padding: 0;
     }
@@ -733,5 +728,18 @@
         width: 80px;
         height: 80px;
         margin-right: 20px;
+    }
+
+    #page-blocks-vitrina-detail .relatedcourses > div {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #page-blocks-vitrina-detail .relatedcourses > div .coursebox {
+        width: calc(100% - 20px);
+    }
+
+    #page-blocks-vitrina-detail .course-detail .detail-foot > div.has_rating.has_comments > div {
+        width: 100%;
     }
 }
