@@ -82,7 +82,7 @@
                 {{#hascustomfields}}
                     <div class="customfields-box">
                         {{#customfields}}
-                            <div class="customfield-box {{key}}-box">
+                            <div class="customfield-box {{shortname}}-box">
                                 <h3>{{title}}</h3>
                                 <span>{{{value}}}</span>
                             </div>
@@ -128,7 +128,7 @@
         {{#haslongcustomfields}}
             {{#longcustomfields}}
                 <div class="info-container">
-                    <div class="content-layout longcustomfields-box {{key}}-box">
+                    <div class="content-layout longcustomfields-box {{shortname}}-box">
                         <h3>{{title}}</h3>
                         <div class="content-box experts">
                             {{{value}}}

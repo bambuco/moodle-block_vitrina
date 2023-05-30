@@ -169,6 +169,7 @@ class detail implements renderable, templatable {
                     $c->title = format_text($data->get_field()->get('name'), FORMAT_HTML);
                     $c->value = $value;
                     $c->key = $key;
+                    $c->shortname = $data->get_field()->get('shortname');
 
                     if (in_array($key, $showcustomfields)) {
                         $custom->customfields[] = $c;

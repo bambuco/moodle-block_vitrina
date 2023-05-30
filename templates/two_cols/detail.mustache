@@ -49,7 +49,7 @@
 
             {{#custom}}
                 {{#longcustomfields}}
-                    <div class="{{key}}-box">
+                    <div class="longcustomfields-box {{shortname}}-box">
                         <h3>{{title}}</h3>
                         <span>{{{value}}}</span>
                     </div>
@@ -148,7 +148,7 @@
                             </li>
                         {{/license}}
                         {{#customfields}}
-                            <li class="customfield-item {{key}}-item">
+                            <li class="customfield-item {{shortname}}-item">
                                 <strong>{{title}}:</strong>
                                 <span>{{{value}}}</span>
                             </li>

@@ -60,7 +60,7 @@ $string['enrollrequired'] = '¡Matricúlate para tomar el curso!';
 $string['filtercustomfields'] = 'Filtrar por campos personalizados';
 $string['filtercustomfields_help'] = 'Seleccione los campos personalizados que desea usar para filtrar los cursos.
 Sólo se aceptan campos de lista desplegable y casillas de verificación.';
-$string['fulltextsearch'] = 'Bñusqueda de texto';
+$string['fulltextsearch'] = 'Búsqueda de texto';
 $string['gotocourse'] = 'Ir al curso';
 $string['greats'] = 'Destacados';
 $string['hascourseview'] = '¡Tienes acceso a este curso con tu usuario actual!';
