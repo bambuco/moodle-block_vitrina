@@ -37,7 +37,7 @@ function xmldb_block_vitrina_upgrade($oldversion) {
         foreach ($customfields as $k => $field) {
             $select = "plugin = 'block_vitrina' AND value = :value AND " .
                         " name IN ('thematic', 'units', 'requirements', 'license', 'media', 'duration', 'experts', " .
-                                    " 'expertsshort', 'settingsheaderpayment', 'paymenturl')";
+                                    " 'expertsshort', 'paymenturl')";
 
             $params = ['value' => $field->shortname];
 
@@ -57,6 +57,18 @@ function xmldb_block_vitrina_upgrade($oldversion) {
 
         // Savepoint reached.
         upgrade_block_savepoint(true, 2023042602, 'vitrina');
+    }
+
+    if ($oldversion < 2023042604) {
+        $DB->delete_records('config_plugins', ['plugin' => 'block_vitrina', 'name' => 'thematic']);
+        $DB->delete_records('config_plugins', ['plugin' => 'block_vitrina', 'name' => 'units']);
+        $DB->delete_records('config_plugins', ['plugin' => 'block_vitrina', 'name' => 'requirements']);
+        $DB->delete_records('config_plugins', ['plugin' => 'block_vitrina', 'name' => 'duration']);
+        $DB->delete_records('config_plugins', ['plugin' => 'block_vitrina', 'name' => 'experts']);
+        $DB->delete_records('config_plugins', ['plugin' => 'block_vitrina', 'name' => 'expertsshort']);
+
+        // Savepoint reached.
+        upgrade_block_savepoint(true, 2023042604, 'vitrina');
     }
 
     return true;

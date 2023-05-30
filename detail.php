@@ -43,7 +43,7 @@ $syscontext = context_system::instance();
 $PAGE->set_context($syscontext);
 $PAGE->set_url('/blocks/vitrina/detail.php', ['id' => $course->id]);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_heading($course->fullname);
+$PAGE->set_heading(get_string('coursedetail', 'block_vitrina'));
 $PAGE->set_title(get_string('coursedetail', 'block_vitrina'));
 
 if ($enroll) {

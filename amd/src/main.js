@@ -110,13 +110,17 @@ function loadCourses(uniqueid, $tabcontent) {
     var filters = [];
 
     if ($filtersbox) {
-        var $fulltext = $filtersbox.find('.filterfulltext input[name=q]').val().trim();
+        var $fulltextcontrol = $filtersbox.find('.filterfulltext input[name=q]');
 
-        if ($fulltext) {
-            filters.push({
-                'values': [$fulltext],
-                'type': 'fulltext',
-            });
+        if ($fulltextcontrol.length > 0) {
+            var $fulltext = $fulltextcontrol.val().trim();
+
+            if ($fulltext) {
+                filters.push({
+                    'values': [$fulltext],
+                    'type': 'fulltext',
+                });
+            }
         }
 
         $filtersbox.find('.filtercontrol').each(function() {

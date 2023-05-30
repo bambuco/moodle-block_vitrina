@@ -78,27 +78,6 @@ if ($ADMIN->fulltree) {
         $settings->add($setting);
     }
 
-    // Thematic field.
-    $name = 'block_vitrina/thematic';
-    $title = get_string('thematicfield', 'block_vitrina');
-    $help = get_string('thematicfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
-    $settings->add($setting);
-
-    // Content units field.
-    $name = 'block_vitrina/units';
-    $title = get_string('unitsfield', 'block_vitrina');
-    $help = get_string('unitsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
-    $settings->add($setting);
-
-    // Requirements field.
-    $name = 'block_vitrina/requirements';
-    $title = get_string('requirementsfield', 'block_vitrina');
-    $help = get_string('requirementsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
-    $settings->add($setting);
-
     // License field.
     $name = 'block_vitrina/license';
     $title = get_string('licensefield', 'block_vitrina');
@@ -110,27 +89,6 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/media';
     $title = get_string('mediafield', 'block_vitrina');
     $help = get_string('mediafield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
-    $settings->add($setting);
-
-    // Duration field.
-    $name = 'block_vitrina/duration';
-    $title = get_string('durationfield', 'block_vitrina');
-    $help = get_string('durationfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
-    $settings->add($setting);
-
-    // Experts field.
-    $name = 'block_vitrina/experts';
-    $title = get_string('expertsfield', 'block_vitrina');
-    $help = get_string('expertsfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
-    $settings->add($setting);
-
-    // Short experts field.
-    $name = 'block_vitrina/expertsshort';
-    $title = get_string('expertsshortfield', 'block_vitrina');
-    $help = get_string('expertsshortfield_help', 'block_vitrina');
     $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
     $settings->add($setting);
 
@@ -182,6 +140,18 @@ if ($ADMIN->fulltree) {
         $displaylist
     );
 
+    $settings->add($setting);
+
+    // General filters.
+    $staticfilters = [
+                        'fulltext' => get_string('fulltextsearch', 'block_vitrina'),
+                        'categories' => get_string('category'),
+                        'langs' => get_string('language')
+                    ];
+    $name = 'block_vitrina/staticfilters';
+    $title = get_string('staticfilters', 'block_vitrina');
+    $help = get_string('staticfilters_help', 'block_vitrina');
+    $setting = new admin_setting_configmultiselect($name, $title, $help, [], $staticfilters);
     $settings->add($setting);
 
     // Only availabe if exist fields to filter.

@@ -86,7 +86,7 @@ class detail implements renderable, templatable {
         // Load custom course fields.
         $handler = \core_customfield\handler::get_handler('core_course', 'course');
         $datas = $handler->get_instance_data($this->course->id);
-        $fields = ['thematic', 'units', 'requirements', 'license', 'media', 'duration', 'expertsshort', 'experts'];
+        $fields = ['license', 'media'];
         $custom = new \stdClass();
 
         // Select specific fields to display.

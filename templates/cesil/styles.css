@@ -127,11 +127,6 @@
     max-width: 1140px;
 }
 
-#page-blocks-vitrina-detail .duration-box,
-#page-blocks-vitrina-detail .expert-box {
-    padding-left: 0;
-}
-
 #page-blocks-vitrina-detail .media-container .media-content {
     position: relative;
     width: 100%;
@@ -216,11 +211,6 @@
 
 #page-blocks-vitrina-detail .content-layout {
     flex-direction: column-reverse;
-}
-
-#page-blocks-vitrina-detail .thematic-box {
-    padding-left: 0;
-    padding-right: 0;
 }
 
 .block_vitrina-courseslist .coursebox.state-waiting {

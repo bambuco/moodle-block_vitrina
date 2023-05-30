@@ -54,18 +54,13 @@ $string['daystoupcoming_help'] = 'Número de días para considerar cursos próxi
 $string['defaultsort'] = 'Todos';
 $string['detailinfo'] = 'Info detalle';
 $string['detailinfo_help'] = 'Información general para la vista de detalles de cursos.';
-$string['durationfield'] = 'Campo Duración';
-$string['durationfield_help'] = 'El nombre del campo para cargar la duración del curso.';
 $string['enroll'] = 'Matricular';
 $string['enrolled'] = '¡Ya se encuentra matriculado en el curso!';
 $string['enrollrequired'] = '¡Matricúlate para tomar el curso!';
-$string['expertsfield'] = 'Campo de Expertos';
-$string['expertsfield_help'] = 'El nombre del campo para especificar los expertos del curso.';
-$string['expertsshortfield'] = 'Campo nombre de expertos';
-$string['expertsshortfield_help'] = 'El nombre de un campo que indica la versión resumida de los expertos, normalmente sólo los nombres.';
-$string['filtercustomfields'] = "Filtrar por campos personalizados";
-$string['filtercustomfields_help'] = "Seleccione los campos personalizados que desea usar para filtrar los cursos.
-Sólo se aceptan campos de lista desplegable y casillas de verificación.";
+$string['filtercustomfields'] = 'Filtrar por campos personalizados';
+$string['filtercustomfields_help'] = 'Seleccione los campos personalizados que desea usar para filtrar los cursos.
+Sólo se aceptan campos de lista desplegable y casillas de verificación.';
+$string['fulltextsearch'] = 'Bñusqueda de texto';
 $string['gotocourse'] = 'Ir al curso';
 $string['greats'] = 'Destacados';
 $string['hascourseview'] = '¡Tienes acceso a este curso con tu usuario actual!';
@@ -101,8 +96,6 @@ $string['premium'] = 'Premium';
 $string['ratingslabel'] = '{$a} calificaciones';
 $string['relatedcourses'] = "Cursos relacionados";
 $string['requireauth'] = 'Debe <a href="{$a}">acceder</a> primero para poder matricular este curso';
-$string['requirementsfield'] = 'Campo Requisitos';
-$string['requirementsfield_help'] = 'El nombre del campo para cargar los requisitos del curso';
 $string['returntocatalog'] = 'Ir al catálogo de cursos';
 $string['recents'] = 'Nuevos';
 $string['settingsheaderappearance'] = 'Apariencia';
@@ -140,13 +133,11 @@ $string['showcustomfields_help'] = 'Campos que se mostrarán en la vista de deta
 $string['showlongcustomfields'] = 'Campos largos a mostrar';
 $string['showlongcustomfields_help'] = 'Campos que se mostrarán en la sección descriptiva de cada curso en la vista de detalle.';
 $string['showtext'] = 'Solo texto';
+$string['staticfilters'] = 'Fíltros estáticos';
+$string['staticfilters_help'] = 'Seleccione los filtros fijos que se mostrarán en la vista de catálogo';
 $string['textandicon'] = 'Iconos y texto';
 $string['templatetype'] = 'Tipo de plantilla';
 $string['templatetype_help'] = 'Elija una plantilla para ajustar la apariencia de las páginas del bloque';
-$string['thematicfield'] = 'Campo Temáticas';
-$string['thematicfield_help'] = 'El nombre del campo para cargar las temáticas del curso.';
-$string['unitsfield'] = 'Campo Contenidos';
-$string['unitsfield_help'] = 'El nombre del campo para cargar las unidades de contenidos del curso.';
 $string['viewall'] = 'Ver todos';
 $string['viewsicons'] = 'Iconos para vistas';
 $string['viewsicons_help'] = 'Elige los íconos que se mostrarán según la vista, normalmente para el menú de pestañas. Uno por línea, con la siguiente estructura: nombrevista=typo/icono. Por ejemplo: greats=i/star. Si no se especifica alguno, se usará el por defecto. Las vistas disponibles son: default, recents, greats, premium.';

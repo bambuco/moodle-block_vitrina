@@ -48,31 +48,6 @@
             {{/hasinstructors}}
 
             {{#custom}}
-                {{#units}}
-                    <div class="units-box">
-                        <h3>{{title}}</h3>
-                        <div class="units">
-                            {{{value}}}
-                        </div>
-                    </div>
-                {{/units}}
-
-                {{#requirements}}
-                    <div class="requirements-box">
-                        <h3>{{title}}</h3>
-                        <div class="requirements">
-                            {{{value}}}
-                        </div>
-                    </div>
-                {{/requirements}}
-
-                {{#thematic}}
-                    <div class="thematic-box">
-                        <h3>{{title}}</h3>
-                        <span>{{{value}}}</span>
-                    </div>
-                {{/thematic}}
-
                 {{#longcustomfields}}
                     <div class="{{key}}-box">
                         <h3>{{title}}</h3>
@@ -157,18 +132,6 @@
                 <div>
                     <ul class="list-info">
                     {{#custom}}
-                        {{#duration}}
-                            <li class="duration-item">
-                                <strong>{{title}}:</strong>
-                                <span>{{value}}</span>
-                            </li>
-                        {{/duration}}
-                        {{#expertsshort}}
-                            <li class="expertsshort-item">
-                                <strong>{{title}}:</strong>
-                                <span>{{value}}</span>
-                            </li>
-                        {{/expertsshort}}
                         {{#license}}
                             <li class="license-item">
                                 <strong>{{title}}:</strong>

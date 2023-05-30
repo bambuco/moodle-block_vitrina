@@ -200,11 +200,6 @@
     flex-wrap: wrap;
 }
 
-#page-blocks-vitrina-detail .context-detail .experts-duration {
-    min-width: 335px;
-    padding-top: 20px;
-}
-
 #page-blocks-vitrina-detail .context-detail .customfield-box {
     padding: 0 10px;
     text-align: center;
@@ -213,18 +208,6 @@
 
 #page-blocks-vitrina-detail .context-detail :last-child {
     border-right: none;
-}
-
-#page-blocks-vitrina-detail .duration-box,
-#page-blocks-vitrina-detail .expert-box {
-    position: relative;
-    padding-left: 65px;
-}
-
-#page-blocks-vitrina-detail .thematic-box {
-    position: relative;
-    padding-left: 85px;
-    padding-top: 20px;
 }
 
 #page-blocks-vitrina-detail .media-container {

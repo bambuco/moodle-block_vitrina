@@ -83,26 +83,33 @@ class catalog implements renderable, templatable {
         // Filter controls.
         $filtercontrols = [];
 
-        // Filter by category.
-        $categoriesoptions = \block_vitrina\controller::get_categories();
+        $staticfilters = get_config('block_vitrina', 'staticfilters');
+        $staticfilters = explode(',', $staticfilters);
 
-        if (count($categoriesoptions) > 1) {
-            $control = new \stdClass();
-            $control->title = get_string('category');
-            $control->key = 'categories';
-            $control->options = $categoriesoptions;
-            $filtercontrols[] = $control;
+        // Filter by category.
+        if (in_array('categories', $staticfilters)) {
+            $categoriesoptions = \block_vitrina\controller::get_categories();
+
+            if (count($categoriesoptions) > 1) {
+                $control = new \stdClass();
+                $control->title = get_string('category');
+                $control->key = 'categories';
+                $control->options = $categoriesoptions;
+                $filtercontrols[] = $control;
+            }
         }
 
         // Filter by language.
-        $options = \block_vitrina\controller::get_languages();
+        if (in_array('langs', $staticfilters)) {
+            $options = \block_vitrina\controller::get_languages();
 
-        if (count($options) > 1) {
-            $control = new \stdClass();
-            $control->title = get_string('language');
-            $control->key = 'langs';
-            $control->options = $options;
-            $filtercontrols[] = $control;
+            if (count($options) > 1) {
+                $control = new \stdClass();
+                $control->title = get_string('language');
+                $control->key = 'langs';
+                $control->options = $options;
+                $filtercontrols[] = $control;
+            }
         }
 
         // Filter by custom fields.
@@ -111,7 +118,10 @@ class catalog implements renderable, templatable {
         $filtercontrols = array_merge($filtercontrols, \block_vitrina\controller::get_customfieldsfilters());
 
         $filterproperties = new \stdClass();
-        $filterproperties->fulltext = true;
+
+        if (in_array('fulltext', $staticfilters)) {
+            $filterproperties->fulltext = true;
+        }
         // End of filter controls.
 
         $defaultvariables = [

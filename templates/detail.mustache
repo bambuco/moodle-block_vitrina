@@ -58,31 +58,6 @@
         </div>
 
         <div class="context-detail content-layout">
-            <div class="experts-duration">
-                {{#custom}}
-                    {{#expertsshort}}
-                        <div class="expert-box">
-                            <h3>{{title}}</h3>
-                            <span>{{{value}}}</span>
-                        </div>
-                    {{/expertsshort}}
-                    {{#duration}}
-                        <div class="duration-box">
-                            <h3>{{title}}</h3>
-                            <span>{{value}}</span>
-                        </div>
-                    {{/duration}}
-                {{/custom}}
-            </div>
-            {{#custom}}
-                {{#thematic}}
-                    <div class="thematic-box">
-                            <h3>{{title}}</h3>
-                            <span>{{{value}}}</span>
-                    </div>
-                {{/thematic}}
-            {{/custom}}
-
             {{#custom}}
                 {{#hascustomfields}}
                     {{#customfields}}
@@ -181,39 +156,6 @@
     </div>
 
     <div class="info-container">
-        {{#custom}}
-            {{#units}}
-                <div class="content-layout units-box">
-                    <h3>{{title}}</h3>
-                    <div class="content-box units">
-                        {{{value}}}
-                    </div>
-                </div>
-            {{/units}}
-        {{/custom}}
-
-        {{#custom}}
-            {{#requirements}}
-                <div class="content-layout requirements-box">
-                    <h3>{{title}}</h3>
-                    <div class="content-box requirements">
-                        {{{value}}}
-                    </div>
-                </div>
-            {{/requirements}}
-        {{/custom}}
-
-        {{#custom}}
-            {{#experts}}
-                <div class="content-layout experts-box">
-                    <h3>{{title}}</h3>
-                    <div class="content-box experts">
-                        {{{value}}}
-                    </div>
-                </div>
-            {{/experts}}
-        {{/custom}}
-
         {{#custom}}
             {{#haslongcustomfields}}
                 {{#longcustomfields}}
