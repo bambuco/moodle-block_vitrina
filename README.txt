@@ -22,6 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042606:
+- Support for payment success URL.
+
 2023042605:
 - Media poster included.
 

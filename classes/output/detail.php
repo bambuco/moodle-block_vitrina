@@ -259,6 +259,10 @@ class detail implements renderable, templatable {
             } else if ($this->course->haspaymentgw) {
                 $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
                 $custom->requireauth = isguestuser() || !isloggedin();
+                $custom->successurl = new \moodle_url('/blocks/vitrina/detail.php', [
+                    'id' => $this->course->id,
+                    'msg' => 'enrolled'
+                ]);
 
                 if ($custom->requireauth) {
                     $url = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'tologin' => true]);
