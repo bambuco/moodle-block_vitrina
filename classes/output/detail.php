@@ -86,7 +86,7 @@ class detail implements renderable, templatable {
         // Load custom course fields.
         $handler = \core_customfield\handler::get_handler('core_course', 'course');
         $datas = $handler->get_instance_data($this->course->id);
-        $fields = ['license', 'media'];
+        $fields = ['license', 'media', 'mediaposter'];
         $custom = new \stdClass();
 
         // Select specific fields to display.
@@ -176,7 +176,7 @@ class detail implements renderable, templatable {
                     } else if (in_array($key, $showlongfields)) {
                         $custom->longcustomfields[] = $c;
                     } else {
-                        $custom->$key = $c;
+                        $custom->{$c->shortname} = $c;
                     }
                 }
             }

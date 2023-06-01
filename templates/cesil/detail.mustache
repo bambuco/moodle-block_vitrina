@@ -66,7 +66,7 @@
                             <iframe src="{{value}}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture"></iframe>
                         {{/isembed}}
                         {{^isembed}}
-                            <video controls="controls">
+                            <video controls="controls" {{#mediaposter}}poster="{{value}}"{{/mediaposter}}>
                                 <source src="{{value}}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>

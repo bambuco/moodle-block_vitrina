@@ -22,6 +22,12 @@ FEATURES
 
 IN VERSION
 =============
+2023042605:
+- Media poster included.
+
+2023042604:
+- Choice static filters.
+
 2023042603:
 - Filters in the catalog page.
 - Full custom fields support in the detail page.
