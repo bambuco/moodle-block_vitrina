@@ -55,9 +55,9 @@ class external extends \external_api {
                         'A filter to apply'),
                     'List of filters to search the courses', VALUE_DEFAULT, []
                 ),
-                'instanceid' => new \external_value(PARAM_INT, 'Block instance id', VALUE_OPTIONAL),
-                'amount' => new \external_value(PARAM_INT, 'Amount of courses', VALUE_OPTIONAL),
-                'initial' => new \external_value(PARAM_INT, 'From where to start', VALUE_OPTIONAL)
+                'instanceid' => new \external_value(PARAM_INT, 'Block instance id', VALUE_DEFAULT, 0),
+                'amount' => new \external_value(PARAM_INT, 'Amount of courses', VALUE_DEFAULT, 0),
+                'initial' => new \external_value(PARAM_INT, 'From where to start', VALUE_DEFAULT, 0)
             ]
         );
     }
