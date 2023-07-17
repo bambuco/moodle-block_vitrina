@@ -41,6 +41,7 @@ $string['commentstitle'] = 'Comments newest';
 $string['completed'] = 'Course completed';
 $string['coursecategory'] = 'Course category';
 $string['coursedetail'] = 'Course detail';
+$string['coursedetailtitle'] = 'Course: {$a->fullname}';
 $string['countstars'] = '{$a} stars';
 $string['courselinkcopiedtoclipboard'] = 'Course link copied to clipboard';
 $string['coverimagetype_help'] = 'Option when a course don\'t have an image.';

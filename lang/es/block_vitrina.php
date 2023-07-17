@@ -41,6 +41,7 @@ $string['comment_by'] = 'Por {$a}';
 $string['commentstitle'] = 'Comentarios más recientes';
 $string['coursecategory'] = 'Categoría de curso';
 $string['coursedetail'] = 'Detalles del curso';
+$string['coursedetailtitle'] = 'Curso: {$a->fullname}';
 $string['countstars'] = '{$a} estrellas';
 $string['coverimagetype'] = 'Imagen de vista previa';
 $string['coverimagetype_none'] = 'Ninguna';
