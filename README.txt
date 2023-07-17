@@ -22,6 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042608:
+- Support to socialnetworks metadata.
+
 2023042607:
 - New {urlencoded} tag to build share link to social network.
 
