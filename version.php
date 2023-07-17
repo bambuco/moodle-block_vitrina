@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023042606; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2021051708; // Requires this Moodle version.
+$plugin->version = 2023042607; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires = 2021051708; // Requires this Moodle version.
 $plugin->component = 'block_vitrina'; // Full name of the plugin (used for diagnostics).

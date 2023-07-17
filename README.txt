@@ -22,6 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042607:
+- New {urlencoded} tag to build share link to social network.
+
 2023042606:
 - Support for payment success URL.
 

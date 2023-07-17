@@ -113,7 +113,7 @@ $string['sharecoursedesc'] = '¿Conoces a alguien que le pueda gustar este curso
 <strong>Cuéntale sobre él</strong>';
 $string['socialnetworks'] = 'Redes sociales';
 $string['socialnetworks_help'] = 'Una red social por línea, con la siguiente estructura: nombre-icono|URL.
-La URL puede usar las claves: {url} y {name}.';
+La URL puede usar las claves: {url}, {urlencoded} y {name}.';
 $string['sortalphabetically'] = 'Alfabéticamente';
 $string['sortbydefault'] = 'Orden por defecto';
 $string['sortbydefault_help'] = 'Elija el orden en que se mostrarán los cursos en la vista de la pestaña Todos los cursos.';

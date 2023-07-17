@@ -78,6 +78,7 @@ class detail implements renderable, templatable {
                 $network->icon = trim($row[0]);
                 $network->url = trim($row[1]);
                 $network->url = str_replace('{url}', $courseurl, $network->url);
+                $network->url = str_replace('{urlencoded}', urlencode($courseurl), $network->url);
                 $network->url = str_replace('{name}', $this->course->fullname, $network->url);
                 $socialnetworks[] = $network;
             }

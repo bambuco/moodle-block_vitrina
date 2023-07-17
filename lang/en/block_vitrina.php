@@ -113,7 +113,7 @@ $string['singleamountcourses_help'] = 'Amount courses to display in default bloc
 $string['sharecourse'] = 'Share the course';
 $string['socialnetworks'] = 'Social networks';
 $string['socialnetworks_help'] = 'One network by line, with the next structure: icon-name|URL.
-The URL can use the keys: {url} and {name}.';
+The URL can use the keys: {url}, {urlencoded} and {name}.';
 $string['sortalphabetically'] = 'Alphabetically';
 $string['sortbydefault'] = 'Sort by default';
 $string['sortbydefault_help'] = 'Choose the order in which the courses are displayed in all courses tab view.';
