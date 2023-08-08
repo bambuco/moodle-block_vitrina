@@ -36,12 +36,14 @@
         </div>
     </div>
     <div class="panel-foot clearfix">
-        {{#rating}}
-        <div class="vitrina-ranking-stars">
-            <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
-            {{#pix}}stars_empty, block_vitrina{{/pix}}
-        </div>
-        {{/rating}}
+        {{#hasrating}}
+            {{#rating}}
+            <div class="vitrina-ranking-stars">
+                <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                {{#pix}}stars_empty, block_vitrina{{/pix}}
+            </div>
+            {{/rating}}
+        {{/hasrating}}
     </div>
     {{^active}}
         <div class="waiting-label">{{#str}}waiting, block_vitrina{{/str}}</div>

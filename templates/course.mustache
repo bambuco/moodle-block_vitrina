@@ -32,12 +32,14 @@
         {{/hassummary}}
     </div>
     <div class="panel-heading">
-        {{#rating}}
-        <div class="vitrina-ranking-stars">
-            <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
-            {{#pix}}stars_empty, block_vitrina{{/pix}}
-        </div>
-        {{/rating}}
+        {{#hasrating}}
+            {{#rating}}
+            <div class="vitrina-ranking-stars">
+                <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                {{#pix}}stars_empty, block_vitrina{{/pix}}
+            </div>
+            {{/rating}}
+        {{/hasrating}}
     </div>
     <div class="panel-body clearfix">
         <a class="" title="{{{shortname}}}" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}">

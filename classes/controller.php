@@ -187,6 +187,7 @@ class controller {
                 $course->rating = new \stdClass();
                 $course->rating->total = $rating;
                 $course->rating->count = $ratings;
+                $course->hasrating = $ratings > 0;
 
                 if ($ratinglist) {
                     $course->rating->detail = [];
@@ -211,6 +212,7 @@ class controller {
                 $course->rating->total = $rating;
                 $course->rating->count = property_exists($course, 'ratings') ? $course->ratings : 0;
                 $course->rating->detail = null;
+                $course->hasrating = $course->rating->count > 0;
             }
 
             // Not rating course.
@@ -349,12 +351,14 @@ class controller {
                         $one->rating->total = 0;
                         $one->rating->count = 0;
                         $one->rating->detail = null;
+                        $one->hasrating = false;
 
                         if ($rate) {
                             $one->rating->total = round($rate->rating, 1);
                             $one->rating->count = $rate->ratings;
                             $one->rating->percent = round($one->rating->total * 20);
                             $one->rating->formated = str_pad($one->rating->total, 3, '.0');
+                            $one->hasrating = $rate->ratings > 0;
                             $one->rating->stars = $one->rating->total > 0 ? range(1, $one->rating->total) : null;
                         }
                     }

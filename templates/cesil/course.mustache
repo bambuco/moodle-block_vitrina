@@ -31,12 +31,14 @@
     </div>
     <div class="panel-body clearfix">
         <div class="courseimage" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}></div>
-        {{#rating}}
-        <div class="vitrina-ranking-stars">
-            <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
-            {{#pix}}stars_empty, block_vitrina{{/pix}}
-        </div>
-        {{/rating}}
+        {{#hasrating}}
+            {{#rating}}
+            <div class="vitrina-ranking-stars">
+                <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                {{#pix}}stars_empty, block_vitrina{{/pix}}
+            </div>
+            {{/rating}}
+        {{/hasrating}}
         <div class="course-summary">
          {{{summary}}}
         </div>
