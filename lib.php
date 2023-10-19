@@ -139,19 +139,30 @@ function block_vitrina_get_path_from_pluginfile(string $filearea, array $args) :
  * @return string The HTML Meta to insert before the head.
  */
 function block_vitrina_before_standard_html_head() {
-    global $CFG, $PAGE, $USER;
+    global $PAGE, $OUTPUT;
 
     $course = $PAGE->course;
-    $imagepath = \block_vitrina\controller::get_courseimage($course);
+
     $title = $PAGE->title;
     $url = $PAGE->url;
     $summaryplain = strip_tags(format_text($course->summary, $course->summaryformat));
 
+    if ($course->id == SITEID) {
+        $imagepath = $OUTPUT->get_logo_url();
+    } else {
+        $imagepath = \block_vitrina\controller::get_courseimage($course);
+    }
+
     $headers = [];
     $headers[] = '<meta property="og:title" content="' . $title . '"/>';
-    $headers[] = '<meta property="og:image" content="' . $imagepath . '"/>';
     $headers[] = '<meta property="og:url" content="' . $url . '"/>';
-    $headers[] = '<meta property="og:description" content="' . $summaryplain . '"/>';
 
+    if ($summaryplain) {
+        $headers[] = '<meta property="og:description" content="' . $summaryplain . '"/>';
+    }
+
+    if ($imagepath) {
+        $headers[] = '<meta property="og:image" content="' . $imagepath . '"/>';
+    }
     return implode("\n", $headers);
 }
