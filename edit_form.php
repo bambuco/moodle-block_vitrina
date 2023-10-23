@@ -62,10 +62,11 @@ class block_vitrina_edit_form extends block_edit_form {
 
         $mform->addElement('select', 'config_recents', get_string('recents', 'block_vitrina'), $options);
 
-        // Show greats tab config only if rate_course block exists.
-        $dbman = $DB->get_manager();
-        $bmanager = new \block_manager($this->page);
-        if ($bmanager->is_known_block_type('rate_course') && $dbman->table_exists('block_rate_course')) {
+        // Show greats tab config only if rating feature exists.
+        $ratemanager = \block_vitrina\controller::get_ratemanager();
+        $ratingavailable = $ratemanager::rating_available();
+
+        if ($ratingavailable) {
             $mform->addElement('select', 'config_greats', get_string('greats', 'block_vitrina'), $options);
         }
 
