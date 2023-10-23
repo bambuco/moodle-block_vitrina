@@ -86,7 +86,7 @@ class tool_courserating {
                 $ratingpercents[$key] = $ratings > 0 ? round($one * 100 / $ratings) : 0;
             }
         } else {
-            $sql = "SELECT avgrating AS rating, cntreviews AS ratings FROM {tool_courserating_summary} WHERE courseid = :courseid";
+            $sql = "SELECT avgrating AS rating, cntall AS ratings FROM {tool_courserating_summary} WHERE courseid = :courseid";
             $rate = $DB->get_record_sql($sql, ['courseid' => $course]);
             $ratinglist = null;
             $rating = $rate->rating;
@@ -123,7 +123,7 @@ class tool_courserating {
 
         return [
             'ratingfield' => 'avgrating',
-            'totalfield' => 'cntreviews',
+            'totalfield' => 'cntall',
             'join' => "INNER JOIN {tool_courserating_summary} r ON r.courseid = c.id",
         ];
     }
