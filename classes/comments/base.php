@@ -48,6 +48,7 @@ class base {
      * Get the course comments.
      *
      * @param object|int $course Course to be processed.
+     * @param int $amount Amount of comments to be returned.
      * @return object
      */
     public static function get_comments($course, $amount = 20) : array {
