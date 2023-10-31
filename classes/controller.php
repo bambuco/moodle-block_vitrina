@@ -88,7 +88,7 @@ class controller {
      * @param bool   $large  True if load full information about the course.
      */
     public static function course_preprocess($course, $large = false) {
-        global $CFG, $OUTPUT, $DB, $PAGE, $USER;
+        global $CFG, $DB, $PAGE, $USER;
 
         self::$large = $large;
         $course->haspaymentgw = false;
@@ -125,7 +125,9 @@ class controller {
 
                 if ($cost > 0) {
                     $datafee = new \stdClass();
-                    $datafee->cost = \core_payment\helper::get_cost_as_string($cost, $instance->currency);
+                    $datafee->cost = $cost;
+                    $datafee->currency = $instance->currency;
+                    $datafee->formatedcost = \core_payment\helper::get_cost_as_string($cost, $instance->currency);
                     $datafee->itemid = $instance->id;
                     $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
                     $datafee->description = get_string('purchasedescription', 'enrol_fee',

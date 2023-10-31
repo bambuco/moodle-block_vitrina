@@ -259,15 +259,24 @@ class detail implements renderable, templatable {
 
             } else if ($this->course->haspaymentgw) {
                 $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
-                $custom->requireauth = isguestuser() || !isloggedin();
-                $custom->successurl = new \moodle_url('/blocks/vitrina/detail.php', [
-                    'id' => $this->course->id,
-                    'msg' => 'enrolled'
-                ]);
 
-                if ($custom->requireauth) {
-                    $url = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'tologin' => true]);
-                    $custom->requireauthurl = $url;
+                $localbuybee = \core_plugin_manager::instance()->get_plugin_info('local_buybee');
+                if ($localbuybee) {
+                    $custom->hascart = true;
+                    foreach ($this->course->fee as $fee) {
+                        $fee->reference = \local_buybee\controller::get_product_reference('enrol_fee', $fee->itemid);
+                    }
+                } else {
+                    $custom->requireauth = isguestuser() || !isloggedin();
+                    $custom->successurl = new \moodle_url('/blocks/vitrina/detail.php', [
+                        'id' => $this->course->id,
+                        'msg' => 'enrolled'
+                    ]);
+
+                    if ($custom->requireauth) {
+                        $url = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'tologin' => true]);
+                        $custom->requireauthurl = $url;
+                    }
                 }
 
             } else if ($this->course->enrollasguest) {
@@ -295,7 +304,8 @@ class detail implements renderable, templatable {
             'networks' => $socialnetworks,
             'detailinfo' => $detailinfo,
             'enrollstate' => $enrollstate,
-            'coursename' => $coursename
+            'coursename' => $coursename,
+            'originalcoursename' => $this->course->fullname,
         ];
 
         return $defaultvariables;
