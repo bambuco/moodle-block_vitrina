@@ -455,7 +455,7 @@ class controller {
     /**
      * Get the course preview image.
      *
-     * @param stdClass $course Course object.
+     * @param \stdClass $course Course object.
      * @return string Image url.
      */
     public static function get_courseimage($course) : string {
@@ -466,10 +466,12 @@ class controller {
         $courseimage = '';
         foreach ($coursefull->get_course_overviewfiles() as $file) {
             $isimage = $file->is_valid_image();
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                    '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                    $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+
             if ($isimage) {
+                $url = \moodle_url::make_file_url("$CFG->wwwroot/pluginfile.php",
+                        '/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
+                        $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+
                 $courseimage = $url;
                 break;
             }

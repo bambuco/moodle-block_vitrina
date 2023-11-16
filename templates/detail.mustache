@@ -147,6 +147,9 @@
                                             data-formatedcost="{{formatedcost}}"
                                             data-currency="{{currency}}"
                                             data-cost="{{cost}}"
+                                            {{#imagepath}}
+                                                data-image="{{.}}"
+                                            {{/imagepath}}
                                     {{/hascart}}
                                     {{^hascart}}
                                             data-action="core_payment/triggerPayment"
@@ -156,9 +159,10 @@
                                             data-cost="{{formatedcost}}"
                                     {{/hascart}}
                                         data-name="{{originalcoursename}}"
-                                        data-description={{#quote}}{{description}}{{/quote}}>
+                                        >
                                             {{#hascart}}
-                                                    {{#pix}} i/addtocart, local_buybee {{/pix}} {{#str}} labeladdproduct, local_buybee {{/str}}
+                                                    {{#pix}} i/addtocart, local_buybee {{/pix}}
+                                                    <span>{{#str}} labeladdproduct, local_buybee {{/str}}</span>
                                             {{/hascart}}
                                             {{^hascart}}
                                                 {{label}}
