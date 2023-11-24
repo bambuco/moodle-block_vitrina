@@ -221,6 +221,8 @@ class detail implements renderable, templatable {
         $custom->enrollurl = null;
         $custom->enrollurllabel = '';
 
+        $localbuybee = \core_plugin_manager::instance()->get_plugin_info('local_buybee');
+
         if ($custom->completed) {
 
             $custom->enrolltitle = get_string('completed', 'block_vitrina');
@@ -260,7 +262,6 @@ class detail implements renderable, templatable {
             } else if ($this->course->haspaymentgw) {
                 $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
 
-                $localbuybee = \core_plugin_manager::instance()->get_plugin_info('local_buybee');
                 if ($localbuybee) {
                     $custom->hascart = true;
                     foreach ($this->course->fee as $fee) {
@@ -291,6 +292,15 @@ class detail implements renderable, templatable {
                 $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
             }
 
+        }
+
+        if ($this->course->hasrelated && $localbuybee) {
+            foreach ($this->course->related as $onerelated) {
+                $onerelated->hascart = true;
+                foreach ($onerelated->fee as $fee) {
+                    $fee->reference = \local_buybee\controller::get_product_reference('enrol_fee', $fee->itemid);
+                }
+            }
         }
 
         $PAGE->requires->js_call_amd('block_vitrina/main', 'detail');

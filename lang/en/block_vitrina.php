@@ -59,6 +59,7 @@ $string['enroll'] = 'Enroll';
 $string['enrolled'] = 'You are enrolled currently!';
 $string['enrollrequired'] = 'You need to enroll to take the course!';
 $string['feeinfo'] = '{$a}';
+$string['feeinfoinlist'] = '{$a}';
 $string['filtercustomfields'] = 'Custom fields to filter';
 $string['filtercustomfields_help'] = 'Select the custom fields to filter the courses in the catalog.
 Only select and check fields are available to filter.';

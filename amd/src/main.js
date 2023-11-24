@@ -159,6 +159,11 @@ function loadCourses(uniqueid, $tabcontent) {
                 data.forEach(one => {
                     $coursesbox.append(one.html);
                 });
+
+                if (M && M.LocalBuyBee) {
+                    M.LocalBuyBee.bindAddProduct();
+                }
+
             } else {
                 paging[uniqueid][view].ended = true;
             }

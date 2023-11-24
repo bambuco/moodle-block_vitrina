@@ -42,6 +42,31 @@
         <div class="course-summary">
          {{{summary}}}
         </div>
+        {{#fee}}
+            <div class="coursefee">
+                <div class="feeinfo">
+                    {{#str}} feeinfoinlist, block_vitrina, {{formatedcost}} {{/str}}
+                </div>
+                {{#hascart}}
+                    <a class="btn btn-primary"
+                        data-component="enrol_fee"
+                        data-action="local_buybee/addProduct"
+                        data-reference="{{reference}}"
+                        data-quantity="1"
+                        data-formatedcost="{{formatedcost}}"
+                        data-currency="{{currency}}"
+                        data-cost="{{cost}}"
+                        {{#imagepath}}
+                            data-image="{{.}}"
+                        {{/imagepath}}
+                        data-name="{{originalcoursename}}"
+                    >
+                        {{#pix}} i/addtocart, local_buybee {{/pix}}
+                        <span>{{#str}} labeladdproduct, local_buybee {{/str}}</span>
+                    </a>
+                {{/hascart}}
+            </div>
+        {{/fee}}
     </div>
     <div class="panel-foot clearfix">
         <a class="coursebtn submit btn btn-info btn-sm" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">

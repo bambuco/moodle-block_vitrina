@@ -107,44 +107,7 @@ class controller {
         $coursecontext = \context_course::instance($course->id, $USER, '', true);
 
         // Load the course enrol info.
-        $enrolinstances = enrol_get_instances($course->id, true);
-
-        $course->enrollable = false;
-        $course->enrollasguest = false;
-        $course->fee = [];
-        foreach ($enrolinstances as $instance) {
-            if ($instance->enrol == 'self') {
-                $course->enrollable = true;
-                break;
-            } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
-
-                $cost = (float) $instance->cost;
-                if ( $cost <= 0 ) {
-                    $cost = (float) get_config('enrol_fee', 'cost');
-                }
-
-                if ($cost > 0) {
-                    $datafee = new \stdClass();
-                    $datafee->cost = $cost;
-                    $datafee->currency = $instance->currency;
-                    $datafee->formatedcost = \core_payment\helper::get_cost_as_string($cost, $instance->currency);
-                    $datafee->itemid = $instance->id;
-                    $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
-                    $datafee->description = get_string('purchasedescription', 'enrol_fee',
-                                                format_string($course->fullname, true, ['context' => $coursecontext]));
-
-                    $course->fee[] = $datafee;
-                    $course->enrollable = true;
-                    $course->haspaymentgw = true;
-                }
-
-            } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
-
-                $course->enrollable = true;
-                $course->enrollasguest = true;
-
-            }
-        }
+        self::load_enrolinfo($course);
 
         // If course has a single cost, load it for fast printing.
         if (count($course->fee) == 1) {
@@ -365,6 +328,8 @@ class controller {
                         }
                     }
 
+                    // Load the related course enrol info.
+                    self::load_enrolinfo($one);
                     $course->related[] = $one;
                 }
             }
@@ -767,6 +732,11 @@ class controller {
 
         if (!empty($sql)) {
             $courses = $DB->get_records_sql($sql, $params, $initial, $amount);
+
+            foreach ($courses as $course) {
+                // Load the related course enrol info.
+                self::load_enrolinfo($course);
+            }
         }
 
         return $courses;
@@ -1018,5 +988,58 @@ class controller {
     public static function get_staticfilters() : array {
 
         return self::STATICFILTERS;
+    }
+
+    /**
+     * Set the available enrol info ina a course.
+     *
+     * @param object $course The course object.
+     */
+    public static function load_enrolinfo(object $course) {
+        global $USER;
+
+        // Load course context to general purpose.
+        $coursecontext = \context_course::instance($course->id, $USER, '', true);
+
+        // Load the course enrol info.
+        $enrolinstances = enrol_get_instances($course->id, true);
+
+        $course->enrollable = false;
+        $course->enrollasguest = false;
+        $course->fee = [];
+        $course->haspaymentgw = false;
+
+        foreach ($enrolinstances as $instance) {
+            if ($instance->enrol == 'self') {
+                $course->enrollable = true;
+                break;
+            } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
+
+                $cost = (float) $instance->cost;
+                if ( $cost <= 0 ) {
+                    $cost = (float) get_config('enrol_fee', 'cost');
+                }
+
+                if ($cost > 0) {
+                    $datafee = new \stdClass();
+                    $datafee->cost = $cost;
+                    $datafee->currency = $instance->currency;
+                    $datafee->formatedcost = \core_payment\helper::get_cost_as_string($cost, $instance->currency);
+                    $datafee->itemid = $instance->id;
+                    $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
+                    $datafee->description = get_string('purchasedescription', 'enrol_fee',
+                                                format_string($course->fullname, true, ['context' => $coursecontext]));
+
+                    $course->fee[] = $datafee;
+                    $course->enrollable = true;
+                    $course->haspaymentgw = true;
+                }
+
+            } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
+                $course->enrollable = true;
+                $course->enrollasguest = true;
+            }
+        }
+
     }
 }
