@@ -294,7 +294,7 @@ class detail implements renderable, templatable {
 
         }
 
-        if ($this->course->hasrelated && $localbuybee) {
+        if ($this->course->hasrelated && $localbuybee && !$this->course->enrolled && !$this->course->canview) {
             foreach ($this->course->related as $onerelated) {
                 $onerelated->hascart = true;
                 foreach ($onerelated->fee as $fee) {

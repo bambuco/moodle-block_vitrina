@@ -1008,6 +1008,8 @@ class controller {
         $course->enrollasguest = false;
         $course->fee = [];
         $course->haspaymentgw = false;
+        $course->enrolled = !(isguestuser() || !isloggedin() || !is_enrolled($coursecontext));
+        $course->canview = has_capability('moodle/course:view', $coursecontext);
 
         foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {

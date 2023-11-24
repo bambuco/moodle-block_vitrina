@@ -124,7 +124,7 @@ class renderer extends plugin_renderer_base {
             $localbuybee = \core_plugin_manager::instance()->get_plugin_info('local_buybee');
         }
 
-        if ($localbuybee) {
+        if ($localbuybee && !$course->enrolled && !$course->canview) {
             $course->hascart = true;
             foreach ($course->fee as $fee) {
                 $fee->reference = \local_buybee\controller::get_product_reference('enrol_fee', $fee->itemid);
