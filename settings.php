@@ -119,6 +119,21 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext($name, $title, $help, '');
     $settings->add($setting);
 
+    // Decimal points.
+    $options = [
+        '0' => '0',
+        '1' => '1',
+        '2' => '2',
+        '3' => '3',
+        '4' => '4',
+        '5' => '5'
+    ];
+    $name = 'block_vitrina/decimalpoints';
+    $title = get_string('decimalpoints', 'block_vitrina');
+    $help = get_string('decimalpoints_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, 2, $options);
+    $settings->add($setting);
+
     // Filtering.
     $name = 'block_vitrina/settingsheaderfiltering';
     $heading = get_string('settingsheaderfiltering', 'block_vitrina');

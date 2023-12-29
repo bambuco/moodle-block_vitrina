@@ -1026,7 +1026,7 @@ class controller {
                     $datafee = new \stdClass();
                     $datafee->cost = $cost;
                     $datafee->currency = $instance->currency;
-                    $datafee->formatedcost = \core_payment\helper::get_cost_as_string($cost, $instance->currency);
+                    $datafee->formatedcost = self::format_cost($cost, $instance->currency);
                     $datafee->itemid = $instance->id;
                     $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
                     $datafee->description = get_string('purchasedescription', 'enrol_fee',
@@ -1043,5 +1043,30 @@ class controller {
             }
         }
 
+    }
+
+    /**
+     * Returns human-readable amount with correct number of fractional digits and currency indicator, can also apply surcharge
+     *
+     * @param float $amount amount in the currency units
+     * @param string $currency The currency
+     * @param float $surcharge surcharge in percents
+     * @return string
+     */
+    public static function format_cost(float $amount, string $currency, float $surcharge = 0): string {
+        $amount = $amount * (100 + $surcharge) / 100;
+
+        $decimalpoints = (int)get_config('block_vitrina', 'decimalpoints');
+
+        $locale = get_string('localecldr', 'langconfig');
+        $fmt = \NumberFormatter::create($locale, \NumberFormatter::CURRENCY);
+        $fmt->setAttribute(\NumberFormatter::FRACTION_DIGITS, $decimalpoints);
+        $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
+
+        if (strpos('$', $localisedcost) === false) {
+            $localisedcost = '$' . $localisedcost;
+        }
+
+        return $localisedcost;
     }
 }
