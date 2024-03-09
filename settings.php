@@ -292,4 +292,42 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
     $settings->add($setting);
 
+    // Rating components.
+    $options = [];
+
+    if (\block_vitrina\rating\base::rating_available()) {
+        $options['block_rate_course'] = get_string('pluginname', 'block_rate_course') . ' (block_rate_course)';
+    }
+
+    if (\block_vitrina\rating\tool_courserating::rating_available()) {
+        $options['tool_courserating'] = get_string('pluginname', 'tool_courserating') . ' (tool_courserating)';
+    }
+
+    if (count($options) > 0) {
+        $name = 'block_vitrina/ratingmanager';
+        $title = get_string('ratingmanager', 'block_vitrina');
+        $help = get_string('ratingmanager_help', 'block_vitrina');
+        $setting = new admin_setting_configselect($name, $title, $help, '', $options);
+        $settings->add($setting);
+    }
+
+    // Rating components.
+    $options = [];
+
+    if (\block_vitrina\comments\base::comments_available()) {
+        $options['block_comments'] = get_string('pluginname', 'block_comments') . ' (block_comments)';
+    }
+
+    if (\block_vitrina\comments\tool_courserating::comments_available()) {
+        $options['tool_courserating'] = get_string('pluginname', 'tool_courserating') . ' (tool_courserating)';
+    }
+
+    if (count($options) > 0) {
+        $name = 'block_vitrina/commentsmanager';
+        $title = get_string('commentsmanager', 'block_vitrina');
+        $help = get_string('commentsmanager_help', 'block_vitrina');
+        $setting = new admin_setting_configselect($name, $title, $help, '', $options);
+        $settings->add($setting);
+    }
+
 }

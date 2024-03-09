@@ -116,56 +116,12 @@ class controller {
 
         $course->imagepath = self::get_courseimage($course);
 
-        $bmanager = new \block_manager($PAGE);
+        $ratemanager = self::get_ratemanager();
+        $ratingavailable = $ratemanager::rating_available();
 
         if (!property_exists($course, 'rating')) {
-            if ($bmanager->is_known_block_type('rate_course')) {
-
-                if ($large) {
-                    $values = $DB->get_records('block_rate_course', ['course' => $course->id], '', 'id, rating');
-
-                    // Start default array to 1-5 stars.
-                    $ratinglist = [0, 0, 0, 0, 0, 0];
-                    unset($ratinglist[0]);
-
-                    $ratingsum = 0;
-                    foreach ($values as $one) {
-                        $ratinglist[$one->rating]++;
-                        $ratingsum += $one->rating;
-                    }
-
-                    $ratings = count($values);
-                    $rating = $ratings > 0 ? $ratingsum / $ratings : 0;
-
-                    $ratingpercents = [];
-                    foreach ($ratinglist as $key => $one) {
-                        $ratingpercents[$key] = $ratings > 0 ? round($one * 100 / $ratings) : 0;
-                    }
-                } else {
-                    $sql = "SELECT AVG(rating) AS rating, COUNT(1) AS ratings  FROM {block_rate_course} WHERE course = :courseid";
-                    $rate = $DB->get_record_sql($sql, ['courseid' => $course->id]);
-                    $ratinglist = null;
-                    $rating = $rate->rating;
-                    $ratings = $rate->ratings;
-                }
-
-                $course->rating = new \stdClass();
-                $course->rating->total = $rating;
-                $course->rating->count = $ratings;
-                $course->hasrating = $ratings > 0;
-
-                if ($ratinglist) {
-                    $course->rating->detail = [];
-                    foreach ($ratinglist as $key => $one) {
-                        $detail = new \stdClass();
-                        $detail->value = $key;
-                        $detail->count = $one;
-                        $detail->avg = round($ratingpercents[$key]);
-                        $course->rating->detail[] = $detail;
-                    }
-                } else {
-                    $course->rating->detail = null;
-                }
+            if ($ratingavailable) {
+                $course->rating = $ratemanager::get_ratings($course, $large);
             }
         }
 
@@ -198,16 +154,15 @@ class controller {
         if ($large) {
             $fullcourse = new \core_course_list_element($course);
 
-            $course->commentscount = $DB->count_records('comments', ['contextid' => $coursecontext->id,
-                                                                     'component' => 'block_comments']);
+            $commentsmanager = self::get_commentsmanager();
+            $comments = $commentsmanager::get_comments($course);
+            $course->commentscount = count($comments);
 
             if ($course->commentscount > 0) {
                 $course->hascomments = true;
 
                 // Get 20 newest records.
-                $course->comments = $DB->get_records('comments',
-                                                     ['contextid' => $coursecontext->id, 'component' => 'block_comments'],
-                                                     'timecreated DESC', '*', 0, 20);
+                $course->comments = $comments;
 
                 $course->comments = array_values($course->comments);
 
@@ -308,23 +263,23 @@ class controller {
                                                     ['fieldid' => $payfield->id, 'instanceid' => $one->id]);
                     }
 
-                    if ($bmanager->is_known_block_type('rate_course')) {
-                        $sql = "SELECT AVG(rating) AS rating, COUNT(1) AS ratings  FROM {block_rate_course} WHERE course = :cid";
-                        $rate = $DB->get_record_sql($sql, ['cid' => $one->id]);
-
+                    if ($ratingavailable) {
                         $one->rating = new \stdClass();
                         $one->rating->total = 0;
                         $one->rating->count = 0;
                         $one->rating->detail = null;
                         $one->hasrating = false;
 
-                        if ($rate) {
-                            $one->rating->total = round($rate->rating, 1);
-                            $one->rating->count = $rate->ratings;
-                            $one->rating->percent = round($one->rating->total * 20);
-                            $one->rating->formated = str_pad($one->rating->total, 3, '.0');
-                            $one->hasrating = $rate->ratings > 0;
-                            $one->rating->stars = $one->rating->total > 0 ? range(1, $one->rating->total) : null;
+                        $ratemanager = self::get_ratemanager();
+                        $onerating = $ratemanager::get_ratings($one->id, $large);
+
+                        if ($onerating && $onerating->count > 0) {
+                            $one->rating->total = round($onerating->rating, 1);
+                            $one->rating->count = $onerating->count;
+                            $one->rating->percent = round($onerating->total * 20);
+                            $one->rating->formated = str_pad($onerating->total, 3, '.0');
+                            $one->hasrating = true;
+                            $one->rating->stars = $onerating->total > 0 ? range(1, $onerating->total) : null;
                         }
                     }
 
@@ -500,9 +455,11 @@ class controller {
 
         $availablesorting = self::COURSES_VIEWS;
 
-        $bmanager = new \block_manager($PAGE);
-        if (!$bmanager->is_known_block_type('rate_course')) {
-            // Remove the greats value if the rate_course block is not available.
+        $ratemanager = self::get_ratemanager();
+        $ratingavailable = $ratemanager::rating_available();
+
+        if (!$ratingavailable) {
+            // Remove the greats value if the rate feature is not available.
             if (($key = array_search('greats', $availablesorting)) !== false) {
                 unset($availablesorting[$key]);
             }
@@ -691,10 +648,12 @@ class controller {
 
         switch ($view) {
             case 'greats':
+                $ratemanager = self::get_ratemanager();
+                list($ratingfield, $totalfield, $joinrate) = array_values($ratemanager::sql_map());
 
-                $sql = "SELECT DISTINCT c.*, AVG(r.rating) AS rating, COUNT(1) AS ratings " .
+                $sql = "SELECT DISTINCT c.*, $ratingfield AS rating, $totalfield AS ratings " .
                             " FROM {course} c " .
-                            " INNER JOIN {block_rate_course} r ON r.course = c.id " .
+                            $joinrate . ' ' .
                             $joincustomfields .
                             " WHERE " . $select .
                             " GROUP BY c.id HAVING rating > 3 " .
@@ -991,7 +950,7 @@ class controller {
     }
 
     /**
-     * Set the available enrol info ina a course.
+     * Set the available enrol info in a course.
      *
      * @param object $course The course object.
      */
@@ -1069,4 +1028,37 @@ class controller {
 
         return $localisedcost;
     }
+
+    /**
+     * Get the usable course rate manager.
+     */
+    public static function get_ratemanager() : string {
+
+        $rateplugin = get_config('block_vitrina', 'ratingmanager');
+
+        switch ($rateplugin) {
+            case 'tool_courserating':
+                return '\block_vitrina\rating\tool_courserating';
+            break;
+            default:
+                return '\block_vitrina\rating\base';
+        }
+    }
+
+    /**
+     * Get the usable course comments manager.
+     */
+    public static function get_commentsmanager() : string {
+
+        $commentsplugin = get_config('block_vitrina', 'commentsmanager');
+
+        switch ($commentsplugin) {
+            case 'tool_courserating':
+                return '\block_vitrina\comments\tool_courserating';
+            break;
+            default:
+                return '\block_vitrina\comments\base';
+        }
+    }
+
 }
