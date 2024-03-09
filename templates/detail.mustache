@@ -135,16 +135,39 @@
                             {{/requireauth}}
                             {{^requireauth}}
                                 {{#fee}}
-                                <a class="btn btn-primary"
-                                    data-action="core_payment/triggerPayment"
-                                    data-component="enrol_fee"
-                                    data-paymentarea="fee"
-                                    data-itemid="{{itemid}}"
-                                    data-cost="{{cost}}"
-                                    {{#successurl}}data-successurl="{{{successurl}}}"{{/successurl}}
-                                    data-description={{#quote}}{{description}}{{/quote}}>
-                                    {{label}}
-                                </a>
+                                    <div class="feeinfo">
+                                        {{#str}} feeinfo, block_vitrina, {{formatedcost}} {{/str}}
+                                    </div>
+                                    <a class="btn btn-primary"
+                                            data-component="enrol_fee"
+                                    {{#hascart}}
+                                            data-action="local_buybee/addProduct"
+                                            data-reference="{{reference}}"
+                                            data-quantity="1"
+                                            data-formatedcost="{{formatedcost}}"
+                                            data-currency="{{currency}}"
+                                            data-cost="{{cost}}"
+                                            {{#imagepath}}
+                                                data-image="{{.}}"
+                                            {{/imagepath}}
+                                    {{/hascart}}
+                                    {{^hascart}}
+                                            data-action="core_payment/triggerPayment"
+                                            data-paymentarea="fee"
+                                            data-itemid="{{itemid}}"
+                                            {{#successurl}}data-successurl="{{{successurl}}}"{{/successurl}}
+                                            data-cost="{{formatedcost}}"
+                                    {{/hascart}}
+                                        data-name="{{originalcoursename}}"
+                                        >
+                                            {{#hascart}}
+                                                    {{#pix}} i/addtocart, local_buybee {{/pix}}
+                                                    <span>{{#str}} labeladdproduct, local_buybee {{/str}}</span>
+                                            {{/hascart}}
+                                            {{^hascart}}
+                                                {{label}}
+                                            {{/hascart}}
+                                    </a>
                                 {{/fee}}
                             {{/requireauth}}
                         {{/haspaymentgw}}

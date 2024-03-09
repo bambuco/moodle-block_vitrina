@@ -106,6 +106,8 @@ class renderer extends plugin_renderer_base {
     public function render_course(object $course) : string {
         global $CFG;
 
+        static $localbuybee = null;
+
         $template = get_config('block_vitrina', 'templatetype');
         $path = $CFG->dirroot . '/blocks/vitrina/templates/' . $template . '/course.mustache';
 
@@ -113,6 +115,20 @@ class renderer extends plugin_renderer_base {
             $templatefile = 'block_vitrina/' . $template . '/course';
         } else {
             $templatefile = 'block_vitrina/course';
+        }
+
+        // Load the course enrol info.
+        \block_vitrina\controller::load_enrolinfo($course);
+
+        if ($localbuybee === null) {
+            $localbuybee = \core_plugin_manager::instance()->get_plugin_info('local_buybee');
+        }
+
+        if ($localbuybee && !$course->enrolled && !$course->canview) {
+            $course->hascart = true;
+            foreach ($course->fee as $fee) {
+                $fee->reference = \local_buybee\controller::get_product_reference('enrol_fee', $fee->itemid);
+            }
         }
 
         return $this->render_from_template($templatefile, $course);

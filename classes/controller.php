@@ -88,7 +88,7 @@ class controller {
      * @param bool   $large  True if load full information about the course.
      */
     public static function course_preprocess($course, $large = false) {
-        global $CFG, $OUTPUT, $DB, $PAGE, $USER;
+        global $CFG, $DB, $PAGE, $USER;
 
         self::$large = $large;
         $course->haspaymentgw = false;
@@ -107,42 +107,7 @@ class controller {
         $coursecontext = \context_course::instance($course->id, $USER, '', true);
 
         // Load the course enrol info.
-        $enrolinstances = enrol_get_instances($course->id, true);
-
-        $course->enrollable = false;
-        $course->enrollasguest = false;
-        $course->fee = [];
-        foreach ($enrolinstances as $instance) {
-            if ($instance->enrol == 'self') {
-                $course->enrollable = true;
-                break;
-            } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
-
-                $cost = (float) $instance->cost;
-                if ( $cost <= 0 ) {
-                    $cost = (float) get_config('enrol_fee', 'cost');
-                }
-
-                if ($cost > 0) {
-                    $datafee = new \stdClass();
-                    $datafee->cost = \core_payment\helper::get_cost_as_string($cost, $instance->currency);
-                    $datafee->itemid = $instance->id;
-                    $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
-                    $datafee->description = get_string('purchasedescription', 'enrol_fee',
-                                                format_string($course->fullname, true, ['context' => $coursecontext]));
-
-                    $course->fee[] = $datafee;
-                    $course->enrollable = true;
-                    $course->haspaymentgw = true;
-                }
-
-            } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
-
-                $course->enrollable = true;
-                $course->enrollasguest = true;
-
-            }
-        }
+        self::load_enrolinfo($course);
 
         // If course has a single cost, load it for fast printing.
         if (count($course->fee) == 1) {
@@ -318,6 +283,8 @@ class controller {
                         }
                     }
 
+                    // Load the related course enrol info.
+                    self::load_enrolinfo($one);
                     $course->related[] = $one;
                 }
             }
@@ -419,10 +386,12 @@ class controller {
         $courseimage = '';
         foreach ($coursefull->get_course_overviewfiles() as $file) {
             $isimage = $file->is_valid_image();
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                    '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                    $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+
             if ($isimage) {
+                $url = \moodle_url::make_file_url("$CFG->wwwroot/pluginfile.php",
+                        '/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
+                        $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+
                 $courseimage = $url;
                 break;
             }
@@ -722,6 +691,11 @@ class controller {
 
         if (!empty($sql)) {
             $courses = $DB->get_records_sql($sql, $params, $initial, $amount);
+
+            foreach ($courses as $course) {
+                // Load the related course enrol info.
+                self::load_enrolinfo($course);
+            }
         }
 
         return $courses;
@@ -973,6 +947,86 @@ class controller {
     public static function get_staticfilters() : array {
 
         return self::STATICFILTERS;
+    }
+
+    /**
+     * Set the available enrol info in a course.
+     *
+     * @param object $course The course object.
+     */
+    public static function load_enrolinfo(object $course) {
+        global $USER;
+
+        // Load course context to general purpose.
+        $coursecontext = \context_course::instance($course->id, $USER, '', true);
+
+        // Load the course enrol info.
+        $enrolinstances = enrol_get_instances($course->id, true);
+
+        $course->enrollable = false;
+        $course->enrollasguest = false;
+        $course->fee = [];
+        $course->haspaymentgw = false;
+        $course->enrolled = !(isguestuser() || !isloggedin() || !is_enrolled($coursecontext));
+        $course->canview = has_capability('moodle/course:view', $coursecontext);
+
+        foreach ($enrolinstances as $instance) {
+            if ($instance->enrol == 'self') {
+                $course->enrollable = true;
+                break;
+            } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
+
+                $cost = (float) $instance->cost;
+                if ( $cost <= 0 ) {
+                    $cost = (float) get_config('enrol_fee', 'cost');
+                }
+
+                if ($cost > 0) {
+                    $datafee = new \stdClass();
+                    $datafee->cost = $cost;
+                    $datafee->currency = $instance->currency;
+                    $datafee->formatedcost = self::format_cost($cost, $instance->currency);
+                    $datafee->itemid = $instance->id;
+                    $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
+                    $datafee->description = get_string('purchasedescription', 'enrol_fee',
+                                                format_string($course->fullname, true, ['context' => $coursecontext]));
+
+                    $course->fee[] = $datafee;
+                    $course->enrollable = true;
+                    $course->haspaymentgw = true;
+                }
+
+            } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
+                $course->enrollable = true;
+                $course->enrollasguest = true;
+            }
+        }
+
+    }
+
+    /**
+     * Returns human-readable amount with correct number of fractional digits and currency indicator, can also apply surcharge
+     *
+     * @param float $amount amount in the currency units
+     * @param string $currency The currency
+     * @param float $surcharge surcharge in percents
+     * @return string
+     */
+    public static function format_cost(float $amount, string $currency, float $surcharge = 0): string {
+        $amount = $amount * (100 + $surcharge) / 100;
+
+        $decimalpoints = (int)get_config('block_vitrina', 'decimalpoints');
+
+        $locale = get_string('localecldr', 'langconfig');
+        $fmt = \NumberFormatter::create($locale, \NumberFormatter::CURRENCY);
+        $fmt->setAttribute(\NumberFormatter::FRACTION_DIGITS, $decimalpoints);
+        $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
+
+        if (strpos('$', $localisedcost) === false) {
+            $localisedcost = '$' . $localisedcost;
+        }
+
+        return $localisedcost;
     }
 
     /**

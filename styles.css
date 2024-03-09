@@ -61,11 +61,29 @@
 .block_vitrina-courseslist .coursebox .panel-body a {
     color: #4c6295;
     font-weight: bold;
+    display: block;
+}
+
+.block_vitrina-courseslist .coursebox .panel-body a.btn-primary {
+    color: #fff;
+}
+
+.block_vitrina-courseslist .coursebox .panel-body .coursefee {
+    border-bottom: 1px solid #eee;
+    padding: 5px;
 }
 
 .block_vitrina-courseslist .coursebox .panel-body label {
     font-weight: bold;
     font-size: 12px;
+}
+
+.block_vitrina-courseslist .coursebox .panel-body .feeinfo {
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 5px;
+    background-color: var(--secondary);
 }
 
 .block_vitrina-courseslist .coursebox .panel-foot {

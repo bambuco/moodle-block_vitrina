@@ -22,6 +22,10 @@ FEATURES
 
 IN VERSION
 =============
+2023042609:
+- Integration with local_buybee (shopping cart).
+- Decimal points to format the course cost.
+
 2023042608:
 - Support to socialnetworks metadata.
 

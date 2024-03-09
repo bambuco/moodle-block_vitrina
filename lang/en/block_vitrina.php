@@ -56,10 +56,14 @@ $string['daystoupcoming_help'] = 'Number of days to consider courses like active
 $string['daystoupcoming'] = 'Days to upcoming courses';
 $string['detailinfo'] = 'Detail info';
 $string['defaultsort'] = 'All';
+$string['decimalpoints'] = 'Decimal points';
+$string['decimalpoints_help'] = 'The number of decimal points to use in the cost format.';
 $string['detailinfo_help'] = 'General info about the course detail.';
 $string['enroll'] = 'Enroll';
 $string['enrolled'] = 'You are enrolled currently!';
 $string['enrollrequired'] = 'You need to enroll to take the course!';
+$string['feeinfo'] = '{$a}';
+$string['feeinfoinlist'] = '{$a}';
 $string['filtercustomfields'] = 'Custom fields to filter';
 $string['filtercustomfields_help'] = 'Select the custom fields to filter the courses in the catalog.
 Only select and check fields are available to filter.';
