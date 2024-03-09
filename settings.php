@@ -31,6 +31,7 @@ if ($ADMIN->fulltree) {
     // Get custom fields.
     $fields = [];
     $fieldstofilter = [];
+    $fieldstopremium = [0 => ''];
 
     $sql = "SELECT cf.id, cf.name, cf.type FROM {customfield_field} cf " .
             " INNER JOIN {customfield_category} cc ON cc.id = cf.categoryid AND cc.component = 'core_course'" .
@@ -42,6 +43,10 @@ if ($ADMIN->fulltree) {
 
         if (in_array($v->type, \block_vitrina\controller::CUSTOMFIELDS_SUPPORTED)) {
             $fieldstofilter[$k] = format_string($v->name, true);
+        }
+
+        if ($v->type == 'checkbox') {
+            $fieldstopremium[$k] = format_string($v->name, true);
         }
     }
 
@@ -103,6 +108,13 @@ if ($ADMIN->fulltree) {
     $title = get_string('paymenturlfield', 'block_vitrina');
     $help = get_string('paymenturlfield_help', 'block_vitrina');
     $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
+    $settings->add($setting);
+
+    // Premium course field. Only checkbox fields are allowed.
+    $name = 'block_vitrina/premiumcoursefield';
+    $title = get_string('premiumcoursefield', 'block_vitrina');
+    $help = get_string('premiumcoursefield_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldstopremium);
     $settings->add($setting);
 
     // Premium type user field.

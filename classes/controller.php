@@ -37,6 +37,11 @@ class controller {
     protected static $cachedpayfield = null;
 
     /**
+     * @var int Cached premium field id.
+     */
+    protected static $cachedpremiumfield = null;
+
+    /**
      * @var bool True if load full information about the course.
      */
     protected static $large = false;
@@ -101,6 +106,13 @@ class controller {
         if ($payfield) {
             $course->paymenturl = $DB->get_field('customfield_data', 'value',
                                         ['fieldid' => $payfield->id, 'instanceid' => $course->id]);
+        }
+
+        $premiumfield = self::get_premiumfield();
+
+        if ($premiumfield) {
+            $course->premium = $DB->get_field('customfield_data', 'value',
+                                        ['fieldid' => $premiumfield->id, 'instanceid' => $course->id]);
         }
 
         // Load course context to general purpose.
@@ -263,6 +275,11 @@ class controller {
                                                     ['fieldid' => $payfield->id, 'instanceid' => $one->id]);
                     }
 
+                    if ($premiumfield) {
+                        $one->premium = $DB->get_field('customfield_data', 'value',
+                                                    ['fieldid' => $premiumfield->id, 'instanceid' => $one->id]);
+                    }
+
                     if ($ratingavailable) {
                         $one->rating = new \stdClass();
                         $one->rating->total = 0;
@@ -318,8 +335,8 @@ class controller {
      */
     public static function premium_available() : bool {
 
-        $payfield = self::get_payfield();
-        return $payfield ? true : false;
+        $premiumfield = self::get_premiumfield();
+        return $premiumfield ? true : false;
     }
 
     /**
@@ -340,6 +357,23 @@ class controller {
         return self::$cachedpayfield ?? null;
     }
 
+    /**
+     * Get the premium field.
+     *
+     * @return object The premium field.
+     */
+    public static function get_premiumfield() : ?object {
+        global $DB;
+
+        if (!self::$cachedpremiumfield) {
+            $premiumfield = get_config('block_vitrina', 'premiumcoursefield');
+            if (!empty($premiumfield)) {
+                self::$cachedpremiumfield = $DB->get_record('customfield_field', ['id' => $premiumfield]);
+            }
+        }
+
+        return self::$cachedpremiumfield ?? null;
+    }
     /**
      * Define if the current or received user is premium.
      *
@@ -661,11 +695,11 @@ class controller {
             break;
             case 'premium':
 
-                $payfield = self::get_payfield();
+                $premiumfield = self::get_premiumfield();
 
-                if ($payfield) {
+                if ($premiumfield) {
 
-                    $params['fieldid'] = $payfield->id;
+                    $params['fieldid'] = $premiumfield->id;
 
                     $sql = "SELECT DISTINCT c.* $specialfields " .
                         " FROM {course} c" .

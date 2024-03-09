@@ -89,8 +89,14 @@ class tool_courserating {
             $sql = "SELECT avgrating AS rating, cntall AS ratings FROM {tool_courserating_summary} WHERE courseid = :courseid";
             $rate = $DB->get_record_sql($sql, ['courseid' => $course]);
             $ratinglist = null;
-            $rating = $rate->rating;
-            $ratings = $rate->ratings;
+
+            if ($rate) {
+                $rating = $rate->rating;
+                $ratings = $rate->ratings;
+            } else {
+                $rating = 0;
+                $ratings = 0;
+            }
         }
 
         // Not rating course yet.

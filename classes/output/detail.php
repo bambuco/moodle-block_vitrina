@@ -163,7 +163,11 @@ class detail implements renderable, templatable {
             }
 
             if (!$exist) {
-                $value = trim($data->export_value());
+                $value = $data->export_value();
+
+                if (is_string($value)) {
+                    $value = trim($value);
+                }
 
                 if (!empty($value)) {
                     $c = new \stdClass();
@@ -253,7 +257,15 @@ class detail implements renderable, templatable {
         } else if ($this->course->enrollable) {
 
             $ispremium = \block_vitrina\controller::is_user_premium();
-            if ($this->course->paymenturl && !$ispremium) {
+            if ($this->course->premium && $ispremium) {
+                $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
+                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'enroll' => 1]);
+                $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
+
+                // If the user is premium, disable the payment gateway.
+                $this->course->haspaymentgw = false;
+
+            } else if (!empty($this->course->paymenturl)) {
 
                 $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
                 $custom->enrollurl = $this->course->paymenturl;

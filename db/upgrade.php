@@ -29,12 +29,12 @@
  * @param int $oldversion
  */
 function xmldb_block_vitrina_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $DB;
 
     if ($oldversion < 2023042602) {
         $customfields = $DB->get_records('customfield_field');
 
-        foreach ($customfields as $k => $field) {
+        foreach ($customfields as $field) {
             $select = "plugin = 'block_vitrina' AND value = :value AND " .
                         " name IN ('thematic', 'units', 'requirements', 'license', 'media', 'duration', 'experts', " .
                                     " 'expertsshort', 'paymenturl')";

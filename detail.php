@@ -61,24 +61,18 @@ if ($enroll) {
     $enrollable = true;
 
     // Check if the course is only for premium users.
-    if ($course->paymenturl) {
+    if ($course->premium) {
         $enrollable = \block_vitrina\controller::is_user_premium();
     }
 
     // If currently not enrolled.
     if ($enrollable && !is_enrolled($coursecontext)) {
         $enrolinstances = enrol_get_instances($course->id, true);
-        $enrolplugin = enrol_get_plugin('self');
+        $enrolplugin = enrol_get_plugin('membership');
 
         foreach ($enrolinstances as $instance) {
-            if ($instance->enrol == 'self') {
-
-                if ($instance->password) {
-                    $url = new moodle_url('/enrol/index.php', ['id' => $course->id]);
-                    redirect($url);
-                } else {
-                    $enrolplugin->enrol_self($instance);
-                }
+            if ($instance->enrol == 'membership') {
+                $enrolplugin->enrol_membership($instance);
                 break;
             }
         }
