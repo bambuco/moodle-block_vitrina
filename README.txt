@@ -2,7 +2,7 @@ BLOCK Vitrina
 ============================
 A block to display a list of courses and their general information.
 
-Package tested in: moodle 3.11, 4.0, 4.1
+Package tested in: moodle 4.1
 
 QUICK INSTALL
 ==============
@@ -22,6 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042610:
+- Custom cost formater
+
 2023042609:
 - Integration with local_buybee (shopping cart).
 - Decimal points to format the course cost.
