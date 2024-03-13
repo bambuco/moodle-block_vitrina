@@ -389,18 +389,29 @@ class controller {
         $premiumfieldid = get_config('block_vitrina', 'premiumfield');
         $premiumvalue = get_config('block_vitrina', 'premiumvalue');
 
-        if (empty($premiumfieldid) || empty($premiumvalue)) {
+        // If the premium field and value are set, check if the user is premium.
+        // It overrides the "Course to read premium users" setting.
+        if (!empty($premiumfieldid) && !empty($premiumvalue)) {
+
+            $premiumfield = $DB->get_field('user_info_field', 'shortname', ['id' => $premiumfieldid]);
+
+            if (!empty($premiumfield)) {
+                if (isset($user->profile[$premiumfield]) && $user->profile[$premiumfield] == $premiumvalue) {
+                    return true;
+                }
+            }
+
             return false;
         }
 
-        $premiumfield = $DB->get_field('user_info_field', 'shortname', ['id' => $premiumfieldid]);
+        // If the user is enrolled in the "Course to read premium users" is a premium user.
+        $premiumcourseid = get_config('block_vitrina', 'premiumenrolledcourse');
 
-        if (empty($premiumfield)) {
-            return false;
-        }
+        if (!empty($premiumcourseid)) {
+            // Check if the user is enrolled in the premium course.
+            $enrolled = is_enrolled(\context_course::instance($premiumcourseid), $user->id, '', true);
 
-        if (isset($user->profile[$premiumfield]) && $user->profile[$premiumfield] == $premiumvalue) {
-            return true;
+            return $enrolled;
         }
 
         return false;
@@ -989,7 +1000,7 @@ class controller {
      * @param object $course The course object.
      */
     public static function load_enrolinfo(object $course) {
-        global $USER;
+        global $USER, $CFG, $DB;
 
         // Load course context to general purpose.
         $coursecontext = \context_course::instance($course->id, $USER, '', true);
@@ -998,16 +1009,55 @@ class controller {
         $enrolinstances = enrol_get_instances($course->id, true);
 
         $course->enrollable = false;
-        $course->enrollasguest = false;
+        $course->enrollsavailables = [];
         $course->fee = [];
         $course->haspaymentgw = false;
         $course->enrolled = !(isguestuser() || !isloggedin() || !is_enrolled($coursecontext));
         $course->canview = has_capability('moodle/course:view', $coursecontext);
+        $ispremium = \block_vitrina\controller::is_user_premium();
+
+        $premiumcohort = get_config('block_vitrina', 'premiumcohort');
 
         foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {
+
+                if ($instance->customint3 > 0) {
+                    // Max enrol limit specified.
+                    $count = $DB->count_records('user_enrolments', ['enrolid' => $instance->id]);
+                    if ($count >= $instance->customint3) {
+                        // Bad luck, no more self enrolments here.
+                        continue;
+                    }
+                }
+
+                // Course premium require a self enrolment.
+                if ($course->premium && $ispremium) {
+
+                    // The validation only applies to premium courses if the premiumcohort setting is configured.
+                    // If premiumcohort is configured the course requires a specific cohort.
+                    if (!$premiumcohort || ($instance->customint5 && $instance->customint5 == $premiumcohort)) {
+
+                            $course->enrollable = true;
+                            $course->enrollsavailables[] = 'premium';
+                            continue;
+                    }
+                }
+
+                // Enrol with password is not supported.
+                if (!empty($instance->password)) {
+                    continue;
+                }
+
+                if ($instance->customint5) {
+                    require_once($CFG->dirroot . '/cohort/lib.php');
+                    if (!cohort_is_member($instance->customint5, $USER->id)) {
+                        // The user cannot enroll because they are not in the cohort.
+                        continue;
+                    }
+                }
+
+                $course->enrollsavailables[] = 'self';
                 $course->enrollable = true;
-                break;
             } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
 
                 $cost = (float) $instance->cost;
@@ -1027,12 +1077,13 @@ class controller {
 
                     $course->fee[] = $datafee;
                     $course->enrollable = true;
+                    $course->enrollsavailables[] = 'fee';
                     $course->haspaymentgw = true;
                 }
 
             } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
                 $course->enrollable = true;
-                $course->enrollasguest = true;
+                $course->enrollsavailables[] = 'guest';
             }
         }
 

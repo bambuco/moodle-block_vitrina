@@ -131,6 +131,23 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext($name, $title, $help, '');
     $settings->add($setting);
 
+    // Select course for premium.
+    $name = 'block_vitrina/premiumenrolledcourse';
+    $title = get_string('premiumenrolledcourse', 'block_vitrina');
+    $help = get_string('premiumenrolledcourse_help', 'block_vitrina');
+    $displaylist = $DB->get_records_menu('course', null, 'fullname', 'id, fullname');
+    $default = [];
+    $setting = new admin_setting_configmultiselect_autocomplete ($name, $title, $help, $default, $displaylist);
+    $settings->add($setting);
+
+    // Cohort to recognize premium self enrolment.
+    $cohorts = [0 => ''] + $DB->get_records_menu('cohort', ['visible' => 1], 'name', 'id, name');
+    $name = 'block_vitrina/premiumcohort';
+    $title = get_string('premiumcohort', 'block_vitrina');
+    $help = get_string('premiumcohort_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $cohorts);
+    $settings->add($setting);
+
     // Decimal points.
     $options = [
         '0' => '0',
@@ -158,15 +175,7 @@ if ($ADMIN->fulltree) {
     $help = get_string('categories_help', 'block_vitrina');
     $displaylist = \core_course_category::make_categories_list('moodle/category:manage');
     $default = [];
-
-    $setting = new admin_setting_configmultiselect_autocomplete (
-        'block_vitrina/categories',
-        get_string('categories', 'block_vitrina'),
-        get_string('categories_help', 'block_vitrina'),
-        $default,
-        $displaylist
-    );
-
+    $setting = new admin_setting_configmultiselect_autocomplete ($name, $title, $help, $default, $displaylist);
     $settings->add($setting);
 
     // General filters.

@@ -47,6 +47,7 @@ $PAGE->set_heading(get_string('coursedetail', 'block_vitrina', $course));
 $PAGE->set_title(get_string('coursedetailtitle', 'block_vitrina', $course));
 $PAGE->set_course($course);
 
+$msg = [];
 if ($enroll) {
 
     if (isguestuser() || !isloggedin()) {
@@ -56,24 +57,45 @@ if ($enroll) {
 
     $coursecontext = \context_course::instance($course->id, $USER, '', true);
 
-    \block_vitrina\controller::course_preprocess($course);
+    \block_vitrina\controller::course_preprocess($course, true);
 
-    $enrollable = true;
-
-    // Check if the course is only for premium users.
-    if ($course->premium) {
-        $enrollable = \block_vitrina\controller::is_user_premium();
-    }
+    $enrollable = in_array('self', $course->enrollsavailables) || in_array('premium', $course->enrollsavailables);
 
     // If currently not enrolled.
     if ($enrollable && !is_enrolled($coursecontext)) {
         $enrolinstances = enrol_get_instances($course->id, true);
-        $enrolplugin = enrol_get_plugin('membership');
+        $enrolplugin = enrol_get_plugin('self');
+
+        // Use a specific self enrolment.
+        $premiumcohort = null;
+        if ($course->premium) {
+            $premiumcohort = get_config('block_vitrina', 'premiumcohort');
+        }
 
         foreach ($enrolinstances as $instance) {
-            if ($instance->enrol == 'membership') {
-                $enrolplugin->enrol_membership($instance);
-                break;
+            if ($instance->enrol == 'self') {
+
+                // If the premiumcohort is configured this instance is only available to premium users enrollments.
+                if (!in_array('premium', $course->enrollsavailables) && $premiumcohort
+                        && $instance->customint5 && $instance->customint5 == $premiumcohort) {
+                    continue;
+                }
+
+                // The validation only applies to premium courses if the premiumcohort setting is configured.
+                // If premiumcohort is configured the course requires a specific cohort.
+                if (in_array('premium', $course->enrollsavailables) &&
+                            (!$premiumcohort || ($instance->customint5 && $instance->customint5 == $premiumcohort))) {
+
+                    $enrolplugin->enrol_self($instance);
+                    break;
+                }
+
+                // If the self enrolment is available use it directly because is the more basic.
+                if (in_array('self', $course->enrollsavailables)) {
+                    $enrolplugin->enrol_self($instance);
+                    break;
+                }
+
             }
         }
     }

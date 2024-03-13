@@ -256,13 +256,21 @@ class detail implements renderable, templatable {
 
         } else if ($this->course->enrollable) {
 
-            $ispremium = \block_vitrina\controller::is_user_premium();
-            if ($this->course->premium && $ispremium) {
-                $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
+            if (in_array('premium', $this->course->enrollsavailables)) {
+                $custom->enrolltitle = get_string('enrollavailablepremium', 'block_vitrina');
                 $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'enroll' => 1]);
                 $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
 
                 // If the user is premium, disable the payment gateway.
+                $this->course->haspaymentgw = false;
+
+            } else if (in_array('self', $this->course->enrollsavailables)) {
+
+                $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
+                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'enroll' => 1]);
+                $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
+
+                // If the user can self-enroll, disable the payment gateway.
                 $this->course->haspaymentgw = false;
 
             } else if (!empty($this->course->paymenturl)) {
@@ -292,16 +300,11 @@ class detail implements renderable, templatable {
                     }
                 }
 
-            } else if ($this->course->enrollasguest) {
+            } else if (in_array('guest', $this->course->enrollsavailables)) {
                 $custom->enrolltitle = get_string('allowguests', 'enrol_guest');
                 $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
                 $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
 
-            } else {
-
-                $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
-                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'enroll' => 1]);
-                $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
             }
 
         }
@@ -317,7 +320,7 @@ class detail implements renderable, templatable {
 
         $PAGE->requires->js_call_amd('block_vitrina/main', 'detail');
 
-        // End Check enroled status.
+        // End Check enrolled status.
 
         $defaultvariables = [
             'course' => $this->course,
