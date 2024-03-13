@@ -714,7 +714,7 @@ class controller {
 
                     $sql = "SELECT DISTINCT c.* $specialfields " .
                         " FROM {course} c" .
-                        " INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value <> '' AND cd.instanceid = c.id" .
+                        " INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value = '1' AND cd.instanceid = c.id" .
                         $joincustomfields .
                         " WHERE " . $select .
                         " ORDER BY " . $sortby;
