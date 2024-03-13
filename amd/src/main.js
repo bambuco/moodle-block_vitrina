@@ -16,6 +16,7 @@
 /**
  * Javascript to initialise the block.
  *
+ * @module block_vitrina/main
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
