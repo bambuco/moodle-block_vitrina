@@ -48,7 +48,7 @@ $PAGE->set_title(get_string('coursedetailtitle', 'block_vitrina', $course));
 $PAGE->set_course($course);
 
 $msg = [];
-if ($enroll) {
+if ($enroll && $course->visible) {
 
     if (isguestuser() || !isloggedin()) {
         $SESSION->wantsurl = (string)(new moodle_url('/blocks/vitrina/detail.php', ['id' => $course->id, 'enroll' => 1]));
@@ -68,7 +68,7 @@ if ($enroll) {
 
         // Use a specific self enrolment.
         $premiumcohort = null;
-        if ($course->premium) {
+        if ($course->premium || !\block_vitrina\controller::premium_available()) {
             $premiumcohort = get_config('block_vitrina', 'premiumcohort');
         }
 

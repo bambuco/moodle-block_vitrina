@@ -100,7 +100,8 @@ $string['premium'] = 'Premium';
 $string['premiumcohort'] = 'Premium cohort';
 $string['premiumcohort_help'] = 'The self-enrollment instance must be associated with the configured cohort so that premium users can enroll. If you do not want to configure the cohort in each course, do not select a cohort here but protect the self-enrollment with a password so that it is not available to all users.';
 $string['premiumcoursefield'] = 'Premium course field';
-$string['premiumcoursefield_help'] = 'The course field used to specify the premium type.';
+$string['premiumcoursefield_help'] = 'The course field used to specify the premium type.
+If none is specified, the premium course functionality will not be handled, but you will still be able to have premium users with the possibility of enrolling in any course.';
 $string['premiumenrolledcourse'] = 'Course to read premium users';
 $string['premiumenrolledcourse_help'] = 'Users enrolled in the course will be considered as premium users.';
 $string['premiumfield'] = 'Premium type user field';

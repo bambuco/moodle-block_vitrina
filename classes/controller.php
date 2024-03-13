@@ -113,10 +113,9 @@ class controller {
         if ($premiumfield) {
             $course->premium = $DB->get_field('customfield_data', 'value',
                                         ['fieldid' => $premiumfield->id, 'instanceid' => $course->id]);
+        } else {
+            $course->premium = null;
         }
-
-        // Load course context to general purpose.
-        $coursecontext = \context_course::instance($course->id, $USER, '', true);
 
         // Load the course enrol info.
         self::load_enrolinfo($course);
@@ -1031,7 +1030,7 @@ class controller {
                 }
 
                 // Course premium require a self enrolment.
-                if ($course->premium && $ispremium) {
+                if (($course->premium || !self::premium_available()) && $ispremium) {
 
                     // The validation only applies to premium courses if the premiumcohort setting is configured.
                     // If premiumcohort is configured the course requires a specific cohort.
