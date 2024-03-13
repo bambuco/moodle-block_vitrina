@@ -241,7 +241,7 @@ export const init = (uniqueid = null) => {
         $('#' + uniqueid + '.block_vitrina-content').each(function() {
             var $blockcontent = $(this);
 
-            // Tabs.
+            // Manage tabs.
             $blockcontent.find('.block_vitrina-tabs').each(function() {
                 var $tabs = $(this);
                 var tabslist = [];

@@ -1014,7 +1014,7 @@ class controller {
         $course->haspaymentgw = false;
         $course->enrolled = !(isguestuser() || !isloggedin() || !is_enrolled($coursecontext));
         $course->canview = has_capability('moodle/course:view', $coursecontext);
-        $ispremium = \block_vitrina\controller::is_user_premium();
+        $ispremium = self::is_user_premium();
 
         $premiumcohort = get_config('block_vitrina', 'premiumcohort');
 
