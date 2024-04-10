@@ -16,6 +16,7 @@
 /**
  * Javascript to initialise the block.
  *
+ * @module block_vitrina/main
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -240,7 +241,7 @@ export const init = (uniqueid = null) => {
         $('#' + uniqueid + '.block_vitrina-content').each(function() {
             var $blockcontent = $(this);
 
-            // Tabs.
+            // Manage tabs.
             $blockcontent.find('.block_vitrina-tabs').each(function() {
                 var $tabs = $(this);
                 var tabslist = [];

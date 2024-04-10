@@ -37,6 +37,11 @@ class controller {
     protected static $cachedpayfield = null;
 
     /**
+     * @var int Cached premium field id.
+     */
+    protected static $cachedpremiumfield = null;
+
+    /**
      * @var bool True if load full information about the course.
      */
     protected static $large = false;
@@ -103,8 +108,14 @@ class controller {
                                         ['fieldid' => $payfield->id, 'instanceid' => $course->id]);
         }
 
-        // Load course context to general purpose.
-        $coursecontext = \context_course::instance($course->id, $USER, '', true);
+        $premiumfield = self::get_premiumfield();
+
+        if ($premiumfield) {
+            $course->premium = $DB->get_field('customfield_data', 'value',
+                                        ['fieldid' => $premiumfield->id, 'instanceid' => $course->id]);
+        } else {
+            $course->premium = null;
+        }
 
         // Load the course enrol info.
         self::load_enrolinfo($course);
@@ -263,6 +274,11 @@ class controller {
                                                     ['fieldid' => $payfield->id, 'instanceid' => $one->id]);
                     }
 
+                    if ($premiumfield) {
+                        $one->premium = $DB->get_field('customfield_data', 'value',
+                                                    ['fieldid' => $premiumfield->id, 'instanceid' => $one->id]);
+                    }
+
                     if ($ratingavailable) {
                         $one->rating = new \stdClass();
                         $one->rating->total = 0;
@@ -318,8 +334,8 @@ class controller {
      */
     public static function premium_available() : bool {
 
-        $payfield = self::get_payfield();
-        return $payfield ? true : false;
+        $premiumfield = self::get_premiumfield();
+        return $premiumfield ? true : false;
     }
 
     /**
@@ -341,6 +357,23 @@ class controller {
     }
 
     /**
+     * Get the premium field.
+     *
+     * @return object The premium field.
+     */
+    public static function get_premiumfield() : ?object {
+        global $DB;
+
+        if (!self::$cachedpremiumfield) {
+            $premiumfield = get_config('block_vitrina', 'premiumcoursefield');
+            if (!empty($premiumfield)) {
+                self::$cachedpremiumfield = $DB->get_record('customfield_field', ['id' => $premiumfield]);
+            }
+        }
+
+        return self::$cachedpremiumfield ?? null;
+    }
+    /**
      * Define if the current or received user is premium.
      *
      * @param stdClass $user User object.
@@ -355,18 +388,29 @@ class controller {
         $premiumfieldid = get_config('block_vitrina', 'premiumfield');
         $premiumvalue = get_config('block_vitrina', 'premiumvalue');
 
-        if (empty($premiumfieldid) || empty($premiumvalue)) {
+        // If the premium field and value are set, check if the user is premium.
+        // It overrides the "Course to read premium users" setting.
+        if (!empty($premiumfieldid) && !empty($premiumvalue)) {
+
+            $premiumfield = $DB->get_field('user_info_field', 'shortname', ['id' => $premiumfieldid]);
+
+            if (!empty($premiumfield)) {
+                if (isset($user->profile[$premiumfield]) && $user->profile[$premiumfield] == $premiumvalue) {
+                    return true;
+                }
+            }
+
             return false;
         }
 
-        $premiumfield = $DB->get_field('user_info_field', 'shortname', ['id' => $premiumfieldid]);
+        // If the user is enrolled in the "Course to read premium users" is a premium user.
+        $premiumcourseid = get_config('block_vitrina', 'premiumenrolledcourse');
 
-        if (empty($premiumfield)) {
-            return false;
-        }
+        if (!empty($premiumcourseid)) {
+            // Check if the user is enrolled in the premium course.
+            $enrolled = is_enrolled(\context_course::instance($premiumcourseid), $user->id, '', true);
 
-        if (isset($user->profile[$premiumfield]) && $user->profile[$premiumfield] == $premiumvalue) {
-            return true;
+            return $enrolled;
         }
 
         return false;
@@ -661,15 +705,15 @@ class controller {
             break;
             case 'premium':
 
-                $payfield = self::get_payfield();
+                $premiumfield = self::get_premiumfield();
 
-                if ($payfield) {
+                if ($premiumfield) {
 
-                    $params['fieldid'] = $payfield->id;
+                    $params['fieldid'] = $premiumfield->id;
 
                     $sql = "SELECT DISTINCT c.* $specialfields " .
                         " FROM {course} c" .
-                        " INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value <> '' AND cd.instanceid = c.id" .
+                        " INNER JOIN {customfield_data} cd ON cd.fieldid = :fieldid AND cd.value = '1' AND cd.instanceid = c.id" .
                         $joincustomfields .
                         " WHERE " . $select .
                         " ORDER BY " . $sortby;
@@ -955,7 +999,7 @@ class controller {
      * @param object $course The course object.
      */
     public static function load_enrolinfo(object $course) {
-        global $USER;
+        global $USER, $CFG, $DB;
 
         // Load course context to general purpose.
         $coursecontext = \context_course::instance($course->id, $USER, '', true);
@@ -964,16 +1008,55 @@ class controller {
         $enrolinstances = enrol_get_instances($course->id, true);
 
         $course->enrollable = false;
-        $course->enrollasguest = false;
+        $course->enrollsavailables = [];
         $course->fee = [];
         $course->haspaymentgw = false;
         $course->enrolled = !(isguestuser() || !isloggedin() || !is_enrolled($coursecontext));
         $course->canview = has_capability('moodle/course:view', $coursecontext);
+        $ispremium = self::is_user_premium();
+
+        $premiumcohort = get_config('block_vitrina', 'premiumcohort');
 
         foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {
+
+                if ($instance->customint3 > 0) {
+                    // Max enrol limit specified.
+                    $count = $DB->count_records('user_enrolments', ['enrolid' => $instance->id]);
+                    if ($count >= $instance->customint3) {
+                        // Bad luck, no more self enrolments here.
+                        continue;
+                    }
+                }
+
+                // Course premium require a self enrolment.
+                if (($course->premium || !self::premium_available()) && $ispremium) {
+
+                    // The validation only applies to premium courses if the premiumcohort setting is configured.
+                    // If premiumcohort is configured the course requires a specific cohort.
+                    if (!$premiumcohort || ($instance->customint5 && $instance->customint5 == $premiumcohort)) {
+
+                            $course->enrollable = true;
+                            $course->enrollsavailables[] = 'premium';
+                            continue;
+                    }
+                }
+
+                // Enrol with password is not supported.
+                if (!empty($instance->password)) {
+                    continue;
+                }
+
+                if ($instance->customint5) {
+                    require_once($CFG->dirroot . '/cohort/lib.php');
+                    if (!cohort_is_member($instance->customint5, $USER->id)) {
+                        // The user cannot enroll because they are not in the cohort.
+                        continue;
+                    }
+                }
+
+                $course->enrollsavailables[] = 'self';
                 $course->enrollable = true;
-                break;
             } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
 
                 $cost = (float) $instance->cost;
@@ -993,12 +1076,13 @@ class controller {
 
                     $course->fee[] = $datafee;
                     $course->enrollable = true;
+                    $course->enrollsavailables[] = 'fee';
                     $course->haspaymentgw = true;
                 }
 
             } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
                 $course->enrollable = true;
-                $course->enrollasguest = true;
+                $course->enrollsavailables[] = 'guest';
             }
         }
 
