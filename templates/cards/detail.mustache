@@ -1,0 +1,282 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_vitrina/cards/detail
+
+    This template renders the template content area for a resource.
+
+    Example context (json):
+    {}
+}}
+{{#course}}
+<div class="catalog-return">
+    <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-secondary">{{#pix}}i/return, core{{/pix}}  {{#str}}returntocatalog, block_vitrina{{/str}}</a>
+</div>
+<div class="course-detail coursecategory-{{category}} {{#premium}}type-premium{{/premium}} container">
+    <div class="information-structure">
+        <div class="course-specific-info">
+            <div class="coursetitle-box">
+                <h3>{{{coursename}}}</h3>
+                <p> {{{summary}}} </p>
+            </div>
+
+            {{#hasinstructors}}
+                <div class="experts-box">
+                {{#instructors}}
+                    <p>
+                        <img src="{{userpicture}}" alt="{{firstname}}" width="138" height="132" />
+                        <strong>{{firstname}} {{lastname}}</strong>
+                        <em>{{imagealt}}</em>
+                    </p>
+                {{/instructors}}
+                </div>
+            {{/hasinstructors}}
+
+            {{#custom}}
+                {{#longcustomfields}}
+                    <div class="longcustomfields-box {{shortname}}-box">
+                        <h3>{{title}}</h3>
+                        <span>{{{value}}}</span>
+                    </div>
+                {{/longcustomfields}}
+            {{/custom}}
+
+        </div>
+
+        <div class="course-general-info">
+            {{#custom}}
+                {{#media}}
+                <div class="media-content">
+                    {{#isembed}}
+                        <iframe src="{{value}}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture"></iframe>
+                    {{/isembed}}
+                    {{^isembed}}
+                        <video controls="controls" {{#mediaposter}}poster="{{value}}"{{/mediaposter}}>
+                            <source src="{{value}}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {{/isembed}}
+                </div>
+                {{/media}}
+            {{/custom}}
+
+            <div class="general-items-box">
+                <div class="enroll-content enrollstate-{{enrollstate}}">
+                    <div class="enroll-container">
+                        <div class="{{#haspaymentgw}}haspaymentgw{{/haspaymentgw}}">
+                        {{#custom}}
+                            {{#enrolltitle}}<p>{{enrolltitle}}</p>{{/enrolltitle}}
+                            {{#enrollurl}}
+                                <a href="{{{enrollurl}}}" class="btn btn-primary">
+                                    {{enrollurllabel}}
+                                </a>
+                            {{/enrollurl}}
+                            {{#haspaymentgw}}
+                                {{#requireauth}}
+                                    <div class="requireauth">{{#str}} requireauth, block_vitrina, {{{requireauthurl}}} {{/str}}</div>
+                                {{/requireauth}}
+                                {{^requireauth}}
+                                    {{#fee}}
+                                        <div class="feeinfo">
+                                            {{#str}} feeinfo, block_vitrina, {{formatedcost}} {{/str}}
+                                        </div>
+                                        <a class="btn btn-primary"
+                                                data-component="enrol_fee"
+                                        {{#hascart}}
+                                                data-action="local_buybee/addProduct"
+                                                data-reference="{{reference}}"
+                                                data-quantity="1"
+                                                data-formatedcost="{{formatedcost}}"
+                                                data-currency="{{currency}}"
+                                                data-cost="{{cost}}"
+                                                {{#imagepath}}
+                                                    data-image="{{.}}"
+                                                {{/imagepath}}
+                                        {{/hascart}}
+                                        {{^hascart}}
+                                                data-action="core_payment/triggerPayment"
+                                                data-paymentarea="fee"
+                                                data-itemid="{{itemid}}"
+                                                {{#successurl}}data-successurl="{{{successurl}}}"{{/successurl}}
+                                                data-cost="{{formatedcost}}"
+                                        {{/hascart}}
+                                            data-name="{{originalcoursename}}"
+                                            >
+                                                {{#hascart}}
+                                                        {{#pix}} i/addtocart, local_buybee {{/pix}}
+                                                        <span>{{#str}} labeladdproduct, local_buybee {{/str}}</span>
+                                                {{/hascart}}
+                                                {{^hascart}}
+                                                    {{label}}
+                                                {{/hascart}}
+                                        </a>
+                                    {{/fee}}
+                                {{/requireauth}}
+                            {{/haspaymentgw}}
+
+                        {{/custom}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ranking-summary">
+                    {{#rating}}
+                        <div>
+                            <label>{{formated}}</label>
+                            <div class="vitrina-ranking-stars">
+                                <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                                {{#pix}}stars_empty, block_vitrina{{/pix}}
+                            </div>
+                        </div>
+                        <div>
+                            <label>{{#str}}ratingslabel, block_vitrina, {{count}} {{/str}}</label>
+                        </div>
+                    {{/rating}}
+                    <div>
+                        <label>{{#str}}commentslabel, block_vitrina, {{commentscount}} {{/str}}</label>
+                    </div>
+                </div>
+
+                <div>
+                    <ul class="list-info">
+                    {{#custom}}
+                        {{#license}}
+                            <li class="license-item">
+                                <strong>{{title}}:</strong>
+                                <span class="content-box license">
+                                    {{#path}}
+                                    <a rel="license" href="http://creativecommons.org/licenses/{{path}}/" target="_blank">
+                                        <img alt="Licencia Creative Commons" src="https://licensebuttons.net/l/{{path}}/88x31.png" />
+                                    </a>
+                                    {{/path}}
+                                    {{^path}}
+                                        {{text}}
+                                    {{/path}}
+                                </span>
+                            </li>
+                        {{/license}}
+                        {{#customfields}}
+                            <li class="customfield-item {{shortname}}-item">
+                                <strong>{{title}}:</strong>
+                                <span>{{{value}}}</span>
+                            </li>
+                        {{/customfields}}
+                    {{/custom}}
+                    </ul>
+                </div>
+
+                <div class="share-container">
+                    <h3>{{#str}}sharecourse, block_vitrina{{/str}}</h3>
+
+                    <div class="input-container">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="fa fa-link"></i>
+                                </span>
+                            </div>
+                            <input type="text" name="courselink" aria-label="course link" value="{{baseurl}}/blocks/vitrina/detail.php?id={{id}}">
+                        </div>
+                    </div>
+                    <div class="share-icons">
+                    {{#networks}}
+                        <a href="{{url}}" target="_blank">
+                            <i class="fa fa-{{icon}}"></i>
+                        </a>
+                    {{/networks}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{#detailinfo}}
+        <div class="detailinfo">
+            {{{detailinfo}}}
+        </div>
+    {{/detailinfo}}
+
+    {{#hasrelated}}
+        <div class="relatedcourses">
+            <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
+            <div class="block_vitrina-courseslist">
+                {{#related}}
+                    {{>block_vitrina/cards/course}}
+                {{/related}}
+            </div>
+        </div>
+    {{/hasrelated}}
+
+    <div class="detail-foot">
+        {{#hascomments}}<h3>{{#str}}commentstitle, block_vitrina{{/str}}</h3>{{/hascomments}}
+
+        <div class="{{#rating}}has_rating{{/rating}} {{#hascomments}}has_comments{{/hascomments}}">
+            {{#hascomments}}
+                <div class="course-comments" data-count="{{commentscount}}">
+                    {{#comments}}
+                        <div class="onecomment">
+                            <div class="timeformated">{{timeformated}}</div>
+                            <div class="comment-body">
+                                <img src="{{userpicture}}" class="userpicture" />
+                                <p>
+                                    {{content}}
+                                </p>
+                            </div>
+                            <label>{{#str}} comment_by, block_vitrina, {{userfirstname}} {{/str}}</label>
+                        </div>
+                    {{/comments}}
+                    <div class="box-show-more-comments">
+                        <button class="btn btn-primary" data-vitrina-toggle="showallcomments" data-target=".detail-foot .course-comments">
+                            <span class="more">{{#str}} showmorecomments, block_vitrina {{/str}}</span>
+                            <span class="less">{{#str}} showlesscomments, block_vitrina {{/str}}</span>
+                        </button>
+                    </div>
+                </div>
+            {{/hascomments}}
+            {{#rating}}
+                <div class="ranking-detail">
+                    <div>
+                        <label>{{formated}}</label>
+                        <div class="vitrina-ranking-stars">
+                            <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                            {{#pix}}stars_empty, block_vitrina{{/pix}}
+                        </div>
+                    </div>
+                    <div>
+                        {{#detail}}
+                        <div class="ranking-detail-item">
+                            <label>{{#str}} countstars, block_vitrina, {{value}} {{/str}}</label>
+                            <div class="rating-bar"><div style="width: {{avg}}%"></div></div>
+                            <div>{{avg}}%</div>
+                        </div>
+                        {{/detail}}
+                    </div>
+                </div>
+            {{/rating}}
+        </div>
+    </div>
+</div>
+
+{{#haspaymentgw}}
+{{#js}}
+    require(['core_payment/gateways_modal'], function(modal) {
+        modal.init();
+    });
+{{/js}}
+{{/haspaymentgw}}
+
+{{/course}}
