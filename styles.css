@@ -718,24 +718,51 @@
     border-top: 1px solid #ddd;
 }
 
-.path-blocks-vitrina .filtercontrol .filteroptions {
-    list-style: none;
-    padding: 0;
-}
-
 .path-blocks-vitrina .filtercontrol .filteroptions > li {
     padding-bottom: 5px;
     max-width: 200px;
     display: flex;
 }
 
-.path-blocks-vitrina .filtercontrol .filteroptions > li > label {
+.path-blocks-vitrina .filtercontrol .filteroptions label {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     padding-left: 5px;
     margin: 0;
     cursor: pointer;
+    width: 100%;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions label:hover {
+    background-color: #f5f5f5;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions {
+    list-style: none;
+    padding: 0;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions .filter-optiongroup {
+    flex-direction: column;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions .filter-optiongroup.haschilds {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions .filter-optiongroup.haschilds:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions .filter-optiongroup.haschilds > .filter-option {
+    font-weight: bold;
+}
+
+.path-blocks-vitrina .filtercontrol .filteroptions .filter-option {
+    display: flex;
 }
 
 .vitrina-filter-closebutton,

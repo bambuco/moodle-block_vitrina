@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use editor_tiny\lang;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/blocks/vitrina/classes/admin_setting_configmultiselect_autocomplete.php');
@@ -188,6 +190,17 @@ if ($ADMIN->fulltree) {
     $title = get_string('staticfilters', 'block_vitrina');
     $help = get_string('staticfilters_help', 'block_vitrina');
     $setting = new admin_setting_configmultiselect($name, $title, $help, [], $staticfilters);
+    $settings->add($setting);
+
+    // Category filter view.
+    $catfilterviews = [
+        'default' => new lang_string('catfilterview_default', 'block_vitrina'),
+        'tree' => new lang_string('catfilterview_tree', 'block_vitrina'),
+    ];
+    $name = 'block_vitrina/catfilterview';
+    $title = get_string('catfilterview', 'block_vitrina');
+    $help = get_string('catfilterview_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, '', $catfilterviews);
     $settings->add($setting);
 
     // Only availabe if exist fields to filter.
