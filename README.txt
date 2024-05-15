@@ -22,8 +22,11 @@ FEATURES
 
 IN VERSION
 =============
+2023042611:
+- Categories filter can be set to view as tree.
+
 2023042610:
-- Custom cost formater
+- Custom cost formater.
 
 2023042609:
 - Integration with local_buybee (shopping cart).
