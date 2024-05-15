@@ -73,14 +73,7 @@
                         <h5>{{title}}</h5>
                         <ul class="filteroptions">
                             {{#options}}
-                                <li>
-                                    <input id="option-{{key}}_{{value}}"
-                                            type="checkbox"
-                                            value="{{value}}"
-                                            class="filteroption"
-                                            {{#selected}}checked{{/selected}} />
-                                    <label for="option-{{key}}_{{value}}">{{label}}</label>
-                                </li>
+                                {{>block_vitrina/filterchild}}
                             {{/options}}
                         </ul>
                     </div>

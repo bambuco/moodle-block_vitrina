@@ -87,8 +87,13 @@ class catalog implements renderable, templatable {
         $staticfilters = explode(',', $staticfilters);
 
         // Filter by category.
+        $catfilterview = null;
         if (in_array('categories', $staticfilters)) {
-            $categoriesoptions = \block_vitrina\controller::get_categories();
+            $catfilterview = get_config('block_vitrina', 'catfilterview');
+
+            $nested = $catfilterview == 'tree';
+
+            $categoriesoptions = \block_vitrina\controller::get_categories([], $nested);
 
             if (count($categoriesoptions) > 1) {
                 $control = new \stdClass();
@@ -97,6 +102,7 @@ class catalog implements renderable, templatable {
                 $control->options = $categoriesoptions;
                 $filtercontrols[] = $control;
             }
+
         }
 
         // Filter by language.
@@ -133,6 +139,7 @@ class catalog implements renderable, templatable {
             'showtext' => \block_vitrina\controller::show_tabtext(),
             'filtercontrols' => $filtercontrols,
             'filterproperties' => $filterproperties,
+            'catfilterview' => $catfilterview,
         ];
 
         return $defaultvariables;

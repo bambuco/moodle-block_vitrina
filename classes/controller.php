@@ -848,9 +848,10 @@ class controller {
      * Get the available categories list.
      *
      * @param array $selectedlist The selected categories.
+     * @param bool $nested If return the categories in a nested way.
      * @return array The categories list.
      */
-    public static function get_categories(array $selectedlist = []) : array {
+    public static function get_categories(array $selectedlist = [], bool $nested = false) : array {
         global $DB;
 
         $select = 'visible = 1';
@@ -877,11 +878,49 @@ class controller {
 
         foreach ($categories as $category) {
             $selected = in_array($category->id, $selectedlist);
-            $response[] = [
+            $node = (object)[
                 'value' => $category->id,
                 'label' => format_string($category->name, true),
-                'selected' => $selected
+                'selected' => $selected,
+                'haschilds' => false,
+                'childs' => [],
+                'indent' => 0,
             ];
+
+            if ($nested && $category->parent) {
+                $parents = explode('/', $category->path);
+
+                // Search the most parent category.
+                $tosearch = $response;
+                $root = null;
+                $indent = 0;
+                foreach ($parents as $parentid) {
+                    if ($parentid == $category->id) {
+                        continue;
+                    }
+
+                    foreach ($tosearch as $element) {
+                        if ($element->value == $parentid) {
+                            $indent++;
+                            $root = $element;
+                            $root->haschilds = true;
+                            $tosearch = $root->childs;
+                            break;
+                        }
+                    }
+                }
+
+                $node->indent = $indent;
+                // Add the category to the more close parent.
+                if ($root) {
+                    $root->childs[] = $node;
+                } else {
+                    $response[] = $node;
+                }
+
+            } else {
+                $response[] = $node;
+            }
         }
 
         return $response;
