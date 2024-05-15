@@ -29,17 +29,18 @@
                 "label": "label value",
                 "selected": true
             }
-        ]
+        ],
+        "debugmode": true
     }
 }}
-
+{{#debugmode}}<ul>{{/debugmode}}
 <li class="filter-optiongroup {{#haschilds}}haschilds{{/haschilds}}" data-indent="{{indent}}" style="padding-left: {{indent}}0px;">
     <div class="filter-option">
         <input id="option-{{key}}_{{value}}"
                 type="checkbox"
                 value="{{value}}"
                 class="filteroption"
-                {{#selected}}checked{{/selected}} />
+                {{#selected}}checked{{/selected}}>
         <label for="option-{{key}}_{{value}}" title="{{label}}">{{label}}</label>
     </div>
     {{#haschilds}}
@@ -50,3 +51,4 @@
         </ul>
     {{/haschilds}}
 </li>
+{{#debugmode}}</ul>{{/debugmode}}
