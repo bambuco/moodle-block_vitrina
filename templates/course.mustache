@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_vitrina/courses
+    @template block_vitrina/course
 
     This template renders the template content area for a resource.
 
@@ -51,22 +51,7 @@
                     {{#str}} feeinfoinlist, block_vitrina, {{formatedcost}} {{/str}}
                 </div>
                 {{#hascart}}
-                    <a class="btn btn-primary"
-                        data-component="enrol_fee"
-                        data-action="local_buybee/addProduct"
-                        data-reference="{{reference}}"
-                        data-quantity="1"
-                        data-formatedcost="{{formatedcost}}"
-                        data-currency="{{currency}}"
-                        data-cost="{{cost}}"
-                        {{#imagepath}}
-                            data-image="{{.}}"
-                        {{/imagepath}}
-                        data-name="{{originalcoursename}}"
-                    >
-                        {{#pix}} i/addtocart, local_buybee {{/pix}}
-                        <span>{{#str}} labeladdproduct, local_buybee {{/str}}</span>
-                    </a>
+                    {{> block_vitrina/cartbutton}}
                 {{/hascart}}
             </div>
         {{/fee}}
