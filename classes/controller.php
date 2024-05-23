@@ -1147,7 +1147,7 @@ class controller {
         $fmt->setAttribute(\NumberFormatter::FRACTION_DIGITS, $decimalpoints);
         $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
 
-        if (strpos('$', $localisedcost) === false) {
+        if (strpos($localisedcost, '$') === false) {
             $localisedcost = '$' . $localisedcost;
         }
 
