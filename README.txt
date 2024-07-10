@@ -22,6 +22,10 @@ FEATURES
 
 IN VERSION
 =============
+2023042612:
+- Extend shop plugins.
+- Filter by fulltext in URL with the "q" param.
+
 2023042611:
 - Categories filter can be set to view as tree.
 

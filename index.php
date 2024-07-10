@@ -28,6 +28,7 @@ require_once('classes/output/catalog.php');
 $instanceid = optional_param('id', 0, PARAM_INT);
 $view = optional_param('view', 'default', PARAM_TEXT);
 $filters = optional_param('filters', '', PARAM_TEXT);
+$q = optional_param('q', '', PARAM_TEXT);
 
 require_login(null, true);
 
@@ -82,6 +83,10 @@ if (!empty($filters)) {
             }
         }
     }
+}
+
+if (!empty($q)) {
+    $filtersselected[] = (object) ['key' => 'fulltext', 'values' => [$q]];
 }
 
 $categoriesids = [];
