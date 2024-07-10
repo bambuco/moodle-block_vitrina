@@ -64,7 +64,7 @@ class catalog implements renderable, templatable {
      * @return array Context variables for the template
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $PAGE;
+        global $CFG;
 
         $availableviews = \block_vitrina\controller::get_courses_views();
 

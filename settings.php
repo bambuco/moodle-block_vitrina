@@ -345,7 +345,7 @@ if ($ADMIN->fulltree) {
         $settings->add($setting);
     }
 
-    // Rating components.
+    // Comments components.
     $options = [];
 
     if (\block_vitrina\comments\base::comments_available()) {
@@ -360,6 +360,25 @@ if ($ADMIN->fulltree) {
         $name = 'block_vitrina/commentsmanager';
         $title = get_string('commentsmanager', 'block_vitrina');
         $help = get_string('commentsmanager_help', 'block_vitrina');
+        $setting = new admin_setting_configselect($name, $title, $help, '', $options);
+        $settings->add($setting);
+    }
+
+    // Shop components.
+    $options = [];
+
+    if (\block_vitrina\shop\local_buybee::available()) {
+        $options['local_buybee'] = get_string('pluginname', 'local_buybee') . ' (local_buybee)';
+    }
+
+    if (\block_vitrina\shop\local_bazaar::available()) {
+        $options['local_bazaar'] = get_string('pluginname', 'local_bazaar') . ' (local_bazaar)';
+    }
+
+    if (count($options) > 0) {
+        $name = 'block_vitrina/shopmanager';
+        $title = get_string('shopmanager', 'block_vitrina');
+        $help = get_string('shopmanager_help', 'block_vitrina');
         $setting = new admin_setting_configselect($name, $title, $help, '', $options);
         $settings->add($setting);
     }

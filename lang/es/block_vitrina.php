@@ -112,6 +112,8 @@ $string['settingsheaderpayment'] = 'Opciones para cursos de pago';
 $string['sharecourse'] = 'Comparte este curso';
 $string['sharecoursedesc'] = '¿Conoces a alguien que le pueda gustar este curso?<br />
 <strong>Cuéntale sobre él</strong>';
+$string['shopmanager'] = 'Manejador de tienda';
+$string['shopmanager_help'] = 'Elija el componente a usar como tienda.';
 $string['showcustomfields'] = 'Campos personalizados a mostrar';
 $string['showcustomfields_help'] = 'Campos que se mostrarán en la vista de detalle para cada curso.';
 $string['showicon'] = 'Solo iconos';

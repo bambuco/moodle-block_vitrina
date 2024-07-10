@@ -1113,6 +1113,7 @@ class controller {
                     $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
                     $datafee->description = get_string('purchasedescription', 'enrol_fee',
                                                 format_string($course->fullname, true, ['context' => $coursecontext]));
+                    $datafee->originalcoursename = $course->fullname;
 
                     $course->fee[] = $datafee;
                     $course->enrollable = true;
@@ -1146,7 +1147,7 @@ class controller {
         $fmt->setAttribute(\NumberFormatter::FRACTION_DIGITS, $decimalpoints);
         $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
 
-        if (strpos('$', $localisedcost) === false) {
+        if (strpos($localisedcost, '$') === false) {
             $localisedcost = '$' . $localisedcost;
         }
 

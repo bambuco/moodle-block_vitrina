@@ -58,7 +58,7 @@ class detail implements renderable, templatable {
      * @return array Context variables for the template
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $OUTPUT, $PAGE, $USER, $DB;
+        global $CFG, $PAGE, $USER, $DB;
 
         // Course detail info.
         $detailinfo = get_config('block_vitrina', 'detailinfo');
@@ -225,7 +225,11 @@ class detail implements renderable, templatable {
         $custom->enrollurl = null;
         $custom->enrollurllabel = '';
 
-        $localbuybee = \core_plugin_manager::instance()->get_plugin_info('local_buybee');
+        $shoppluginname = get_config('block_vitrina', 'shopmanager');
+        $shopmanager = null;
+        if (!empty($shoppluginname)) {
+            $shopmanager = 'block_vitrina\shop\\' . $shoppluginname;
+        }
 
         if ($custom->completed) {
 
@@ -282,10 +286,11 @@ class detail implements renderable, templatable {
             } else if ($this->course->haspaymentgw) {
                 $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
 
-                if ($localbuybee) {
+                if ($shopmanager) {
                     $custom->hascart = true;
+                    $custom->shopmanager = $shopmanager::render_from_template();
                     foreach ($this->course->fee as $fee) {
-                        $fee->reference = \local_buybee\controller::get_product_reference('enrol_fee', $fee->itemid);
+                        $fee->reference = $shopmanager::get_product_reference('enrol_fee', $fee->itemid);
                     }
                 } else {
                     $custom->requireauth = isguestuser() || !isloggedin();
@@ -309,11 +314,12 @@ class detail implements renderable, templatable {
 
         }
 
-        if ($this->course->hasrelated && $localbuybee && !$this->course->enrolled && !$this->course->canview) {
+        if ($this->course->hasrelated && $shopmanager && !$this->course->enrolled && !$this->course->canview) {
             foreach ($this->course->related as $onerelated) {
                 $onerelated->hascart = true;
+                $onerelated->shopmanager = $shopmanager::render_from_template();
                 foreach ($onerelated->fee as $fee) {
-                    $fee->reference = \local_buybee\controller::get_product_reference('enrol_fee', $fee->itemid);
+                    $fee->reference = $shopmanager::get_product_reference('enrol_fee', $fee->itemid);
                 }
             }
         }
