@@ -245,6 +245,9 @@
     align-items: center;
 }
 
+#page-blocks-vitrina-detail .media-content video,
+#page-blocks-vitrina-detail .media-content img,
+#page-blocks-vitrina-detail .media-content audio,
 #page-blocks-vitrina-detail .media-container video,
 #page-blocks-vitrina-detail .media-container img,
 #page-blocks-vitrina-detail .media-container audio {
