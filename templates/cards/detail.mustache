@@ -60,15 +60,20 @@
         <div class="course-general-info">
             {{#custom}}
                 {{#media}}
-                <div class="media-content">
+                <div class="media-content {{#isimage}}isimage{{/isimage}}">
                     {{#isembed}}
                         <iframe src="{{value}}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture"></iframe>
                     {{/isembed}}
                     {{^isembed}}
-                        <video controls="controls" {{#mediaposter}}poster="{{value}}"{{/mediaposter}}>
-                            <source src="{{value}}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
+                        {{#isimage}}
+                            <img src="{{value}}" />
+                        {{/isimage}}
+                        {{^isimage}}
+                            <video controls="controls" {{#mediaposter}}poster="{{value}}"{{/mediaposter}}>
+                                <source src="{{value}}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {{/isimage}}
                     {{/isembed}}
                 </div>
                 {{/media}}

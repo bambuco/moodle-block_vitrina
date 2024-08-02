@@ -127,6 +127,7 @@ class detail implements renderable, templatable {
             $showlongfields = [];
         }
 
+        $imgextentions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
         foreach ($datas as $data) {
             $key = $data->get_field()->get('id');
 
@@ -150,6 +151,8 @@ class detail implements renderable, templatable {
                                strpos($c->value, 'https://youtube.com') === 0 ||
                                strpos($c->value, 'https://player.vimeo.com') === 0) {
                             $c->isembed = true;
+                        } else if (in_array(pathinfo(strtolower($c->value), PATHINFO_EXTENSION), $imgextentions)) {
+                            $c->isimage = true;
                         }
                     }
 

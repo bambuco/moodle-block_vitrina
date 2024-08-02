@@ -22,6 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042613:
+- Include image as a posible media in course detail.
+
 2023042612:
 - Extend shop plugins.
 - Filter by fulltext in URL with the "q" param.
