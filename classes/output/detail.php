@@ -139,24 +139,24 @@ class detail implements renderable, templatable {
 
                     $c->value = $data->export_value();
 
-                    if ($field == 'license') {
-                        if (get_string_manager()->string_exists('license-' . $c->value, 'block_vitrina')) {
-                            $c->text = get_string('license-' . $c->value, 'block_vitrina');
-                            $c->path = $c->value == 'cc-0' ? 'zero/1.0' : trim($c->value, 'cc-') . '/4.0';
-                        } else {
-                            $c->text = $c->value;
-                        }
-                    } else if ($field == 'media') {
-                        if (strpos($c->value, 'https://www.youtube.com') === 0 ||
-                               strpos($c->value, 'https://youtube.com') === 0 ||
-                               strpos($c->value, 'https://player.vimeo.com') === 0) {
-                            $c->isembed = true;
-                        } else if (in_array(pathinfo(strtolower($c->value), PATHINFO_EXTENSION), $imgextentions)) {
-                            $c->isimage = true;
-                        }
-                    }
-
                     if (!empty($c->value)) {
+                        if ($field == 'license') {
+                            if (get_string_manager()->string_exists('license-' . $c->value, 'block_vitrina')) {
+                                $c->text = get_string('license-' . $c->value, 'block_vitrina');
+                                $c->path = $c->value == 'cc-0' ? 'zero/1.0' : trim($c->value, 'cc-') . '/4.0';
+                            } else {
+                                $c->text = $c->value;
+                            }
+                        } else if ($field == 'media') {
+                            if (strpos($c->value, 'https://www.youtube.com') === 0 ||
+                                strpos($c->value, 'https://youtube.com') === 0 ||
+                                strpos($c->value, 'https://player.vimeo.com') === 0) {
+                                $c->isembed = true;
+                            } else if (in_array(pathinfo(strtolower($c->value), PATHINFO_EXTENSION), $imgextentions)) {
+                                $c->isimage = true;
+                            }
+                        }
+
                         $custom->$field = $c;
                     }
 
@@ -263,7 +263,12 @@ class detail implements renderable, templatable {
 
         } else if ($this->course->enrollable) {
 
-            if (in_array('premium', $this->course->enrollsavailables)) {
+            if (in_array('guest', $this->course->enrollsavailables)) {
+                $custom->enrolltitle = get_string('allowguests', 'enrol_guest');
+                $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
+                $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
+
+            } else if (in_array('premium', $this->course->enrollsavailables)) {
                 $custom->enrolltitle = get_string('enrollavailablepremium', 'block_vitrina');
                 $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'enroll' => 1]);
                 $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
@@ -307,11 +312,6 @@ class detail implements renderable, templatable {
                         $custom->requireauthurl = $url;
                     }
                 }
-
-            } else if (in_array('guest', $this->course->enrollsavailables)) {
-                $custom->enrolltitle = get_string('allowguests', 'enrol_guest');
-                $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
-                $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
 
             }
 

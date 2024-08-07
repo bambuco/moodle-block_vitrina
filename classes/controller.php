@@ -400,8 +400,6 @@ class controller {
                     return true;
                 }
             }
-
-            return false;
         }
 
         // If the user is enrolled in the "Course to read premium users" is a premium user.
@@ -496,7 +494,6 @@ class controller {
      * Get the available courses views.
      */
     public static function get_courses_views() : array {
-        global $PAGE;
 
         $availablesorting = self::COURSES_VIEWS;
 

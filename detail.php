@@ -86,7 +86,13 @@ if ($enroll && $course->visible) {
                 if (in_array('premium', $course->enrollsavailables) &&
                             (!$premiumcohort || ($instance->customint5 && $instance->customint5 == $premiumcohort))) {
 
-                    $enrolplugin->enrol_self($instance);
+                    $data = null;
+                    if ($instance->password) {
+                        // If the instance has a password but the course is premium the password is simuled.
+                        $data = new stdClass();
+                        $data->enrolpassword = $instance->password;
+                    }
+                    $enrolplugin->enrol_self($instance, $data);
                     break;
                 }
 
