@@ -22,6 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2024083101:
+- Moodle 4.4+ compatibility.
+
 2023042613:
 - Include image as a posible media in course detail.
 - The cost of premium courses is not shown to premium users.
