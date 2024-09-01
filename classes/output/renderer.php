@@ -117,9 +117,6 @@ class renderer extends plugin_renderer_base {
             $templatefile = 'block_vitrina/course';
         }
 
-        // Load the course enrol info.
-        \block_vitrina\controller::load_enrolinfo($course);
-
         if ($shopmanager === null) {
             $shoppluginname = get_config('block_vitrina', 'shopmanager');
             if (!empty($shoppluginname)) {

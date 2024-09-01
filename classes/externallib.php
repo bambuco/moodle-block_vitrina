@@ -77,7 +77,7 @@ class external extends \external_api {
                                         int $instanceid = 0,
                                         int $amount = 0,
                                         int $initial = 0) : array {
-        global $DB, $USER, $PAGE, $CFG;
+        global $PAGE, $CFG;
 
         if (!isloggedin() && empty($CFG->guestloginbutton) && empty($CFG->autologinguests)) {
             require_login(null, true);

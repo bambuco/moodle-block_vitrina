@@ -67,6 +67,11 @@ class controller {
     private static $showtext = null;
 
     /**
+     * @var bool True if the user is premium.
+     */
+    private static $isuserpremium = null;
+
+    /**
      * @var array List of available courses views.
      */
     public const COURSES_VIEWS = ['default', 'recents', 'greats', 'premium'];
@@ -93,7 +98,9 @@ class controller {
      * @param bool   $large  True if load full information about the course.
      */
     public static function course_preprocess($course, $large = false) {
-        global $CFG, $DB, $PAGE, $USER;
+        global $CFG, $DB, $PAGE;
+
+        $isuserpremium = self::is_user_premium();
 
         self::$large = $large;
         $course->haspaymentgw = false;
@@ -102,10 +109,11 @@ class controller {
         $course->hassummary = !empty($course->summary);
 
         $payfield = self::get_payfield();
-
-        if ($payfield) {
-            $course->paymenturl = $DB->get_field('customfield_data', 'value',
-                                        ['fieldid' => $payfield->id, 'instanceid' => $course->id]);
+        if (!$isuserpremium) {
+            if ($payfield) {
+                $course->paymenturl = $DB->get_field('customfield_data', 'value',
+                                            ['fieldid' => $payfield->id, 'instanceid' => $course->id]);
+            }
         }
 
         $premiumfield = self::get_premiumfield();
@@ -120,9 +128,13 @@ class controller {
         // Load the course enrol info.
         self::load_enrolinfo($course);
 
-        // If course has a single cost, load it for fast printing.
-        if (count($course->fee) == 1) {
-            $course->cost = $course->fee[0]->cost;
+        if ((!$premiumfield || $course->premium) && $isuserpremium) {
+            $course->fee = null;
+        } else {
+            // If course has a single cost, load it for fast printing.
+            if (count($course->fee) == 1) {
+                $course->cost = $course->fee[0]->cost;
+            }
         }
 
         $course->imagepath = self::get_courseimage($course);
@@ -270,7 +282,7 @@ class controller {
                     $one->hassummary = !empty($one->summary);
                     $one->imagepath = self::get_courseimage($one);
                     $one->active = $one->startdate <= time();
-                    if ($payfield) {
+                    if (!$isuserpremium && $payfield) {
                         $one->paymenturl = $DB->get_field('customfield_data', 'value',
                                                     ['fieldid' => $payfield->id, 'instanceid' => $one->id]);
                     }
@@ -382,6 +394,11 @@ class controller {
      */
     public static function is_user_premium($user = null) : bool {
         global $USER, $DB;
+
+        if (self::$isuserpremium !== null) {
+            return self::$isuserpremium;
+        }
+
         if (!$user) {
             $user = $USER;
         }
@@ -397,6 +414,7 @@ class controller {
 
             if (!empty($premiumfield)) {
                 if (isset($user->profile[$premiumfield]) && $user->profile[$premiumfield] == $premiumvalue) {
+                    self::$isuserpremium = true;
                     return true;
                 }
             }
@@ -409,9 +427,11 @@ class controller {
             // Check if the user is enrolled in the premium course.
             $enrolled = is_enrolled(\context_course::instance($premiumcourseid), $user->id, '', true);
 
+            self::$isuserpremium = $enrolled;
             return $enrolled;
         }
 
+        self::$isuserpremium = false;
         return false;
     }
 
@@ -733,11 +753,6 @@ class controller {
 
         if (!empty($sql)) {
             $courses = $DB->get_records_sql($sql, $params, $initial, $amount);
-
-            foreach ($courses as $course) {
-                // Load the related course enrol info.
-                self::load_enrolinfo($course);
-            }
         }
 
         return $courses;
@@ -1067,7 +1082,7 @@ class controller {
                 }
 
                 // Course premium require a self enrolment.
-                if (($course->premium || !self::premium_available()) && $ispremium) {
+                if (property_exists($course, 'premium') && ($course->premium || !self::premium_available()) && $ispremium) {
 
                     // The validation only applies to premium courses if the premiumcohort setting is configured.
                     // If premiumcohort is configured the course requires a specific cohort.

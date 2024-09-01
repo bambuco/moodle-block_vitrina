@@ -24,6 +24,8 @@ IN VERSION
 =============
 2023042613:
 - Include image as a posible media in course detail.
+- The cost of premium courses is not shown to premium users.
+- All courses are enabled for premium users if the premium courses functionality is not used.
 
 2023042612:
 - Extend shop plugins.
