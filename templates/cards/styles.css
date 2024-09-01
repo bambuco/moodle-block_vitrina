@@ -120,7 +120,7 @@
     padding: 10px;
     position: relative;
     border: 2px solid #eee;
-    margin-bottom: 20px;;
+    margin-bottom: 20px;
 }
 
 #page-blocks-vitrina-detail .course-general-info .general-items-box {
@@ -139,7 +139,7 @@
 #page-blocks-vitrina-detail .course-general-info .media-content iframe {
     width: 100%;
     height: 402px;
-    background: #12182B 0% 0% no-repeat padding-box
+    background: #12182b 0% 0% no-repeat padding-box;
 }
 
 #page-blocks-vitrina-detail .course-detail .enroll-content {
@@ -170,7 +170,7 @@
     margin-bottom: 10px;
 }
 
-#page-blocks-vitrina-detail .course-general-info .ranking-summary>div {
+#page-blocks-vitrina-detail .course-general-info .ranking-summary > div {
     padding: 0;
     border: unset;
 }
@@ -261,7 +261,7 @@
     margin: 40px 0 30px;
 }
 
-#page-blocks-vitrina-detail .course-detail .detail-foot>div {
+#page-blocks-vitrina-detail .course-detail .detail-foot > div {
     display: flex;
     padding: 20px;
 }
@@ -358,7 +358,7 @@
     clear: both;
 }
 
-#page-blocks-vitrina-detail .experts-box>p>img {
+#page-blocks-vitrina-detail .experts-box > p > img {
     float: left;
     margin: 0 20px 20px 0;
     width: 97px;
@@ -368,15 +368,15 @@
     border-radius: 50%;
 }
 
-#page-blocks-vitrina-detail .experts-box>p>strong {
+#page-blocks-vitrina-detail .experts-box > p > strong {
     display: block;
     padding-top: 30px;
     font-size: 17px;
     font-weight: 700;
-    color: #151C2F
+    color: #151c2f;
 }
 
-#page-blocks-vitrina-detail .experts-box>p>em {
+#page-blocks-vitrina-detail .experts-box > p > em {
     font-style: unset;
     font-weight: 300;
     font-size: 17px;
@@ -481,7 +481,7 @@
         padding-right: 0;
     }
 
-    #page-blocks-vitrina-detail #region-main>.card>.card-body {
+    #page-blocks-vitrina-detail #region-main > .card > .card-body {
         padding-right: 0;
     }
 
@@ -528,7 +528,7 @@
         font-size: 14px;
     }
 
-    #page-blocks-vitrina-detail #region-main>.card>.card-body {
+    #page-blocks-vitrina-detail #region-main > .card > .card-body {
         padding: 0;
     }
 
@@ -558,15 +558,15 @@
         height: 227px;
     }
 
-    #page-blocks-vitrina-detail .course-general-info .general-items-box>div {
+    #page-blocks-vitrina-detail .course-general-info .general-items-box > div {
         padding: 0;
     }
 
-    #page-blocks-vitrina-detail .course-general-info .experts-box>p>strong {
+    #page-blocks-vitrina-detail .course-general-info .experts-box > p > strong {
         font-size: 14px;
     }
 
-    #page-blocks-vitrina-detail .course-general-info .experts-box>p>em {
+    #page-blocks-vitrina-detail .course-general-info .experts-box > p > em {
         font-size: 14px;
     }
 
@@ -588,16 +588,16 @@
         padding: 20px;
     }
 
-    #page-blocks-vitrina-detail .relatedcourses>div {
+    #page-blocks-vitrina-detail .relatedcourses > div {
         display: block;
     }
 
-    #page-blocks-vitrina-detail .relatedcourses>div .onerelated {
+    #page-blocks-vitrina-detail .relatedcourses > div .onerelated {
         width: calc(100% - 40px);
         margin: 0 auto 40px;
     }
 
-    #page-blocks-vitrina-detail .relatedcourses>div .onerelated::after {
+    #page-blocks-vitrina-detail .relatedcourses > div .onerelated::after {
         content: "";
         display: block;
         clear: both;

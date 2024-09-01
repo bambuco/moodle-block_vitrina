@@ -36,7 +36,7 @@ class base {
      *
      * @return boolean
      */
-    public static function comments_available() : bool {
+    public static function comments_available(): bool {
         global $PAGE;
 
         $bmanager = new \block_manager($PAGE);
@@ -51,7 +51,7 @@ class base {
      * @param int $amount Amount of comments to be returned.
      * @return object
      */
-    public static function get_comments($course, $amount = 20) : array {
+    public static function get_comments($course, $amount = 20): array {
         global $DB;
 
         if (!self::comments_available()) {

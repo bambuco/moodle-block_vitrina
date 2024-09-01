@@ -26,14 +26,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
 
-    // ToDo: check if this is needed and secure.
     'block/vitrina:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
         ],
 
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
+        'clonepermissionsfrom' => 'moodle/site:manageblocks',
     ],
 
     'block/vitrina:addinstance' => [
@@ -43,9 +42,9 @@ $capabilities = [
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
         ],
 
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    ]
+        'clonepermissionsfrom' => 'moodle/site:manageblocks',
+    ],
 ];

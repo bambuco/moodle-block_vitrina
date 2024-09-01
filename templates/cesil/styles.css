@@ -67,7 +67,7 @@
 
 .block_vitrina-courseslist .coursebox .panel-foot .btn {
     width: 100%;
-    color: #666666;
+    color: #666;
     background-color: #f1f1f1;
     padding: 10px 0;
     border: 1px solid #e7e7e7;
@@ -75,8 +75,8 @@
 
 .block_vitrina-courseslist .coursebox .panel-foot .btn:hover {
     color: #f1f1f1;
-    background-color: #666666;
-    border-color: #666666;
+    background-color: #666;
+    border-color: #666;
 }
 
 .block_vitrina-courseslist .coursebox.state-waiting .panel-body::after {
@@ -143,12 +143,11 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
     height: 100%;
 }
 
 #page-blocks-vitrina-detail .mediaplugin > div {
-    max-width: 800px !important;
+    max-width: 800px;
 }
 
 #page-blocks-vitrina-detail .course-detail .enroll-container {
@@ -180,7 +179,7 @@
 }
 
 #page-blocks-vitrina-detail .course-detail .enroll-container a.btn {
-    background-color: #333 !important;
+    background-color: #333;
     width: 100%;
     margin-bottom: 20px;
     font-weight: bold;
@@ -200,7 +199,7 @@
     height: 36px;
     background-color: #333;
     border: none;
-    color: #FFF;
+    color: #fff;
     border-radius: 50px;
     padding-left: 8px;
 }

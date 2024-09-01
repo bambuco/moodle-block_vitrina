@@ -36,7 +36,7 @@ class local_buybee {
      *
      * @return bool
      */
-    public static function available() : bool {
+    public static function available(): bool {
         $list = \core_component::get_plugin_list('local');
         foreach ($list as $name => $notused) {
             if ($name == 'buybee') {
@@ -54,7 +54,7 @@ class local_buybee {
      * @param int $itemid
      * @return string
      */
-    public static function get_product_reference(string $type, int $itemid) : string {
+    public static function get_product_reference(string $type, int $itemid): string {
         return \local_buybee\controller::get_product_reference($type, $itemid);
     }
 
@@ -63,7 +63,7 @@ class local_buybee {
      *
      * @return array
      */
-    public static function render_from_template() : array {
+    public static function render_from_template(): array {
         global $OUTPUT;
         $data = [
             'plugin' => 'local_buybee',

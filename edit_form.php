@@ -80,7 +80,7 @@ class block_vitrina_edit_form extends block_edit_form {
 
         $options = [
             'multiple' => true,
-            'noselectionstring' => get_string('selectcategories', 'block_vitrina')
+            'noselectionstring' => get_string('selectcategories', 'block_vitrina'),
         ];
 
         $mform->addElement(

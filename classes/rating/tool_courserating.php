@@ -36,7 +36,7 @@ class tool_courserating {
      *
      * @return boolean
      */
-    public static function rating_available() : bool {
+    public static function rating_available(): bool {
         $list = \core_component::get_plugin_list('tool');
         foreach ($list as $name => $dir) {
             if ($name == 'courserating') {
@@ -54,7 +54,7 @@ class tool_courserating {
      * @param bool $large True if load full information about the course rating.
      * @return object
      */
-    public static function get_ratings($course, $large = false) : ?object {
+    public static function get_ratings($course, $large = false): ?object {
         global $DB;
 
         if (!self::rating_available()) {
@@ -125,7 +125,7 @@ class tool_courserating {
     /**
      * List SQL fragments to get the course ratings.
      */
-    public static function sql_map() : array {
+    public static function sql_map(): array {
 
         return [
             'ratingfield' => 'avgrating',

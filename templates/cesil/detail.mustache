@@ -20,7 +20,72 @@
     This template renders the template content area for a resource.
 
     Example context (json):
-    {}
+    {
+        "id": 1,
+        "coursename": "Course name",
+        "summary": "Course summary",
+        "category": "Category name",
+        "instructors": [
+            {
+                "firstname": "First name",
+                "lastname": "Last name",
+                "imagealt": "Image alt",
+                "userpicture": "http://example.com/image.jpg"
+            }
+        ],
+        "custom": {
+            "longcustomfields": [
+                {
+                    "title": "Title",
+                    "value": "Value",
+                    "shortname": "Short name"
+                }
+            ],
+            "media": [
+                {
+                    "isembed": false,
+                    "value": "http://example.com/video.mp4",
+                    "isimage": false
+                }
+            ]
+        },
+        "rating": {
+            "formated": "Formated rating",
+            "percent": 100,
+            "count": 1
+        },
+        "commentscount": 1,
+        "baseurl": "http://example.com",
+        "hascomments": true,
+        "comments": [
+            {
+                "timeformated": "Time formated",
+                "userpicture": "http://example.com/image.jpg",
+                "content": "Content",
+                "userfirstname": "First name"
+            }
+        ],
+        "hasrelated": true,
+        "related": [
+            {
+                "id": 1,
+                "coursename": "Course name",
+                "summary": "Course summary",
+                "category": "Category name",
+                "imagepath": "http://example.com/image.jpg",
+                "active": true,
+                "premium": true,
+                "fee": true,
+                "formatedcost": "$ 100.00",
+                "baseurl": "http://example.com",
+                "hascart": false,
+                "hasrating": false,
+                "rating": {
+                    "percent": 100
+                }
+            }
+        ]
+    }
 }}
 
 {{#course}}

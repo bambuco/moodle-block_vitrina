@@ -50,14 +50,14 @@ class external extends \external_api {
                             'type' => new \external_value(PARAM_TEXT, 'Filter type key'),
                             'values' => new \external_multiple_structure(
                                 new \external_value(PARAM_TEXT, 'Filter value'),
-                            )
+                            ),
                         ],
                         'A filter to apply'),
                     'List of filters to search the courses', VALUE_DEFAULT, []
                 ),
                 'instanceid' => new \external_value(PARAM_INT, 'Block instance id', VALUE_DEFAULT, 0),
                 'amount' => new \external_value(PARAM_INT, 'Amount of courses', VALUE_DEFAULT, 0),
-                'initial' => new \external_value(PARAM_INT, 'From where to start', VALUE_DEFAULT, 0)
+                'initial' => new \external_value(PARAM_INT, 'From where to start', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -76,7 +76,7 @@ class external extends \external_api {
                                         array $filters = [],
                                         int $instanceid = 0,
                                         int $amount = 0,
-                                        int $initial = 0) : array {
+                                        int $initial = 0): array {
         global $PAGE, $CFG;
 
         if (!isloggedin() && empty($CFG->guestloginbutton) && empty($CFG->autologinguests)) {
@@ -94,7 +94,7 @@ class external extends \external_api {
                 'filters' => $filters,
                 'instanceid' => $instanceid,
                 'amount' => $amount,
-                'initial' => $initial
+                'initial' => $initial,
             ]
         );
 
@@ -167,7 +167,7 @@ class external extends \external_api {
             new \external_single_structure(
                 [
                     'id' => new \external_value(PARAM_INT, 'Course id'),
-                    'html' => new \external_value(PARAM_RAW, 'HTML with course information')
+                    'html' => new \external_value(PARAM_RAW, 'HTML with course information'),
                 ]
             ), 'List of courses'
         );

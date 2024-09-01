@@ -36,7 +36,7 @@ class base {
      *
      * @return boolean
      */
-    public static function rating_available() : bool {
+    public static function rating_available(): bool {
         global $PAGE;
 
         $bmanager = new \block_manager($PAGE);
@@ -51,7 +51,7 @@ class base {
      * @param bool $large True if load full information about the course rating.
      * @return object
      */
-    public static function get_ratings($course, $large = false) : ?object {
+    public static function get_ratings($course, $large = false): ?object {
         global $DB;
 
         if (!self::rating_available()) {
@@ -116,7 +116,7 @@ class base {
     /**
      * List SQL fragments to get the course ratings.
      */
-    public static function sql_map() : array {
+    public static function sql_map(): array {
 
         return [
             'ratingfield' => 'AVG(r.rating)',

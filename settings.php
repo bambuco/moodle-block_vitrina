@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use editor_tiny\lang;
-
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/blocks/vitrina/classes/admin_setting_configmultiselect_autocomplete.php');
@@ -157,7 +155,7 @@ if ($ADMIN->fulltree) {
         '2' => '2',
         '3' => '3',
         '4' => '4',
-        '5' => '5'
+        '5' => '5',
     ];
     $name = 'block_vitrina/decimalpoints';
     $title = get_string('decimalpoints', 'block_vitrina');
@@ -184,7 +182,7 @@ if ($ADMIN->fulltree) {
     $staticfilters = [
                         'fulltext' => get_string('fulltextsearch', 'block_vitrina'),
                         'categories' => get_string('category'),
-                        'langs' => get_string('language')
+                        'langs' => get_string('language'),
                     ];
     $name = 'block_vitrina/staticfilters';
     $title = get_string('staticfilters', 'block_vitrina');
@@ -238,7 +236,7 @@ if ($ADMIN->fulltree) {
         'default' => get_string('sortdefault', 'block_vitrina'),
         'startdate' => get_string('sortbystartdate', 'block_vitrina'),
         'finishdate' => get_string('sortbyfinishdate', 'block_vitrina'),
-        'alphabetically' => get_string('sortalphabetically', 'block_vitrina')
+        'alphabetically' => get_string('sortalphabetically', 'block_vitrina'),
     ];
 
     $name = 'block_vitrina/sortbydefault';
@@ -279,7 +277,7 @@ if ($ADMIN->fulltree) {
     $options = [
         'default' => get_string('textandicon', 'block_vitrina'),
         'showtext' => get_string('showtext', 'block_vitrina'),
-        'showicon' => get_string('showicon', 'block_vitrina')
+        'showicon' => get_string('showicon', 'block_vitrina'),
     ];
 
     $name = 'block_vitrina/tabview';

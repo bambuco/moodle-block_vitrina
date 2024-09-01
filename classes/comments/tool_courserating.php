@@ -36,7 +36,7 @@ class tool_courserating {
      *
      * @return boolean
      */
-    public static function comments_available() : bool {
+    public static function comments_available(): bool {
         $list = \core_component::get_plugin_list('tool');
         foreach ($list as $name => $dir) {
             if ($name == 'courserating') {
@@ -54,7 +54,7 @@ class tool_courserating {
      * @param int $amount Amount of comments to be returned.
      * @return object
      */
-    public static function get_comments($course, $amount = 20) : array {
+    public static function get_comments($course, $amount = 20): array {
         global $DB;
 
         if (!self::comments_available()) {

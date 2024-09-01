@@ -32,8 +32,8 @@ $functions = [
         'description' => 'Get the courses list for the Vitrina',
         'type' => 'read',
         'ajax' => true,
-        'loginrequired' => false
-    ]
+        'loginrequired' => false,
+    ],
 ];
 
 $services = [
@@ -41,6 +41,6 @@ $services = [
         'functions' => ['block_vitrina_get_courses'],
         'restrictedusers' => 0,
         'enabled' => 1,
-        'shortname' => 'block_vitrina_ws'
-    ]
+        'shortname' => 'block_vitrina_ws',
+    ],
 ];

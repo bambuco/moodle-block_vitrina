@@ -20,7 +20,24 @@
     This template renders the template content area for a resource.
 
     Example context (json):
-    {}
+    {
+        "id": 1,
+        "fullname": "Course name",
+        "shortname": "Course short name",
+        "summary": "Course summary",
+        "category": "Category name",
+        "imagepath": "http://example.com/image.jpg",
+        "active": true,
+        "premium": true,
+        "fee": true,
+        "formatedcost": "$ 100.00",
+        "baseurl": "http://example.com",
+        "hascart": false,
+        "hasrating": false,
+        "rating": {
+            "percent": 100
+        }
+    }
 }}
 
 <div class="coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>

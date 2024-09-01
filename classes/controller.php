@@ -345,7 +345,7 @@ class controller {
      *
      * @return boolean
      */
-    public static function premium_available() : bool {
+    public static function premium_available(): bool {
 
         $premiumfield = self::get_premiumfield();
         return $premiumfield ? true : false;
@@ -356,7 +356,7 @@ class controller {
      *
      * @return object The payment field.
      */
-    public static function get_payfield() : ?object {
+    public static function get_payfield(): ?object {
         global $DB;
 
         if (!self::$cachedpayfield) {
@@ -374,7 +374,7 @@ class controller {
      *
      * @return object The premium field.
      */
-    public static function get_premiumfield() : ?object {
+    public static function get_premiumfield(): ?object {
         global $DB;
 
         if (!self::$cachedpremiumfield) {
@@ -392,7 +392,7 @@ class controller {
      * @param stdClass $user User object.
      * @return boolean
      */
-    public static function is_user_premium($user = null) : bool {
+    public static function is_user_premium($user = null): bool {
         global $USER, $DB;
 
         if (self::$isuserpremium !== null) {
@@ -441,7 +441,7 @@ class controller {
      * @param \stdClass $course Course object.
      * @return string Image url.
      */
-    public static function get_courseimage($course) : string {
+    public static function get_courseimage($course): string {
         global $CFG, $OUTPUT;
 
         $coursefull = new \core_course_list_element($course);
@@ -513,7 +513,7 @@ class controller {
     /**
      * Get the available courses views.
      */
-    public static function get_courses_views() : array {
+    public static function get_courses_views(): array {
 
         $availablesorting = self::COURSES_VIEWS;
 
@@ -547,12 +547,12 @@ class controller {
      * @param int $initial From where to start counting the next courses to get.
      * @return array The courses list.
      */
-    public static function get_courses_by_view(string $view = null,
+    public static function get_courses_by_view(string $view = 'default',
                                                 array $categoriesids = [],
                                                 array $filters = [],
-                                                string $sort = null,
+                                                string $sort = '',
                                                 int $amount = 0,
-                                                int $initial = 0) : array {
+                                                int $initial = 0): array {
         global $DB, $CFG;
 
         $availableviews = self::get_courses_views();
@@ -763,7 +763,7 @@ class controller {
      *
      * @return array The icons list.
      */
-    public static function get_views_icons() : array {
+    public static function get_views_icons(): array {
 
         if (!empty(self::$viewsicons)) {
             return self::$viewsicons;
@@ -775,7 +775,7 @@ class controller {
             'default' => 'a/view_icon_active',
             'greats' => 't/emptystar',
             'premium' => 'i/badge',
-            'recents' => 'i/calendareventtime'
+            'recents' => 'i/calendareventtime',
         ];
 
         if (!empty($customicons)) {
@@ -800,7 +800,7 @@ class controller {
      *
      * @return bool If show icons.
      */
-    public static function show_tabicon() : bool {
+    public static function show_tabicon(): bool {
 
         if (self::$showicons !== null) {
             return self::$showicons;
@@ -819,7 +819,7 @@ class controller {
      *
      * @return bool If show the text.
      */
-    public static function show_tabtext() : bool {
+    public static function show_tabtext(): bool {
 
         if (self::$showtext !== null) {
             return self::$showtext;
@@ -839,7 +839,7 @@ class controller {
      * @param array $selectedlist The selected languages.
      * @return array The languages list.
      */
-    public static function get_languages(array $selectedlist = []) : array {
+    public static function get_languages(array $selectedlist = []): array {
         $langs = get_string_manager()->get_list_of_translations();
 
         $response = [];
@@ -849,7 +849,7 @@ class controller {
             $response[] = [
                 'value' => $lang,
                 'label' => $name,
-                'selected' => $selected
+                'selected' => $selected,
             ];
         }
 
@@ -863,7 +863,7 @@ class controller {
      * @param bool $nested If return the categories in a nested way.
      * @return array The categories list.
      */
-    public static function get_categories(array $selectedlist = [], bool $nested = false) : array {
+    public static function get_categories(array $selectedlist = [], bool $nested = false): array {
         global $DB;
 
         $select = 'visible = 1';
@@ -944,7 +944,7 @@ class controller {
      * @param array $selectedvalues The selected values.
      * @return array The custom fields to filter.
      */
-    public static function get_customfieldsfilters(array $selectedvalues = []) : array {
+    public static function get_customfieldsfilters(array $selectedvalues = []): array {
         global $DB;
 
         $filtercontrols = [];
@@ -965,12 +965,12 @@ class controller {
                     $options[] = [
                         'value' => 1,
                         'label' => get_string('yes'),
-                        'selected' => in_array(1, $selectedinfield)
+                        'selected' => in_array(1, $selectedinfield),
                     ];
                     $options[] = [
                         'value' => 0,
                         'label' => get_string('no'),
-                        'selected' => in_array(0, $selectedinfield)
+                        'selected' => in_array(0, $selectedinfield),
                     ];
                 break;
                 case 'select':
@@ -983,7 +983,7 @@ class controller {
                         $options[] = [
                             'value' => $index,
                             'label' => format_string($value, true),
-                            'selected' => $selected
+                            'selected' => $selected,
                         ];
                     }
                 break;
@@ -1007,7 +1007,7 @@ class controller {
      *
      * @return array The custom fields objects selected to filter.
      */
-    public static function get_configuredcustomfields() : array {
+    public static function get_configuredcustomfields(): array {
         global $DB;
 
         $filtercustomfields = get_config('block_vitrina', 'filtercustomfields');
@@ -1040,7 +1040,7 @@ class controller {
      *
      * @return array The static filters.
      */
-    public static function get_staticfilters() : array {
+    public static function get_staticfilters(): array {
 
         return self::STATICFILTERS;
     }
@@ -1169,7 +1169,7 @@ class controller {
     /**
      * Get the usable course rate manager.
      */
-    public static function get_ratemanager() : string {
+    public static function get_ratemanager(): string {
 
         $rateplugin = get_config('block_vitrina', 'ratingmanager');
 
@@ -1185,7 +1185,7 @@ class controller {
     /**
      * Get the usable course comments manager.
      */
-    public static function get_commentsmanager() : string {
+    public static function get_commentsmanager(): string {
 
         $commentsplugin = get_config('block_vitrina', 'commentsmanager');
 

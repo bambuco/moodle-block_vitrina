@@ -40,7 +40,7 @@ class renderer extends plugin_renderer_base {
      * @param main $main The main renderable
      * @return string HTML string
      */
-    public function render_main(main $main) : string {
+    public function render_main(main $main): string {
         global $CFG;
 
         $template = get_config('block_vitrina', 'templatetype');
@@ -61,7 +61,7 @@ class renderer extends plugin_renderer_base {
      * @param catalog $catalog The catalog renderable
      * @return string HTML string
      */
-    public function render_catalog(catalog $catalog) : string {
+    public function render_catalog(catalog $catalog): string {
         global $CFG;
 
         $template = get_config('block_vitrina', 'templatetype');
@@ -82,7 +82,7 @@ class renderer extends plugin_renderer_base {
      * @param detail $detail The detail renderable
      * @return string HTML string
      */
-    public function render_detail(detail $detail) : string {
+    public function render_detail(detail $detail): string {
         global $CFG;
 
         $template = get_config('block_vitrina', 'templatetype');
@@ -103,7 +103,7 @@ class renderer extends plugin_renderer_base {
      * @param object $course The course information
      * @return string HTML string
      */
-    public function render_course(object $course) : string {
+    public function render_course(object $course): string {
         global $CFG;
 
         static $shopmanager = null;

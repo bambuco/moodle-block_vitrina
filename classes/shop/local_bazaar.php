@@ -36,7 +36,7 @@ class local_bazaar {
      *
      * @return bool
      */
-    public static function available() : bool {
+    public static function available(): bool {
         $list = \core_component::get_plugin_list('local');
         foreach ($list as $name => $notused) {
             if ($name == 'bazaar') {
@@ -54,7 +54,7 @@ class local_bazaar {
      * @param int $itemid
      * @return string
      */
-    public static function get_product_reference(string $type, int $itemid) : string {
+    public static function get_product_reference(string $type, int $itemid): string {
         return \local_bazaar\controller::get_product_reference($type, $itemid);
     }
 
@@ -63,8 +63,8 @@ class local_bazaar {
      *
      * @return array
      */
-    public static function render_from_template() : array {
-        global $OUTPUT;
+    public static function render_from_template(): array {
+
         $data = [
             'plugin' => 'local_bazaar',
             'title' => get_string('pluginname', 'local_bazaar'),

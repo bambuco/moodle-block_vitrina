@@ -2,7 +2,7 @@ BLOCK Vitrina
 ============================
 A block to display a list of courses and their general information.
 
-Package tested in: moodle 4.1
+Package tested in: moodle 4.1, 4.2 and 4.3.
 
 QUICK INSTALL
 ==============

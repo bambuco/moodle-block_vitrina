@@ -304,7 +304,7 @@ class detail implements renderable, templatable {
                     $custom->requireauth = isguestuser() || !isloggedin();
                     $custom->successurl = new \moodle_url('/blocks/vitrina/detail.php', [
                         'id' => $this->course->id,
-                        'msg' => 'enrolled'
+                        'msg' => 'enrolled',
                     ]);
 
                     if ($custom->requireauth) {
