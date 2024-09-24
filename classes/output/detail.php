@@ -245,9 +245,16 @@ class detail implements renderable, templatable {
 
         } else if ($custom->enrolled) {
 
-            $custom->enrolltitle = get_string('enrolled', 'block_vitrina');
-            $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
-            $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
+            // Look for active enrolments only.
+            $until = enrol_get_enrolment_end($coursecontext->instanceid, $USER->id);
+
+            if ($until === false) {
+                $custom->enrolltitle = get_string('enrolledended', 'block_vitrina');
+            } else {
+                $custom->enrolltitle = get_string('enrolled', 'block_vitrina');
+                $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
+                $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
+            }
 
             // If the user is enrolled, disable the payment gateway.
             $this->course->haspaymentgw = false;

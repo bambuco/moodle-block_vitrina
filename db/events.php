@@ -15,18 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Plugin events.
  *
  * @package    block_vitrina
- * @copyright  2020 David Herney @ BambuCo
+ * @copyright  2024 David Herney @ BambuCo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023042614.03; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2022112800; // Requires this Moodle version.
-$plugin->component = 'block_vitrina'; // Full name of the plugin (used for diagnostics).
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v4.01.01';
-$plugin->supported = [400, 403];
+$observers = [
+    [
+        'eventname'   => '\core\event\user_enrolment_deleted',
+        'callback'    => 'block_vitrina\observer::user_unenrolled',
+    ],
+    [
+        'eventname'   => '\core\event\user_enrolment_updated',
+        'callback'    => 'block_vitrina\observer::user_enrolment_updated',
+    ],
+];

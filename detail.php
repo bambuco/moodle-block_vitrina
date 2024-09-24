@@ -92,6 +92,7 @@ if ($enroll && $course->visible) {
                         $data = new stdClass();
                         $data->enrolpassword = $instance->password;
                     }
+
                     $enrolplugin->enrol_self($instance, $data);
                     break;
                 }

@@ -54,6 +54,7 @@ $string['detailinfo_help'] = 'Información general para la vista de detalles de 
 $string['enroll'] = 'Matricular';
 $string['enrollavailablepremium'] = 'Matrícula disponible por ser usuario premium';
 $string['enrolled'] = '¡Ya se encuentra matriculado en el curso!';
+$string['enrolledended'] = 'Se encuentra matriculado en este curso pero su inscripción está inactiva en este momento';
 $string['enrollrequired'] = '¡Matricúlate para tomar el curso!';
 $string['filtercustomfields'] = 'Filtrar por campos personalizados';
 $string['filtercustomfields_help'] = 'Seleccione los campos personalizados que desea usar para filtrar los cursos.
@@ -149,8 +150,6 @@ $string['textandicon'] = 'Iconos y texto';
 $string['viewall'] = 'Ver todos';
 $string['viewsicons'] = 'Iconos para vistas';
 $string['viewsicons_help'] = 'Elige los íconos que se mostrarán según la vista, normalmente para el menú de pestañas. Uno por línea, con la siguiente estructura: nombrevista=typo/icono. Por ejemplo: greats=i/star. Si no se especifica alguno, se usará el por defecto. Las vistas disponibles son: default, recents, greats, premium.';
-
-// Capabilities.
 $string['vitrina:addinstance'] = 'Adicionar un nuevo bloque de Vitrina de cursos';
 $string['vitrina:myaddinstance'] = 'Adicionar un nuevo bloque de Vitrina de cursos a Dashboard';
 $string['waiting'] = 'Próximamente';
