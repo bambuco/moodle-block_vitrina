@@ -22,6 +22,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042614:
+- Setting to related courses limit.
+
 2023042613:
 - Include image as a posible media in course detail.
 - The cost of premium courses is not shown to premium users.

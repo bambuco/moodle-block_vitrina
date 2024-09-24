@@ -101,6 +101,8 @@ $string['ratingmanager_help'] = 'Elija el complemento para usar en la valoració
 $string['ratingslabel'] = '{$a} calificaciones';
 $string['recents'] = 'Nuevos';
 $string['relatedcourses'] = "Cursos relacionados";
+$string['relatedlimit'] = 'Límite de cursos relacionados';
+$string['relatedlimit_help'] = 'Número de cursos relacionados a mostrar en la vista de detalle de cada curso. Si se establece en 0 no se mostrarán cursos relacionados.';
 $string['requireauth'] = 'Debe <a href="{$a}">acceder</a> primero para poder matricular este curso';
 $string['returntocatalog'] = 'Ir al catálogo de cursos';
 $string['selectcategories'] = 'Elija una categoría de curso';

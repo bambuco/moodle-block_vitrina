@@ -209,7 +209,7 @@ class controller {
             $course->hasrelated = false;
             $course->related = [];
             $related = [];
-            $relatedlimit = 3;
+            $relatedlimit = get_config('block_vitrina', 'relatedlimit');
 
             $categories = get_config('block_vitrina', 'categories');
 
@@ -226,7 +226,7 @@ class controller {
                 $categoriescondition = " AND c.category IN (" . implode(',', $categoriesids) . ")";
             }
 
-            if (\core_tag_tag::is_enabled('core', 'course')) {
+            if (!empty($relatedlimit) && \core_tag_tag::is_enabled('core', 'course')) {
                 // Get the course tags.
                 $tags = \core_tag_tag::get_item_tags_array('core', 'course', $course->id);
 

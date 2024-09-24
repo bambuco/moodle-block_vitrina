@@ -231,6 +231,13 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext($name, $title, $help, 20, PARAM_INT, 5);
     $settings->add($setting);
 
+    // Related courses.
+    $name = 'block_vitrina/relatedlimit';
+    $title = get_string('relatedlimit', 'block_vitrina');
+    $help = get_string('relatedlimit_help', 'block_vitrina');
+    $setting = new admin_setting_configtext($name, $title, $help, 3, PARAM_INT, 5);
+    $settings->add($setting);
+
     // Sort by default.
     $options = [
         'default' => get_string('sortdefault', 'block_vitrina'),
