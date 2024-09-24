@@ -24,8 +24,6 @@
 
 namespace block_vitrina\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class sync_premiumenrolments
  *
@@ -85,44 +83,6 @@ class sync_premiumenrolments extends \core\task\scheduled_task {
                     $enrolplugin = enrol_get_plugin($enrol->enrol);
                     $enrolplugin->update_user_enrol($enrol, $enrolment->userid, ENROL_USER_SUSPENDED);
                 }
-
-                // ToDo: por ahora se deja la implementación de arriba que suspende la inscripción directamente en el curso
-                // del listado de inscripciones premium. De esa manera, al cambiar la inscripción se dispara el cambio en los
-                // cursos premium matriculados por el usuario.
-                /*$usersids = array_unique($usersids);
-
-                $params = [
-                    'status' => ENROL_USER_ACTIVE,
-                ];
-                list($selectin, $paramsin) = $DB->get_in_or_equal($usersids, SQL_PARAMS_NAMED, 'usersids');
-                $params += $paramsin;
-
-                $sql = "SELECT ue.*, e.courseid FROM {user_enrolments} ue
-                                    INNER JOIN mdl_enrol e ON e.id = ue.enrolid
-                                    WHERE ue.userid = ' . $selectin . ' AND ue.status = :status";
-
-                $enrolments = $DB->get_records_sql($sql, $params);
-
-                foreach ($enrolments as $enrolment) {
-
-                    if (!isset($tmpcache['premiumcourses'][$enrolment->courseid])) {
-                        $tmpcache['premiumcourses'][$enrolment->courseid] = $DB->get_field('customfield_data', 'value', [
-                                                                                            'fieldid' => $premiumfield->id,
-                                                                                            'instanceid' => $enrolment->courseid,
-                                                                                        ]);
-                    }
-
-                    $ispremium = $tmpcache['premiumcourses'][$enrolment->courseid];
-
-                    // Only apply to premium courses.
-                    if (!$ispremium) {
-                        continue;
-                    }
-
-                    \block_vitrina\observer::user_change_enrolment($enrol->courseid,
-                                $enrolment->userid,
-                                \block_vitrina\observer::ACTION_INACTIVE);
-                }*/
 
             }
         }
