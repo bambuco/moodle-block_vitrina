@@ -21,7 +21,7 @@
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace block_vitrina;
+namespace block_vitrina\local;
 
 /**
  * Component controller.
@@ -1175,10 +1175,10 @@ class controller {
 
         switch ($rateplugin) {
             case 'tool_courserating':
-                return '\block_vitrina\rating\tool_courserating';
+                return '\block_vitrina\local\rating\tool_courserating';
             break;
             default:
-                return '\block_vitrina\rating\base';
+                return '\block_vitrina\local\rating\base';
         }
     }
 
@@ -1191,10 +1191,10 @@ class controller {
 
         switch ($commentsplugin) {
             case 'tool_courserating':
-                return '\block_vitrina\comments\tool_courserating';
+                return '\block_vitrina\local\comments\tool_courserating';
             break;
             default:
-                return '\block_vitrina\comments\base';
+                return '\block_vitrina\local\comments\base';
         }
     }
 

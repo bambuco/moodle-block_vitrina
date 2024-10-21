@@ -150,7 +150,7 @@ function block_vitrina_before_standard_html_head() {
     if ($course->id == SITEID) {
         $imagepath = $OUTPUT->get_logo_url();
     } else {
-        $imagepath = \block_vitrina\controller::get_courseimage($course);
+        $imagepath = \block_vitrina\local\controller::get_courseimage($course);
     }
 
     $headers = [];

@@ -119,7 +119,7 @@ class block_vitrina extends block_base {
         }
 
         // Load tabs and views.
-        $tabnames = \block_vitrina\controller::get_courses_views();
+        $tabnames = \block_vitrina\local\controller::get_courses_views();
         $tabs = [];
 
         if (isset($this->config) && is_object($this->config)) {
@@ -180,7 +180,7 @@ class block_vitrina extends block_base {
         // Memory footprint.
         unset($filteropt);
 
-        $uniqueid = \block_vitrina\controller::get_uniqueid();
+        $uniqueid = \block_vitrina\local\controller::get_uniqueid();
 
         // Load templates to display courses.
         $renderable = new \block_vitrina\output\main($uniqueid, $tabs[0], $this->instance->id, $tabs);
@@ -189,7 +189,7 @@ class block_vitrina extends block_base {
 
         $this->content->text = $html;
 
-        \block_vitrina\controller::include_templatecss();
+        \block_vitrina\local\controller::include_templatecss();
         $this->page->requires->js_call_amd('block_vitrina/main', 'catalog', [$uniqueid, $tabs[0], $this->instance->id, $amount]);
 
         return $this->content;

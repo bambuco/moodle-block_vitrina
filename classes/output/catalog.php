@@ -66,9 +66,9 @@ class catalog implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
-        $availableviews = \block_vitrina\controller::get_courses_views();
+        $availableviews = \block_vitrina\local\controller::get_courses_views();
 
-        $icons = \block_vitrina\controller::get_views_icons();
+        $icons = \block_vitrina\local\controller::get_views_icons();
 
         $showtabs = [];
         foreach ($availableviews as $k => $view) {
@@ -93,7 +93,7 @@ class catalog implements renderable, templatable {
 
             $nested = $catfilterview == 'tree';
 
-            $categoriesoptions = \block_vitrina\controller::get_categories([], $nested);
+            $categoriesoptions = \block_vitrina\local\controller::get_categories([], $nested);
 
             if (count($categoriesoptions) > 1) {
                 $control = new \stdClass();
@@ -107,7 +107,7 @@ class catalog implements renderable, templatable {
 
         // Filter by language.
         if (in_array('langs', $staticfilters)) {
-            $options = \block_vitrina\controller::get_languages();
+            $options = \block_vitrina\local\controller::get_languages();
 
             if (count($options) > 1) {
                 $control = new \stdClass();
@@ -121,7 +121,7 @@ class catalog implements renderable, templatable {
         // Filter by custom fields.
 
         // Add to filtercontrols the array returned by the method get_customfieldsfilters.
-        $filtercontrols = array_merge($filtercontrols, \block_vitrina\controller::get_customfieldsfilters());
+        $filtercontrols = array_merge($filtercontrols, \block_vitrina\local\controller::get_customfieldsfilters());
 
         $filterproperties = new \stdClass();
 
@@ -135,8 +135,8 @@ class catalog implements renderable, templatable {
             'baseurl' => $CFG->wwwroot,
             'hastabs' => count($showtabs) > 1,
             'tabs' => $showtabs,
-            'showicon' => \block_vitrina\controller::show_tabicon(),
-            'showtext' => \block_vitrina\controller::show_tabtext(),
+            'showicon' => \block_vitrina\local\controller::show_tabicon(),
+            'showtext' => \block_vitrina\local\controller::show_tabtext(),
             'filtercontrols' => $filtercontrols,
             'filterproperties' => $filterproperties,
             'catfilterview' => $catfilterview,

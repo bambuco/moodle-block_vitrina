@@ -79,7 +79,7 @@ class main implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
-        $icons = \block_vitrina\controller::get_views_icons();
+        $icons = \block_vitrina\local\controller::get_views_icons();
 
         $showtabs = [];
         foreach ($this->tabs as $k => $view) {
@@ -96,8 +96,8 @@ class main implements renderable, templatable {
             'baseurl' => $CFG->wwwroot,
             'hastabs' => count($showtabs) > 1,
             'tabs' => $showtabs,
-            'showicon' => \block_vitrina\controller::show_tabicon(),
-            'showtext' => \block_vitrina\controller::show_tabtext(),
+            'showicon' => \block_vitrina\local\controller::show_tabicon(),
+            'showtext' => \block_vitrina\local\controller::show_tabtext(),
             'instanceid' => $this->instanceid,
         ];
 

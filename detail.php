@@ -57,7 +57,7 @@ if ($enroll && $course->visible) {
 
     $coursecontext = \context_course::instance($course->id, $USER, '', true);
 
-    \block_vitrina\controller::course_preprocess($course, true);
+    \block_vitrina\local\controller::course_preprocess($course, true);
 
     $enrollable = in_array('self', $course->enrollsavailables) || in_array('premium', $course->enrollsavailables);
 
@@ -68,7 +68,7 @@ if ($enroll && $course->visible) {
 
         // Use a specific self enrolment.
         $premiumcohort = null;
-        if ($course->premium || !\block_vitrina\controller::premium_available()) {
+        if ($course->premium || !\block_vitrina\local\controller::premium_available()) {
             $premiumcohort = get_config('block_vitrina', 'premiumcohort');
         }
 
@@ -112,7 +112,7 @@ if ($enroll && $course->visible) {
     }
 }
 
-\block_vitrina\controller::include_templatecss();
+\block_vitrina\local\controller::include_templatecss();
 
 echo $OUTPUT->header();
 

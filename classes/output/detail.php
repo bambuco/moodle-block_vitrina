@@ -47,7 +47,7 @@ class detail implements renderable, templatable {
      */
     public function __construct($course) {
 
-        \block_vitrina\controller::course_preprocess($course, true);
+        \block_vitrina\local\controller::course_preprocess($course, true);
         $this->course = $course;
     }
 
@@ -231,7 +231,7 @@ class detail implements renderable, templatable {
         $shoppluginname = get_config('block_vitrina', 'shopmanager');
         $shopmanager = null;
         if (!empty($shoppluginname)) {
-            $shopmanager = 'block_vitrina\shop\\' . $shoppluginname;
+            $shopmanager = 'block_vitrina\local\shop\\' . $shoppluginname;
         }
 
         if ($custom->completed) {
