@@ -88,10 +88,16 @@ class get_courses extends external_api {
                                     int $amount = 0,
                                     int $initial = 0): array {
 
-        global $PAGE;
+        global $PAGE, $CFG;
+
+        if (!isloggedin() && empty($CFG->guestloginbutton) && empty($CFG->autologinguests)) {
+            require_login(null, true);
+        }
 
         $syscontext = \context_system::instance();
-        //self::validate_context($syscontext);
+        // The self::validate_context($syscontext) is not used because we require show the courses
+        // to unauthenticated user in some pages. The security is managed locally.
+        $PAGE->set_context($syscontext);
 
         // Parameter validation.
         $params = self::validate_parameters(
