@@ -120,7 +120,7 @@ class renderer extends plugin_renderer_base {
         if ($shopmanager === null) {
             $shoppluginname = get_config('block_vitrina', 'shopmanager');
             if (!empty($shoppluginname)) {
-                $shopmanager = 'block_vitrina\shop\\' . $shoppluginname;
+                $shopmanager = 'block_vitrina\local\shop\\' . $shoppluginname;
             }
         }
 
