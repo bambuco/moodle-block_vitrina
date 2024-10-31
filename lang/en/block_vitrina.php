@@ -110,6 +110,8 @@ $string['ratingmanager_help'] = 'Choose the plugin to use in the rating course.'
 $string['ratingslabel'] = '{$a} ratings';
 $string['recents'] = 'Recents';
 $string['relatedcourses'] = 'Related courses';
+$string['relatedlimit'] = 'Related courses limit';
+$string['relatedlimit_help'] = 'The number of related courses to display in the course detail page. If set to 0, the related courses will not be displayed.';
 $string['requireauth'] = 'You need <a href="{$a}">login</a> in order to enroll this course';
 $string['returntocatalog'] = 'Go to Catalog';
 $string['selectcategories'] = 'Choose a course category';

@@ -26,21 +26,10 @@ defined('MOODLE_INTERNAL') || die();
 
 $functions = [
     'block_vitrina_get_courses' => [
-        'classname' => '\block_vitrina\external',
-        'methodname' => 'get_courses',
-        'classpath' => 'blocks/vitrina/classes/externallib.php',
+        'classname' => '\block_vitrina\external\get_courses',
         'description' => 'Get the courses list for the Vitrina',
         'type' => 'read',
         'ajax' => true,
         'loginrequired' => false,
-    ],
-];
-
-$services = [
-    'Vitrina webservices' => [
-        'functions' => ['block_vitrina_get_courses'],
-        'restrictedusers' => 0,
-        'enabled' => 1,
-        'shortname' => 'block_vitrina_ws',
     ],
 ];

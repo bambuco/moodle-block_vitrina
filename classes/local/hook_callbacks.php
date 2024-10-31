@@ -14,10 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace block_vitrina;
-
-use core\session\utility\cookie_helper;
-use html_writer;
+namespace block_vitrina\local;
 
 /**
  * Allows plugins to add any elements to the html.
@@ -48,7 +45,7 @@ class hook_callbacks {
         if ($course->id == SITEID) {
             $imagepath = $OUTPUT->get_logo_url();
         } else {
-            $imagepath = \block_vitrina\controller::get_courseimage($course);
+            $imagepath = \block_vitrina\local\controller::get_courseimage($course);
         }
 
         $hook->add_html('<meta property="og:title" content="' . $title . '"/>');

@@ -21,7 +21,11 @@
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace block_vitrina;
+namespace block_vitrina\local;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/cohort/lib.php');
 
 /**
  * Component controller.
@@ -72,6 +76,11 @@ class controller {
     private static $isuserpremium = null;
 
     /**
+     * @var string Membership type.
+     */
+    private static $usermembership = null;
+
+    /**
      * @var array List of available courses views.
      */
     public const COURSES_VIEWS = ['default', 'recents', 'greats', 'premium'];
@@ -90,6 +99,21 @@ class controller {
      * @var array List of available static filters (not include filters by custom fields).
      */
     public const STATICFILTERS = ['langs', 'categories', 'fulltext'];
+
+    /**
+     * @var string The user is premium by user field.
+     */
+    public const PREMIUMBYFIELD = 'field';
+
+    /**
+     * @var string The user is premium by enrolled course.
+     */
+    public const PREMIUMBYCOURSE = 'course';
+
+    /**
+     * @var string The user is premium by cohort.
+     */
+    public const PREMIUMBYCOHORT = 'cohort';
 
     /**
      * Process a specific course to be displayed.
@@ -209,7 +233,7 @@ class controller {
             $course->hasrelated = false;
             $course->related = [];
             $related = [];
-            $relatedlimit = 3;
+            $relatedlimit = get_config('block_vitrina', 'relatedlimit');
 
             $categories = get_config('block_vitrina', 'categories');
 
@@ -226,7 +250,7 @@ class controller {
                 $categoriescondition = " AND c.category IN (" . implode(',', $categoriesids) . ")";
             }
 
-            if (\core_tag_tag::is_enabled('core', 'course')) {
+            if (!empty($relatedlimit) && \core_tag_tag::is_enabled('core', 'course')) {
                 // Get the course tags.
                 $tags = \core_tag_tag::get_item_tags_array('core', 'course', $course->id);
 
@@ -386,17 +410,35 @@ class controller {
 
         return self::$cachedpremiumfield ?? null;
     }
+
     /**
      * Define if the current or received user is premium.
      *
      * @param stdClass $user User object.
-     * @return boolean
+     * @return boolean True if the user is premium.
      */
     public static function is_user_premium($user = null): bool {
-        global $USER, $DB;
 
         if (self::$isuserpremium !== null) {
             return self::$isuserpremium;
+        }
+
+        $membership = self::type_membership($user);
+
+        return $membership ? true : false;
+    }
+
+    /**
+     * Return the user membership type.
+     *
+     * @param stdClass $user User object.
+     * @return string|null If the user is premium return the type of membership or null if not.
+     */
+    public static function type_membership($user = null): ?string {
+        global $USER, $DB;
+
+        if (self::$isuserpremium !== null) {
+            return self::$usermembership;
         }
 
         if (!$user) {
@@ -415,24 +457,35 @@ class controller {
             if (!empty($premiumfield)) {
                 if (isset($user->profile[$premiumfield]) && $user->profile[$premiumfield] == $premiumvalue) {
                     self::$isuserpremium = true;
-                    return true;
+                    self::$usermembership = self::PREMIUMBYFIELD;
+                    return self::$usermembership;
                 }
             }
         }
 
         // If the user is enrolled in the "Course to read premium users" is a premium user.
         $premiumcourseid = get_config('block_vitrina', 'premiumenrolledcourse');
-
         if (!empty($premiumcourseid)) {
             // Check if the user is enrolled in the premium course.
-            $enrolled = is_enrolled(\context_course::instance($premiumcourseid), $user->id, '', true);
+            if (is_enrolled(\context_course::instance($premiumcourseid), $user->id, '', true)) {
+                self::$isuserpremium = true;
+                self::$usermembership = self::PREMIUMBYCOURSE;
+                return self::$usermembership;
+            }
+        }
 
-            self::$isuserpremium = $enrolled;
-            return $enrolled;
+        // If the user is in the cohort to premium users.
+        $premiumcohort = get_config('block_vitrina', 'premiumcohort');
+        if (!empty($premiumcohort)) {
+            if (cohort_is_member($premiumcohort, $USER->id)) {
+                self::$isuserpremium = true;
+                self::$usermembership = self::PREMIUMBYCOHORT;
+                return self::$usermembership;
+            }
         }
 
         self::$isuserpremium = false;
-        return false;
+        return null;
     }
 
     /**
@@ -1085,12 +1138,14 @@ class controller {
                 if (property_exists($course, 'premium') && ($course->premium || !self::premium_available()) && $ispremium) {
 
                     // The validation only applies to premium courses if the premiumcohort setting is configured.
-                    // If premiumcohort is configured the course requires a specific cohort.
-                    if (!$premiumcohort || ($instance->customint5 && $instance->customint5 == $premiumcohort)) {
+                    // If premiumcohort is configured the course requires the specific cohort.
+                    if (!$premiumcohort
+                            || empty($instance->customint5)
+                            || $instance->customint5 == $premiumcohort) {
 
-                            $course->enrollable = true;
-                            $course->enrollsavailables[] = 'premium';
-                            continue;
+                        $course->enrollable = true;
+                        $course->enrollsavailables[] = 'premium';
+                        continue;
                     }
                 }
 
@@ -1175,10 +1230,10 @@ class controller {
 
         switch ($rateplugin) {
             case 'tool_courserating':
-                return '\block_vitrina\rating\tool_courserating';
+                return '\block_vitrina\local\rating\tool_courserating';
             break;
             default:
-                return '\block_vitrina\rating\base';
+                return '\block_vitrina\local\rating\base';
         }
     }
 
@@ -1191,10 +1246,10 @@ class controller {
 
         switch ($commentsplugin) {
             case 'tool_courserating':
-                return '\block_vitrina\comments\tool_courserating';
+                return '\block_vitrina\local\comments\tool_courserating';
             break;
             default:
-                return '\block_vitrina\comments\base';
+                return '\block_vitrina\local\comments\base';
         }
     }
 

@@ -10,7 +10,7 @@ Download zip package, extract the vitrina folder and upload this folder into blo
 
 ABOUT
 =============
-Developed by: David Herney - david dot bernal at bambuco dot co
+Developed by: David Herney - david dot herney at bambuco dot co
 GIT: https://github.com/bambuco/moodle-block_vitrina
 
 FEATURES
@@ -19,11 +19,19 @@ FEATURES
 - Integration with payment gateway components.
 - Include related courses.
 - Recognize Youtube and Vimeo media URL.
+- Premium users management.
 
 IN VERSION
 =============
 2024083101:
 - Moodle 4.4+ compatibility.
+
+2023042615:
+- Moodle code rules applied.
+- Enrollment date for premium courses ends when the membership ends.
+
+2023042614:
+- Setting to related courses limit.
 
 2023042613:
 - Include image as a posible media in course detail.

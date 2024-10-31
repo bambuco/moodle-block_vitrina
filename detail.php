@@ -57,7 +57,7 @@ if ($enroll && $course->visible) {
 
     $coursecontext = \context_course::instance($course->id, $USER, '', true);
 
-    \block_vitrina\controller::course_preprocess($course, true);
+    \block_vitrina\local\controller::course_preprocess($course, true);
 
     $enrollable = in_array('self', $course->enrollsavailables) || in_array('premium', $course->enrollsavailables);
 
@@ -68,9 +68,11 @@ if ($enroll && $course->visible) {
 
         // Use a specific self enrolment.
         $premiumcohort = null;
-        if ($course->premium || !\block_vitrina\controller::premium_available()) {
+        if ($course->premium || !\block_vitrina\local\controller::premium_available()) {
             $premiumcohort = get_config('block_vitrina', 'premiumcohort');
         }
+
+        $premiumtype = \block_vitrina\local\controller::type_membership();
 
         foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {
@@ -82,9 +84,14 @@ if ($enroll && $course->visible) {
                 }
 
                 // The validation only applies to premium courses if the premiumcohort setting is configured.
-                // If premiumcohort is configured the course requires a specific cohort.
-                if (in_array('premium', $course->enrollsavailables) &&
-                            (!$premiumcohort || ($instance->customint5 && $instance->customint5 == $premiumcohort))) {
+                // If premiumcohort is configured the course requires the specific cohort.
+                if (in_array('premium', $course->enrollsavailables)
+                        && (
+                                !$premiumcohort
+                                || empty($instance->customint5)
+                                || $instance->customint5 == $premiumcohort
+                            )
+                    ) {
 
                     $data = null;
                     if ($instance->password) {
@@ -92,6 +99,22 @@ if ($enroll && $course->visible) {
                         $data = new stdClass();
                         $data->enrolpassword = $instance->password;
                     }
+
+                    // Change the end dates from the course if the user is premium for the 'premiumenrolledcourse'.
+                    if ($premiumtype == \block_vitrina\local\controller::PREMIUMBYCOURSE) {
+                        $premiumcourseid = get_config('block_vitrina', 'premiumenrolledcourse');
+
+                        if (!empty($premiumcourseid)) {
+                            $premiumcontext = \context_course::instance($premiumcourseid);
+                            $until = enrol_get_enrolment_end($premiumcontext->instanceid, $USER->id);
+
+                            if ($until !== false) {
+                                $secondstoend = $until - time();
+                                $instance->enrolperiod = $secondstoend;
+                            }
+                        }
+                    }
+
                     $enrolplugin->enrol_self($instance, $data);
                     break;
                 }
@@ -112,7 +135,7 @@ if ($enroll && $course->visible) {
     }
 }
 
-\block_vitrina\controller::include_templatecss();
+\block_vitrina\local\controller::include_templatecss();
 
 echo $OUTPUT->header();
 

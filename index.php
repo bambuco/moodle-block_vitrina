@@ -40,8 +40,8 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_heading(get_string('catalog', 'block_vitrina'));
 $PAGE->set_title(get_string('catalog', 'block_vitrina'));
 
-$uniqueid = \block_vitrina\controller::get_uniqueid();
-\block_vitrina\controller::include_templatecss();
+$uniqueid = \block_vitrina\local\controller::get_uniqueid();
+\block_vitrina\local\controller::include_templatecss();
 
 $bypage = get_config('block_vitrina', 'amount');
 if (empty($bypage)) {
@@ -53,8 +53,8 @@ $filtersselected = [];
 if (!empty($filters)) {
     $filters = explode(';', $filters);
 
-    $configuredcustomfields = \block_vitrina\controller::get_configuredcustomfields();
-    $staticfilters = \block_vitrina\controller::get_staticfilters();
+    $configuredcustomfields = \block_vitrina\local\controller::get_configuredcustomfields();
+    $staticfilters = \block_vitrina\local\controller::get_staticfilters();
 
     foreach ($filters as $filter) {
         $filter = explode(':', $filter);

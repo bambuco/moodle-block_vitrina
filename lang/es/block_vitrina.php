@@ -101,6 +101,8 @@ $string['ratingmanager_help'] = 'Elija el complemento para usar en la valoració
 $string['ratingslabel'] = '{$a} calificaciones';
 $string['recents'] = 'Nuevos';
 $string['relatedcourses'] = "Cursos relacionados";
+$string['relatedlimit'] = 'Límite de cursos relacionados';
+$string['relatedlimit_help'] = 'Número de cursos relacionados a mostrar en la vista de detalle de cada curso. Si se establece en 0 no se mostrarán cursos relacionados.';
 $string['requireauth'] = 'Debe <a href="{$a}">acceder</a> primero para poder matricular este curso';
 $string['returntocatalog'] = 'Ir al catálogo de cursos';
 $string['selectcategories'] = 'Elija una categoría de curso';
@@ -149,6 +151,8 @@ $string['textandicon'] = 'Iconos y texto';
 $string['viewall'] = 'Ver todos';
 $string['viewsicons'] = 'Iconos para vistas';
 $string['viewsicons_help'] = 'Elige los íconos que se mostrarán según la vista, normalmente para el menú de pestañas. Uno por línea, con la siguiente estructura: nombrevista=typo/icono. Por ejemplo: greats=i/star. Si no se especifica alguno, se usará el por defecto. Las vistas disponibles son: default, recents, greats, premium.';
+
+// Capabilities.
 $string['vitrina:addinstance'] = 'Adicionar un nuevo bloque de Vitrina de cursos';
 $string['vitrina:myaddinstance'] = 'Adicionar un nuevo bloque de Vitrina de cursos a Dashboard';
 $string['waiting'] = 'Próximamente';

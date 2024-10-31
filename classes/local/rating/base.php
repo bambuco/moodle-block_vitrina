@@ -21,15 +21,15 @@
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace block_vitrina\rating;
+namespace block_vitrina\local\rating;
 
 /**
- * Plugin tool courserating.
+ * Rating base.
  *
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_courserating {
+class base {
 
     /**
      * Define if rating is available.
@@ -37,14 +37,11 @@ class tool_courserating {
      * @return boolean
      */
     public static function rating_available(): bool {
-        $list = \core_component::get_plugin_list('tool');
-        foreach ($list as $name => $dir) {
-            if ($name == 'courserating') {
-                return true;
-            }
-        }
+        global $PAGE;
 
-        return false;
+        $bmanager = new \block_manager($PAGE);
+
+        return $bmanager->is_known_block_type('rate_course');
     }
 
     /**
@@ -66,7 +63,7 @@ class tool_courserating {
         }
 
         if ($large) {
-            $values = $DB->get_records('tool_courserating_rating', ['courseid' => $course], '', 'id, rating');
+            $values = $DB->get_records('block_rate_course', ['course' => $course], '', 'id, rating');
 
             // Start default array to 1-5 stars.
             $ratinglist = [0, 0, 0, 0, 0, 0];
@@ -86,17 +83,11 @@ class tool_courserating {
                 $ratingpercents[$key] = $ratings > 0 ? round($one * 100 / $ratings) : 0;
             }
         } else {
-            $sql = "SELECT avgrating AS rating, cntall AS ratings FROM {tool_courserating_summary} WHERE courseid = :courseid";
+            $sql = "SELECT AVG(rating) AS rating, COUNT(1) AS ratings  FROM {block_rate_course} WHERE course = :courseid";
             $rate = $DB->get_record_sql($sql, ['courseid' => $course]);
             $ratinglist = null;
-
-            if ($rate) {
-                $rating = $rate->rating;
-                $ratings = $rate->ratings;
-            } else {
-                $rating = 0;
-                $ratings = 0;
-            }
+            $rating = $rate->rating;
+            $ratings = $rate->ratings;
         }
 
         // Not rating course yet.
@@ -128,9 +119,9 @@ class tool_courserating {
     public static function sql_map(): array {
 
         return [
-            'ratingfield' => 'avgrating',
-            'totalfield' => 'cntall',
-            'join' => "INNER JOIN {tool_courserating_summary} r ON r.courseid = c.id",
+            'ratingfield' => 'AVG(r.rating)',
+            'totalfield' => 'COUNT(1)',
+            'join' => "INNER JOIN {block_rate_course} r ON r.course = c.id",
         ];
     }
 }

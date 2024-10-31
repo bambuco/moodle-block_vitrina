@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $callbacks = [
     [
         'hook' => \core\hook\output\before_standard_head_html_generation::class,
-        'callback' => [\block_vitrina\hook_callbacks::class, 'before_standard_head_html_generation'],
+        'callback' => [\block_vitrina\local\hook_callbacks::class, 'before_standard_head_html_generation'],
     ],
 ];

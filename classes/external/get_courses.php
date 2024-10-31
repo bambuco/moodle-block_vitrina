@@ -15,49 +15,59 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External integration API
+ * This class contains the changepasswordlink webservice functions.
  *
- * @package   block_vitrina
- * @copyright 2023 David Herney @ BambuCo
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    block_vitrina
+ * @copyright  2024 David Herney @ BambuCo
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_vitrina;
+declare(strict_types=1);
+
+namespace block_vitrina\external;
+
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_multiple_structure;
+use external_single_structure;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/login/lib.php');
 
 /**
- * External WS lib.
+ * Service implementation.
  *
- * @copyright 2023 David Herney @ BambuCo
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright   2024 David Herney - cirano
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external extends \external_api {
+class get_courses extends external_api {
 
     /**
-     * To validade input parameters
-     * @return \external_function_parameters
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
      */
-    public static function get_courses_parameters() {
-        return new \external_function_parameters(
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters(
             [
-                'view' => new \external_value(PARAM_TEXT, 'Courses view', VALUE_DEFAULT, 'default'),
-                'filters' => new \external_multiple_structure(
+                'view' => new external_value(PARAM_TEXT, 'Courses view', VALUE_DEFAULT, 'default'),
+                'filters' => new external_multiple_structure(
                     new \external_single_structure(
                         [
-                            'type' => new \external_value(PARAM_TEXT, 'Filter type key'),
-                            'values' => new \external_multiple_structure(
-                                new \external_value(PARAM_TEXT, 'Filter value'),
+                            'type' => new external_value(PARAM_TEXT, 'Filter type key'),
+                            'values' => new external_multiple_structure(
+                                new external_value(PARAM_TEXT, 'Filter value'),
                             ),
                         ],
                         'A filter to apply'),
                     'List of filters to search the courses', VALUE_DEFAULT, []
                 ),
-                'instanceid' => new \external_value(PARAM_INT, 'Block instance id', VALUE_DEFAULT, 0),
-                'amount' => new \external_value(PARAM_INT, 'Amount of courses', VALUE_DEFAULT, 0),
-                'initial' => new \external_value(PARAM_INT, 'From where to start', VALUE_DEFAULT, 0),
+                'instanceid' => new external_value(PARAM_INT, 'Block instance id', VALUE_DEFAULT, 0),
+                'amount' => new external_value(PARAM_INT, 'Amount of courses', VALUE_DEFAULT, 0),
+                'initial' => new external_value(PARAM_INT, 'From where to start', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -72,11 +82,12 @@ class external extends \external_api {
      * @param int $initial From where to start
      * @return array Courses list
      */
-    public static function get_courses(string $view = 'default',
-                                        array $filters = [],
-                                        int $instanceid = 0,
-                                        int $amount = 0,
-                                        int $initial = 0): array {
+    public static function execute(string $view = 'default',
+                                    array $filters = [],
+                                    int $instanceid = 0,
+                                    int $amount = 0,
+                                    int $initial = 0): array {
+
         global $PAGE, $CFG;
 
         if (!isloggedin() && empty($CFG->guestloginbutton) && empty($CFG->autologinguests)) {
@@ -84,11 +95,13 @@ class external extends \external_api {
         }
 
         $syscontext = \context_system::instance();
+        // The self::validate_context($syscontext) is not used because we require show the courses
+        // to unauthenticated user in some pages. The security is managed locally.
         $PAGE->set_context($syscontext);
 
         // Parameter validation.
         $params = self::validate_parameters(
-            self::get_courses_parameters(),
+            self::execute_parameters(),
             [
                 'view' => $view,
                 'filters' => $filters,
@@ -135,7 +148,7 @@ class external extends \external_api {
         }
         // End of read categories.
 
-        $courses = \block_vitrina\controller::get_courses_by_view($params['view'],
+        $courses = \block_vitrina\local\controller::get_courses_by_view($params['view'],
                                                                 $categoriesids,
                                                                 $params['filters'],
                                                                 '',
@@ -146,7 +159,7 @@ class external extends \external_api {
         $renderer = $PAGE->get_renderer('block_vitrina');
 
         foreach ($courses as $course) {
-            \block_vitrina\controller::course_preprocess($course);
+            \block_vitrina\local\controller::course_preprocess($course);
 
             $renderedcourse = new \stdClass();
             $renderedcourse->id = $course->id;
@@ -156,21 +169,22 @@ class external extends \external_api {
         }
 
         return $response;
+
     }
 
     /**
-     * Validate the return value
-     * @return \external_multiple_structure
+     * Returns description of method result value.
+     *
+     * @return external_multiple_structure
      */
-    public static function get_courses_returns() {
-        return new \external_multiple_structure(
-            new \external_single_structure(
+    public static function execute_returns(): external_multiple_structure {
+        return new external_multiple_structure(
+            new external_single_structure(
                 [
-                    'id' => new \external_value(PARAM_INT, 'Course id'),
-                    'html' => new \external_value(PARAM_RAW, 'HTML with course information'),
+                    'id' => new external_value(PARAM_INT, 'Course id'),
+                    'html' => new external_value(PARAM_RAW, 'HTML with course information'),
                 ]
             ), 'List of courses'
         );
     }
-
 }

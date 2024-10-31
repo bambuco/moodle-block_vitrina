@@ -63,7 +63,7 @@ class block_vitrina_edit_form extends block_edit_form {
         $mform->addElement('select', 'config_recents', get_string('recents', 'block_vitrina'), $options);
 
         // Show greats tab config only if rating feature exists.
-        $ratemanager = \block_vitrina\controller::get_ratemanager();
+        $ratemanager = \block_vitrina\local\controller::get_ratemanager();
         $ratingavailable = $ratemanager::rating_available();
 
         if ($ratingavailable) {
@@ -71,7 +71,7 @@ class block_vitrina_edit_form extends block_edit_form {
         }
 
         // Show premium tab config only if premium is available.
-        if (\block_vitrina\controller::premium_available()) {
+        if (\block_vitrina\local\controller::premium_available()) {
             $mform->addElement('select', 'config_premium', get_string('premium', 'block_vitrina'), $options);
         }
 

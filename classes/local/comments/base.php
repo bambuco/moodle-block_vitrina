@@ -21,15 +21,15 @@
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace block_vitrina\comments;
+namespace block_vitrina\local\comments;
 
 /**
- * Use plugin admin tool courserating.
+ * Comments base.
  *
  * @copyright 2023 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_courserating {
+class base {
 
     /**
      * Define if comments plugin is available.
@@ -37,14 +37,11 @@ class tool_courserating {
      * @return boolean
      */
     public static function comments_available(): bool {
-        $list = \core_component::get_plugin_list('tool');
-        foreach ($list as $name => $dir) {
-            if ($name == 'courserating') {
-                return true;
-            }
-        }
+        global $PAGE;
 
-        return false;
+        $bmanager = new \block_manager($PAGE);
+
+        return $bmanager->is_known_block_type('comments');
     }
 
     /**
@@ -65,10 +62,10 @@ class tool_courserating {
             $course = $course->id;
         }
 
-        $comments = $DB->get_records('tool_courserating_rating',
-                                    ['courseid' => $course, 'hasreview' => 1],
-                                    'timemodified DESC', 'review AS content, \'0\' AS format, userid, timemodified AS timecreated',
-                                    0, $amount);
+        $coursecontext = \context_course::instance($course);
+        $comments = $DB->get_records('comments',
+                                    ['contextid' => $coursecontext->id, 'component' => 'block_comments'],
+                                    'timecreated DESC', 'content, format, userid, timecreated', 0, $amount);
 
         return $comments;
     }
