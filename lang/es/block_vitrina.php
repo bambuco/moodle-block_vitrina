@@ -27,6 +27,10 @@ $string['amountcourses_help'] = 'Cantidad de cursos a mostrar en la vista genera
 $string['catalog'] = 'Catálogo de cursos';
 $string['categories'] = 'Categorias';
 $string['categories_help'] = 'Elija las categorías con los cursos que desea mostrar.';
+$string['catfilterview'] = 'Vista de filtro de categorías';
+$string['catfilterview_default'] = 'Por defecto';
+$string['catfilterview_help'] = 'Seleccione la vista como se mostrará el filtro de categorías.';
+$string['catfilterview_tree'] = 'Árbol';
 $string['comment_by'] = 'Por {$a}';
 $string['commentslabel'] = '{$a} comentarios';
 $string['commentsmanager'] = 'Manejador de comentarios';
@@ -54,6 +58,7 @@ $string['detailinfo_help'] = 'Información general para la vista de detalles de 
 $string['enroll'] = 'Matricular';
 $string['enrollavailablepremium'] = 'Matrícula disponible por ser usuario premium';
 $string['enrolled'] = '¡Ya se encuentra matriculado en el curso!';
+$string['enrolledended'] = 'Se encuentra matriculado en este curso pero su inscripción está inactiva en este momento';
 $string['enrollrequired'] = '¡Matricúlate para tomar el curso!';
 $string['filtercustomfields'] = 'Filtrar por campos personalizados';
 $string['filtercustomfields_help'] = 'Seleccione los campos personalizados que desea usar para filtrar los cursos.
@@ -139,6 +144,7 @@ $string['staticfilters'] = 'Fíltros estáticos';
 $string['staticfilters_help'] = 'Seleccione los filtros fijos que se mostrarán en la vista de catálogo';
 $string['summary'] = 'Resumen';
 $string['summary_help'] = 'El contenido es mostrado en la parte superior de la lista de cursos.';
+$string['syncpremiumenrolmentstask'] = 'Tarea de sincronización de inscripciones premium';
 $string['tabtitle_default'] = 'Todos los cursos';
 $string['tabtitle_greats'] = 'Cursos destacados';
 $string['tabtitle_premium'] = 'Cursos premium';
@@ -151,8 +157,6 @@ $string['textandicon'] = 'Iconos y texto';
 $string['viewall'] = 'Ver todos';
 $string['viewsicons'] = 'Iconos para vistas';
 $string['viewsicons_help'] = 'Elige los íconos que se mostrarán según la vista, normalmente para el menú de pestañas. Uno por línea, con la siguiente estructura: nombrevista=typo/icono. Por ejemplo: greats=i/star. Si no se especifica alguno, se usará el por defecto. Las vistas disponibles son: default, recents, greats, premium.';
-
-// Capabilities.
 $string['vitrina:addinstance'] = 'Adicionar un nuevo bloque de Vitrina de cursos';
 $string['vitrina:myaddinstance'] = 'Adicionar un nuevo bloque de Vitrina de cursos a Dashboard';
 $string['waiting'] = 'Próximamente';

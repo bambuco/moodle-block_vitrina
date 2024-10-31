@@ -23,6 +23,10 @@ FEATURES
 
 IN VERSION
 =============
+2023042616:
+- Change enrolment when change enrol state in premiumenrolledcourse.
+- Unenroll premium users if their membership expires.
+
 2023042615:
 - Moodle code rules applied.
 - Enrollment date for premium courses ends when the membership ends.
