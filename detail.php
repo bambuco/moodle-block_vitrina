@@ -72,6 +72,8 @@ if ($enroll && $course->visible) {
             $premiumcohort = get_config('block_vitrina', 'premiumcohort');
         }
 
+        $premiumtype = \block_vitrina\local\controller::type_membership();
+
         foreach ($enrolinstances as $instance) {
             if ($instance->enrol == 'self') {
 
@@ -82,9 +84,14 @@ if ($enroll && $course->visible) {
                 }
 
                 // The validation only applies to premium courses if the premiumcohort setting is configured.
-                // If premiumcohort is configured the course requires a specific cohort.
-                if (in_array('premium', $course->enrollsavailables) &&
-                            (!$premiumcohort || ($instance->customint5 && $instance->customint5 == $premiumcohort))) {
+                // If premiumcohort is configured the course requires the specific cohort.
+                if (in_array('premium', $course->enrollsavailables)
+                        && (
+                                !$premiumcohort
+                                || empty($instance->customint5)
+                                || $instance->customint5 == $premiumcohort
+                            )
+                    ) {
 
                     $data = null;
                     if ($instance->password) {
@@ -92,6 +99,22 @@ if ($enroll && $course->visible) {
                         $data = new stdClass();
                         $data->enrolpassword = $instance->password;
                     }
+
+                    // Change the end dates from the course if the user is premium for the 'premiumenrolledcourse'.
+                    if ($premiumtype == \block_vitrina\local\controller::PREMIUMBYCOURSE) {
+                        $premiumcourseid = get_config('block_vitrina', 'premiumenrolledcourse');
+
+                        if (!empty($premiumcourseid)) {
+                            $premiumcontext = \context_course::instance($premiumcourseid);
+                            $until = enrol_get_enrolment_end($premiumcontext->instanceid, $USER->id);
+
+                            if ($until !== false) {
+                                $secondstoend = $until - time();
+                                $instance->enrolperiod = $secondstoend;
+                            }
+                        }
+                    }
+
                     $enrolplugin->enrol_self($instance, $data);
                     break;
                 }
