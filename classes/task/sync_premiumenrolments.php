@@ -55,7 +55,8 @@ class sync_premiumenrolments extends \core\task\scheduled_task {
             return;
         }
 
-        $enrols = $DB->get_records('enrol', ['courseid' => $premiumenrolledcourse]);
+        $coursesids = explode(',', $premiumenrolledcourse);
+        $enrols = $DB->get_records_list('enrol', 'courseid', $coursesids);
 
         foreach ($enrols as $enrol) {
             if ($enrol->status == ENROL_USER_ACTIVE) {

@@ -91,7 +91,7 @@ $string['paymentrequired'] = 'Este curso es de pago';
 $string['paymenturlfield'] = 'Campo de URL de pago';
 $string['pluginname'] = 'Vitrina de cursos';
 $string['premiumcohort'] = 'Cohorte premium';
-$string['premiumcohort_help'] = 'La instancia de auto-matrículación debe estar asociada con la cohorte configurada para que se puedan matricular ususarios premium, si no desea configurar la cohorte en cada curso no seleccione acá una cohorte pero proteja la auto-matrícula con una clave para que no quede disponible para todos los usuarios.';
+$string['premiumcohort_help'] = 'La instancia de auto-matrículación debe estar asociada con la cohorte configurada para que se puedan matricular usuarios premium, si no desea configurar la cohorte en cada curso no seleccione acá una cohorte pero proteja la auto-matrícula con una clave para que no quede disponible para todos los usuarios.';
 $string['premiumcoursefield'] = 'Campo de curso premium';
 $string['premiumcoursefield_help'] = 'El campo del curso utilizado para especificar el tipo de curso premium.
 Si no se especifica ninguno no se manejará la funcionalidad de cursos premium pero todavía se podrán tener usuarios premium con posibilidad de matrícula en cualquier curso.';

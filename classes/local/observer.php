@@ -59,7 +59,9 @@ class observer {
      * @param \core\event\user_enrolment_deleted $event
      */
     public static function user_unenrolled(\core\event\user_enrolment_deleted $event) {
-        self::user_change_enrolment($event->courseid, $event->relateduserid, self::ACTION_REMOVE);
+        global $DB;
+        $enrolment = $DB->get_record('user_enrolments', ['id' => $event->objectid]);
+        self::user_change_enrolment($enrolment, $event->relateduserid, self::ACTION_REMOVE);
     }
 
     /**
@@ -73,22 +75,24 @@ class observer {
 
         $action = $enrolment->status == ENROL_USER_ACTIVE ? self::ACTION_REACTIVE : self::ACTION_INACTIVE;
 
-        self::user_change_enrolment($event->courseid, $event->relateduserid, $action);
+        self::user_change_enrolment($enrolment, $event->relateduserid, $action);
     }
 
     /**
      * Remove, inactive or re-active user enrolments.
      *
-     * @param int $courseid
+     * @param object $changedenrolment
      * @param int $userid
      * @param int $action
      */
-    public static function user_change_enrolment(int $courseid, int $userid, int $action) {
+    public static function user_change_enrolment(object $changedenrolment, int $userid, int $action) {
         global $DB;
 
+        $changedenrol = $DB->get_record('enrol', ['id' => $changedenrolment->enrolid]);
         $premiumenrolledcourse = get_config('block_vitrina', 'premiumenrolledcourse');
+        $premiumenrolledcourseids = explode(',', $premiumenrolledcourse);
 
-        if (!$premiumenrolledcourse || $courseid != $premiumenrolledcourse) {
+        if (empty($premiumenrolledcourse) || !in_array($changedenrol->courseid, $premiumenrolledcourseids)) {
             return;
         }
 
@@ -103,6 +107,12 @@ class observer {
         }
 
         foreach ($enrolments as $enrolment) {
+
+            // In order not to make changes to the enrolment that is triggering the change.
+            if ($enrolment->id == $changedenrolment->id) {
+                continue;
+            }
+
             $enrol = $DB->get_record('enrol', ['id' => $enrolment->enrolid, 'enrol' => 'self']);
 
             if (!$enrol) {
@@ -114,20 +124,22 @@ class observer {
                                                                         'instanceid' => $enrol->courseid,
                                                                     ]);
 
-            // Only unenrol user if the course is premium.
+            // Only make action user if the course is premium.
             if (!$ispremium) {
                 continue;
             }
 
-            // Unenrol user from all self-enrolled premium courses.
+            // Change the self-enrolled in premium courses.
             $selfenrol = enrol_get_plugin('self');
 
             switch ($action) {
                 case self::ACTION_INACTIVE:
-                    $selfenrol->update_user_enrol($enrol, $userid, ENROL_USER_SUSPENDED);
+                    $selfenrol->update_user_enrol($enrol, $userid, ENROL_USER_SUSPENDED,
+                                                    $changedenrolment->timestart, $changedenrolment->timeend);
                     break;
                 case self::ACTION_REACTIVE:
-                    $selfenrol->update_user_enrol($enrol, $userid, ENROL_USER_ACTIVE);
+                    $selfenrol->update_user_enrol($enrol, $userid, ENROL_USER_ACTIVE,
+                                                    $changedenrolment->timestart, $changedenrolment->timeend);
                     break;
                 default:
                     $selfenrol->unenrol_user($enrol, $userid);

@@ -24,7 +24,7 @@ FEATURES
 IN VERSION
 =============
 2023042616:
-- Change enrolment when change enrol state in premiumenrolledcourse.
+- Change enrolment when change enrol state or dates in premiumenrolledcourse.
 - Unenroll premium users if their membership expires.
 
 2023042615:
