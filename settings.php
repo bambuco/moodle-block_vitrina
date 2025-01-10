@@ -89,14 +89,14 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/license';
     $title = get_string('licensefield', 'block_vitrina');
     $help = get_string('licensefield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
+    $setting = new admin_setting_configselect($name, $title, $help, 0, $fieldswithempty);
     $settings->add($setting);
 
     // Media field.
     $name = 'block_vitrina/media';
     $title = get_string('mediafield', 'block_vitrina');
     $help = get_string('mediafield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
+    $setting = new admin_setting_configselect($name, $title, $help, 0, $fieldswithempty);
     $settings->add($setting);
 
     // Payment fields.
@@ -109,21 +109,21 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/paymenturl';
     $title = get_string('paymenturlfield', 'block_vitrina');
     $help = get_string('paymenturlfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldswithempty);
+    $setting = new admin_setting_configselect($name, $title, $help, 0, $fieldswithempty);
     $settings->add($setting);
 
     // Premium course field. Only checkbox fields are allowed.
     $name = 'block_vitrina/premiumcoursefield';
     $title = get_string('premiumcoursefield', 'block_vitrina');
     $help = get_string('premiumcoursefield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $fieldstopremium);
+    $setting = new admin_setting_configselect($name, $title, $help, 0, $fieldstopremium);
     $settings->add($setting);
 
     // Premium type user field.
     $name = 'block_vitrina/premiumfield';
     $title = get_string('premiumfield', 'block_vitrina');
     $help = get_string('premiumfield_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $userfields);
+    $setting = new admin_setting_configselect($name, $title, $help, 0, $userfields);
     $settings->add($setting);
 
     // Premium type value.
@@ -147,7 +147,7 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/premiumcohort';
     $title = get_string('premiumcohort', 'block_vitrina');
     $help = get_string('premiumcohort_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $cohorts);
+    $setting = new admin_setting_configselect($name, $title, $help, 0, $cohorts);
     $settings->add($setting);
 
     // Decimal points.
@@ -200,7 +200,7 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/catfilterview';
     $title = get_string('catfilterview', 'block_vitrina');
     $help = get_string('catfilterview_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, '', $catfilterviews);
+    $setting = new admin_setting_configselect($name, $title, $help, 'default', $catfilterviews);
     $settings->add($setting);
 
     // Only availabe if exist fields to filter.
@@ -364,10 +364,11 @@ if ($ADMIN->fulltree) {
     }
 
     if (count($options) > 0) {
+        $defaultvalue = key($options);
         $name = 'block_vitrina/commentsmanager';
         $title = get_string('commentsmanager', 'block_vitrina');
         $help = get_string('commentsmanager_help', 'block_vitrina');
-        $setting = new admin_setting_configselect($name, $title, $help, '', $options);
+        $setting = new admin_setting_configselect($name, $title, $help, $defaultvalue, $options);
         $settings->add($setting);
     }
 
