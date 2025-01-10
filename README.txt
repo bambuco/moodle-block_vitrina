@@ -2,7 +2,7 @@ BLOCK Vitrina
 ============================
 A block to display a list of courses and their general information.
 
-Package tested in: moodle 4.1, 4.2 and 4.3.
+Package tested in: moodle 4.4 y 4.5.
 
 QUICK INSTALL
 ==============
@@ -23,9 +23,13 @@ FEATURES
 
 IN VERSION
 =============
-2023042616:
+2024083103:
+- Moodle 4.5+ compatibility.
 - Change enrolment when change enrol state or dates in premiumenrolledcourse.
 - Unenroll premium users if their membership expires.
+
+2024083101:
+- Moodle 4.4+ compatibility.
 
 2023042615:
 - Moodle code rules applied.
