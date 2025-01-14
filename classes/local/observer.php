@@ -59,8 +59,10 @@ class observer {
      * @param \core\event\user_enrolment_deleted $event
      */
     public static function user_unenrolled(\core\event\user_enrolment_deleted $event) {
-        global $DB;
-        $enrolment = $DB->get_record('user_enrolments', ['id' => $event->objectid]);
+
+        // The enrolment information is load from the event object because the enrolment is already deleted.
+        $enrolment = (object)$event->other['userenrolment'];
+
         self::user_change_enrolment($enrolment, $event->relateduserid, self::ACTION_REMOVE);
     }
 
