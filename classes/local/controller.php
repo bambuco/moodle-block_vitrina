@@ -131,6 +131,8 @@ class controller {
         $course->paymenturl = null;
         $course->baseurl = $CFG->wwwroot;
         $course->hassummary = !empty($course->summary);
+        $course->fullname = format_string($course->fullname, true, ['context' => \context_course::instance($course->id)]);
+        $course->summary = format_text($course->summary, $course->summaryformat);
 
         $payfield = self::get_payfield();
         if (!$isuserpremium) {
@@ -306,6 +308,8 @@ class controller {
                     $one->hassummary = !empty($one->summary);
                     $one->imagepath = self::get_courseimage($one);
                     $one->active = $one->startdate <= time();
+                    $one->fullname = format_string($one->fullname, true, ['context' => \context_course::instance($one->id)]);
+                    $one->summary = format_text($one->summary, $course->summaryformat);
                     if (!$isuserpremium && $payfield) {
                         $one->paymenturl = $DB->get_field('customfield_data', 'value',
                                                     ['fieldid' => $payfield->id, 'instanceid' => $one->id]);

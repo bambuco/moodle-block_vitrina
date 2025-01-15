@@ -24,8 +24,6 @@
 
 namespace block_vitrina\local;
 
-use stdClass;
-
 /**
  * Events observer.
  *
