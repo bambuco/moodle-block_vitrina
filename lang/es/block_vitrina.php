@@ -47,6 +47,7 @@ $string['coverimagetype_default'] = 'Imágen por defecto del bloque';
 $string['coverimagetype_generated'] = 'Textura generada aleatoriamente';
 $string['coverimagetype_help'] = 'Opción cuando el curso no tiene una imagen asignada.';
 $string['coverimagetype_none'] = 'Ninguna';
+$string['customgrenroll'] = 'Matricular en grupo seleccionado';
 $string['customtitle'] = 'Título personalizado';
 $string['daystoupcoming'] = 'Días para cursos próximos';
 $string['daystoupcoming_help'] = 'Número de días para considerar cursos próximos como activos para mostrar en la vista resumen del bloque.';
