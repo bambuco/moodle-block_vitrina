@@ -23,6 +23,9 @@ FEATURES
 
 IN VERSION
 =============
+2023042618:
+- Compatibility with enrol_customgr
+
 2023042616:
 - Change enrolment when change enrol state or dates in premiumenrolledcourse.
 - Unenroll premium users if their membership expires.

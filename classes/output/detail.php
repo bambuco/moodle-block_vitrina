@@ -227,6 +227,9 @@ class detail implements renderable, templatable {
         $custom->enrolltitle = get_string('notenrollable', 'block_vitrina');
         $custom->enrollurl = null;
         $custom->enrollurllabel = '';
+        $custom->requireauth = false;
+
+        $sesskey = sesskey();
 
         $shoppluginname = get_config('block_vitrina', 'shopmanager');
         $shopmanager = null;
@@ -270,24 +273,77 @@ class detail implements renderable, templatable {
 
         } else if ($this->course->enrollable) {
 
-            if (in_array('guest', $this->course->enrollsavailables)) {
+            if (array_key_exists('guest', $this->course->enrollsavailables)) {
                 $custom->enrolltitle = get_string('allowguests', 'enrol_guest');
                 $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
                 $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
 
-            } else if (in_array('premium', $this->course->enrollsavailables)) {
+            } else if (array_key_exists('premium', $this->course->enrollsavailables)) {
                 $custom->enrolltitle = get_string('enrollavailablepremium', 'block_vitrina');
-                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'enroll' => 1]);
+                $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey];
+                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', $params);
                 $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
 
                 // If the user is premium, disable the payment gateway.
                 $this->course->haspaymentgw = false;
 
-            } else if (in_array('self', $this->course->enrollsavailables)) {
+            } else if (array_key_exists('self', $this->course->enrollsavailables)) {
 
                 $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
-                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'enroll' => 1]);
+                $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey];
+                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', $params);
                 $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
+
+                // If the user can self-enroll, disable the payment gateway.
+                $this->course->haspaymentgw = false;
+
+            } else if (array_key_exists('customgr', $this->course->enrollsavailables)) {
+
+                $custom->requireauth = isguestuser() || !isloggedin();
+
+                $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
+
+                if (!$custom->requireauth) {
+                    $enrolplugin = enrol_get_plugin('customgr');
+
+                    if (count($this->course->enrollsavailables['customgr']) > 1) {
+                        $content = \html_writer::start_tag('select', ['name' => 'enrolid', 'class' => 'custom-select']);
+
+                        foreach ($this->course->enrollsavailables['customgr'] as $instance) {
+                            $name = $enrolplugin->get_instance_name($instance);
+                            $content .= \html_writer::tag('option', $name, [
+                                'value' => $instance->id,
+                            ]);
+                        }
+
+                        $content .= \html_writer::end_tag('select');
+
+                        $label = get_string('customgrenroll', 'block_vitrina');
+                    } else {
+                        $instance = reset($this->course->enrollsavailables['customgr']);
+                        $content = \html_writer::tag('input', '', [
+                            'type' => 'hidden',
+                            'name' => 'enrolid',
+                            'value' => $instance->id,
+                        ]);
+
+                        $label = $enrolplugin->get_instance_name($instance);
+                    }
+
+                    $params = [
+                        'id' => $this->course->id,
+                        'enroll' => 1,
+                        'sesskey' => $sesskey,
+                    ];
+                    $custom->enrollform = (object) [
+                        'sesskey' => sesskey(),
+                        'courseid' => $this->course->id,
+                        'enrollurl' => new \moodle_url('/blocks/vitrina/detail.php', $params),
+                        'enrol' => 'customgr',
+                        'label' => $label,
+                        'content' => $content,
+                    ];
+                }
 
                 // If the user can self-enroll, disable the payment gateway.
                 $this->course->haspaymentgw = false;
@@ -314,14 +370,15 @@ class detail implements renderable, templatable {
                         'msg' => 'enrolled',
                     ]);
 
-                    if ($custom->requireauth) {
-                        $url = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'tologin' => true]);
-                        $custom->requireauthurl = $url;
-                    }
                 }
 
             }
 
+        }
+
+        if ($custom->requireauth) {
+            $url = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id, 'tologin' => true]);
+            $custom->requireauthurl = $url;
         }
 
         if ($this->course->hasrelated && $shopmanager && !$this->course->enrolled && !$this->course->canview) {
