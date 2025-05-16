@@ -47,6 +47,7 @@ $string['coverimagetype_default'] = 'Default block image';
 $string['coverimagetype_generated'] = 'Random generated texture';
 $string['coverimagetype_help'] = 'Option when a course don\'t have an image.';
 $string['coverimagetype_none'] = 'None';
+$string['customgrenroll'] = 'Enroll in selected group';
 $string['customtitle'] = 'Custom title';
 $string['daystoupcoming'] = 'Days to upcoming courses';
 $string['daystoupcoming_help'] = 'Number of days to consider courses like active to show in block view.';

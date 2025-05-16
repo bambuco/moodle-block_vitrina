@@ -32,10 +32,28 @@
                 {{enrollurllabel}}
             </a>
         {{/enrollurl}}
+        {{#enrollform}}
+            <form class="enrollform" action="{{{enrollformurl}}}" method="post">
+                <input type="hidden" name="sesskey" value="{{{sesskey}}}">
+                <input type="hidden" name="id" value="{{courseid}}">
+                <input type="hidden" name="enroll" value="1">
+                <input type="hidden" name="enrol" value="{{enrol}}">
+                <div class="enrollform-body">
+                    <div class="enrollform-content">
+                        {{{content}}}
+                    </div>
+                    <div class="enrollform-footer">
+                        <button class="btn btn-primary" type="submit">
+                            {{label}}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        {{/enrollform}}
+        {{#requireauth}}
+            <div class="requireauth">{{#str}} requireauth, block_vitrina, {{{requireauthurl}}} {{/str}}</div>
+        {{/requireauth}}
         {{#haspaymentgw}}
-            {{#requireauth}}
-                <div class="requireauth">{{#str}} requireauth, block_vitrina, {{{requireauthurl}}} {{/str}}</div>
-            {{/requireauth}}
             {{^requireauth}}
                 {{#fee}}
                     <div class="feeinfo">

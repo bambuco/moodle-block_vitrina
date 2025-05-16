@@ -361,8 +361,8 @@
     border-radius: 50%;
     color: #fff;
     position: relative;
-    width: 250px;
-    height: 250px;
+    width: 300px;
+    height: 300px;
 }
 
 #page-blocks-vitrina-detail .course-detail .enroll-container .haspaymentgw p {
@@ -421,6 +421,10 @@
 #page-blocks-vitrina-detail .course-detail .enrollstate-completed .enroll-container a.btn {
     color: #016e84;
     border: 2px solid #016e84;
+}
+
+#page-blocks-vitrina-detail .course-detail .enroll-container .enrollform-footer {
+    padding: 5px;
 }
 
 #page-blocks-vitrina-detail .course-detail .detail-foot {

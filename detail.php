@@ -48,92 +48,152 @@ $PAGE->set_title(get_string('coursedetailtitle', 'block_vitrina', $course));
 $PAGE->set_course($course);
 
 $msg = [];
-if ($enroll && $course->visible) {
 
-    if (isguestuser() || !isloggedin()) {
-        $SESSION->wantsurl = (string)(new moodle_url('/blocks/vitrina/detail.php', ['id' => $course->id, 'enroll' => 1]));
-        redirect(get_login_url());
-    }
-
-    $coursecontext = \context_course::instance($course->id, $USER, '', true);
-
-    \block_vitrina\local\controller::course_preprocess($course, true);
-
-    $enrollable = in_array('self', $course->enrollsavailables) || in_array('premium', $course->enrollsavailables);
-
-    // If currently not enrolled.
-    if ($enrollable && !is_enrolled($coursecontext)) {
-        $enrolinstances = enrol_get_instances($course->id, true);
-        $enrolplugin = enrol_get_plugin('self');
-
-        // Use a specific self enrolment.
-        $premiumcohort = null;
-        if ($course->premium || !\block_vitrina\local\controller::premium_available()) {
-            $premiumcohort = get_config('block_vitrina', 'premiumcohort');
-        }
-
-        $premiumtype = \block_vitrina\local\controller::type_membership();
-
-        foreach ($enrolinstances as $instance) {
-            if ($instance->enrol == 'self') {
-
-                // If the premiumcohort is configured this instance is only available to premium users enrollments.
-                if (!in_array('premium', $course->enrollsavailables) && $premiumcohort
-                        && $instance->customint5 && $instance->customint5 == $premiumcohort) {
-                    continue;
-                }
-
-                // The validation only applies to premium courses if the premiumcohort setting is configured.
-                // If premiumcohort is configured the course requires the specific cohort.
-                if (in_array('premium', $course->enrollsavailables)
-                        && (
-                                !$premiumcohort
-                                || empty($instance->customint5)
-                                || $instance->customint5 == $premiumcohort
-                            )
-                    ) {
-
-                    $data = null;
-                    if ($instance->password) {
-                        // If the instance has a password but the course is premium the password is simuled.
-                        $data = new stdClass();
-                        $data->enrolpassword = $instance->password;
-                    }
-
-                    // Change the end dates from the course if the user is premium for the 'premiumenrolledcourse'.
-                    if ($premiumtype == \block_vitrina\local\controller::PREMIUMBYCOURSE) {
-                        $premiumcourseid = get_config('block_vitrina', 'premiumenrolledcourse');
-
-                        if (!empty($premiumcourseid)) {
-                            $premiumcontext = \context_course::instance($premiumcourseid);
-                            $until = enrol_get_enrolment_end($premiumcontext->instanceid, $USER->id);
-
-                            if ($until !== false) {
-                                $secondstoend = $until - time();
-                                $instance->enrolperiod = $secondstoend;
-                            }
-                        }
-                    }
-
-                    $enrolplugin->enrol_self($instance, $data);
-                    break;
-                }
-
-                // If the self enrolment is available use it directly because is the more basic.
-                if (in_array('self', $course->enrollsavailables)) {
-                    $enrolplugin->enrol_self($instance);
-                    break;
-                }
-
-            }
-        }
-    }
-} else if ($tologin) {
+if ($tologin) {
     if (isguestuser() || !isloggedin()) {
         $SESSION->wantsurl = (string)(new moodle_url('/blocks/vitrina/detail.php', ['id' => $course->id]));
         redirect(get_login_url());
     }
 }
+
+do {
+    if (!$enroll || !$course->visible) {
+        break;
+    }
+
+    if (isguestuser() || !isloggedin()) {
+        $params = ['id' => $course->id, 'enroll' => $enroll, 'sesskey' => sesskey()];
+        $SESSION->wantsurl = (string)(new moodle_url('/blocks/vitrina/detail.php', $params));
+        redirect(get_login_url());
+    }
+
+    $coursecontext = \context_course::instance($course->id, $USER, '', true);
+
+    // Check if the user is already enrolled in the course.
+    if (is_enrolled($coursecontext)) {
+        break;
+    }
+
+    // Check the session key.
+    if (!confirm_sesskey()) {
+        break;
+    }
+
+    \block_vitrina\local\controller::course_preprocess($course, true);
+
+    $enrollable = array_key_exists('self', $course->enrollsavailables) ||
+                array_key_exists('premium', $course->enrollsavailables) ||
+                array_key_exists('customgr', $course->enrollsavailables);
+
+    // If not exist an available enrollment enabled.
+    if (!$enrollable) {
+        break;
+    }
+
+    $enrolinstances = [];
+    foreach ($course->enrollsavailables as $enrollsavailable) {
+        $enrolinstances += $enrollsavailable;
+    }
+
+    $premiumcohort = null;
+    $premiumtype = null;
+    if (array_key_exists('premium', $course->enrollsavailables)) {
+        if ($course->premium || !\block_vitrina\local\controller::premium_available()) {
+            $premiumcohort = get_config('block_vitrina', 'premiumcohort');
+        }
+
+        $premiumtype = \block_vitrina\local\controller::type_membership();
+    }
+
+    foreach ($enrolinstances as $instance) {
+        if ($instance->enrol == 'self') {
+            $enrolplugin = enrol_get_plugin('self');
+
+            // If the premiumcohort is configured this instance is only available to premium users enrollments.
+            if (!array_key_exists('premium', $course->enrollsavailables) && $premiumcohort
+                    && $instance->customint5 && $instance->customint5 == $premiumcohort) {
+                continue;
+            }
+
+            // The validation only applies to premium courses if the premiumcohort setting is configured.
+            // If premiumcohort is configured the course requires the specific cohort.
+            if (array_key_exists('premium', $course->enrollsavailables)
+                    && (
+                            !$premiumcohort
+                            || empty($instance->customint5)
+                            || $instance->customint5 == $premiumcohort
+                        )
+                ) {
+
+                $data = null;
+                if ($instance->password) {
+                    // If the instance has a password but the course is premium the password is simuled.
+                    $data = new stdClass();
+                    $data->enrolpassword = $instance->password;
+                }
+
+                // Change the end dates from the course if the user is premium for the 'premiumenrolledcourse'.
+                if ($premiumtype == \block_vitrina\local\controller::PREMIUMBYCOURSE) {
+                    $premiumcourseid = get_config('block_vitrina', 'premiumenrolledcourse');
+
+                    if (!empty($premiumcourseid)) {
+                        $premiumcontext = \context_course::instance($premiumcourseid);
+                        $until = enrol_get_enrolment_end($premiumcontext->instanceid, $USER->id);
+
+                        if ($until !== false) {
+                            $secondstoend = $until - time();
+                            $instance->enrolperiod = $secondstoend;
+                        }
+                    }
+                }
+
+                $enrolplugin->enrol_self($instance, $data);
+                break;
+            }
+
+            // If the self enrolment is available use it directly because is the more basic.
+            if (array_key_exists('self', $course->enrollsavailables)) {
+                $enrolplugin->enrol_self($instance);
+                break;
+            }
+
+        } else if ($instance->enrol == 'customgr') {
+
+            $enrolid = optional_param('enrolid', 0, PARAM_INT);
+
+            // The enrolid is required for the custom group enrolment.
+            if (empty($enrolid)) {
+                continue;
+            }
+
+            // It is not the correct instance.
+            if ($instance->id != $enrolid) {
+                continue;
+            }
+
+            $enrolplugin = enrol_get_plugin('customgr');
+
+            if (!$enrolplugin->can_self_enrol($instance, false) || !$enrolplugin->is_self_enrol_available($instance)) {
+                continue;
+            }
+
+            $data = null;
+            if ($instance->password) {
+                $data = new stdClass();
+                // The password is required.
+                $data->enrolpassword = optional_param('enrolpassword', '', PARAM_TEXT);
+
+                if (empty($data->enrolpassword) || $data->enrolpassword != $instance->password) {
+                    continue;
+                }
+            }
+
+            $enrolplugin->enrol_customgr($instance, $data);
+
+        }
+    }
+
+} while (false); // Trick to avoid nesting of IF statements.
 
 \block_vitrina\local\controller::include_templatecss();
 

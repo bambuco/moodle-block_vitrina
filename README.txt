@@ -23,6 +23,13 @@ FEATURES
 
 IN VERSION
 =============
+2024083105:
+- Compatibility with enrol_customgr
+
+2024083104:
+- String formatting is applied to the course title
+- Fixed premium unenrol
+
 2024083103:
 - Moodle 4.5+ compatibility.
 - Change enrolment when change enrol state or dates in premiumenrolledcourse.

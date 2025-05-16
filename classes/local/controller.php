@@ -1149,7 +1149,7 @@ class controller {
                             || $instance->customint5 == $premiumcohort) {
 
                         $course->enrollable = true;
-                        $course->enrollsavailables[] = 'premium';
+                        $course->enrollsavailables['premium'][] = $instance;
                         continue;
                     }
                 }
@@ -1167,7 +1167,7 @@ class controller {
                     }
                 }
 
-                $course->enrollsavailables[] = 'self';
+                $course->enrollsavailables['self'][] = $instance;
                 $course->enrollable = true;
             } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
 
@@ -1189,13 +1189,20 @@ class controller {
 
                     $course->fee[] = $datafee;
                     $course->enrollable = true;
-                    $course->enrollsavailables[] = 'fee';
+                    $course->enrollsavailables['fee'][] = $instance;
                     $course->haspaymentgw = true;
                 }
 
             } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
                 $course->enrollable = true;
-                $course->enrollsavailables[] = 'guest';
+                $course->enrollsavailables['guest'][] = $instance;
+            } else if ($instance->enrol == 'customgr' && enrol_is_enabled('customgr')) {
+                $enrolplugin = enrol_get_plugin('customgr');
+
+                if ($enrolplugin->is_self_enrol_available($instance)) {
+                    $course->enrollable = true;
+                    $course->enrollsavailables['customgr'][] = $instance;
+                }
             }
         }
 
