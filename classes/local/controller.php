@@ -225,7 +225,10 @@ class controller {
                     $comment->userpicture = $userpicture->get_url($PAGE);
                     $comment->timeformated = userdate($comment->timecreated, $strftimeformat);
                     $comment->userfirstname = $user->firstname;
+                    $comment->userlastname = $user->lastname;
                 }
+
+                $course->latestcomments = array_slice($course->comments, 0, 3);
             } else {
                 $course->hascomments = false;
                 $course->comments = null;

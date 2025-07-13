@@ -1,0 +1,353 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_vitrina/two_cols_nodolab/detail
+
+    This template renders the template content area for a resource.
+
+    Example context (json):
+    {
+        "id": 1,
+        "coursename": "Course name",
+        "summary": "Course summary",
+        "category": "Category name",
+        "instructors": [
+            {
+                "firstname": "First name",
+                "lastname": "Last name",
+                "imagealt": "Image alt",
+                "userpicture": "http://example.com/image.jpg"
+            }
+        ],
+        "custom": {
+            "longcustomfields": [
+                {
+                    "title": "Title",
+                    "value": "Value",
+                    "shortname": "Short name"
+                }
+            ],
+            "media": [
+                {
+                    "isembed": false,
+                    "value": "http://example.com/video.mp4",
+                    "isimage": false
+                }
+            ]
+        },
+        "rating": {
+            "formated": "Formated rating",
+            "percent": 100,
+            "count": 1
+        },
+        "commentscount": 1,
+        "baseurl": "http://example.com",
+        "hascomments": true,
+        "comments": [
+            {
+                "timeformated": "Time formated",
+                "userpicture": "http://example.com/image.jpg",
+                "content": "Content",
+                "userfirstname": "First name"
+            }
+        ],
+        "hasrelated": true,
+        "related": [
+            {
+                "id": 1,
+                "coursename": "Course name",
+                "summary": "Course summary",
+                "category": "Category name",
+                "imagepath": "http://example.com/image.jpg",
+                "active": true,
+                "premium": true,
+                "fee": true,
+                "formatedcost": "$ 100.00",
+                "baseurl": "http://example.com",
+                "hascart": false,
+                "hasrating": false,
+                "rating": {
+                    "percent": 100
+                }
+            }
+        ]
+    }
+}}
+
+{{#course}}
+<div class="catalog-return">
+    <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-secondary">{{#pix}}i/return, core{{/pix}}  {{#str}}returntocatalog, block_vitrina{{/str}}</a>
+</div>
+<div class="course-detail coursecategory-{{category}} {{#premium}}type-premium{{/premium}} container">
+    <div class="coursetitle-box d-md-none">
+        <h2 class="h1">{{{coursename}}}</h2>
+        {{#rating}}
+            <a class="rating-link" href="#rating-detail">
+                <div class="rating-wrapper">
+                    <span>{{formated}}</span>
+                    <div class="vitrina-ranking-stars">
+                        <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                    </div>
+                    <span>({{count}} {{#str}}ratings, block_vitrina{{/str}})</span>
+                </div>
+            </a>
+        {{/rating}}
+        <p> {{{summary}}} </p>
+    </div>
+    <div class="information-structure">
+        <div class="course-specific-info">
+            <div class="coursetitle-box d-none d-md-block">
+                <h2 class="h1">{{{coursename}}}</h2>
+                {{#rating}}
+                    <a class="rating-link" href="#rating-detail">
+                        <div class="rating-wrapper">
+                            <span>{{formated}}</span>
+                            <div class="vitrina-ranking-stars">
+                                <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                            </div>
+                            <span>({{count}} {{#str}}ratings, block_vitrina{{/str}})</span>
+                        </div>
+                    </a>
+                {{/rating}}
+                <p> {{{summary}}} </p>
+            </div>
+            {{#hasinstructors}}
+                <div class="experts-box">
+                {{#instructors}}
+                    <p>
+                        <img src="{{userpicture}}" alt="{{firstname}}" width="138" height="132" />
+                        <strong>{{firstname}} {{lastname}}</strong>
+                        <em>{{imagealt}}</em>
+                    </p>
+                {{/instructors}}
+                </div>
+            {{/hasinstructors}}
+
+            {{#custom}}
+                {{#longcustomfields}}
+                    <div class="longcustomfields-box {{shortname}}-box">
+                        <h3>{{title}}</h3>
+                        <span>{{{value}}}</span>
+                    </div>
+                {{/longcustomfields}}
+            {{/custom}}
+
+        </div>
+
+        <div class="course-general-info">
+            <div class="box-custom-shadow"></div>
+            {{#custom}}
+                {{#media}}
+                <div class="media-content {{#isimage}}isimage{{/isimage}}">
+                    {{#isembed}}
+                        <iframe src="{{value}}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture"></iframe>
+                    {{/isembed}}
+                    {{^isembed}}
+                        {{#isimage}}
+                            <img src="{{value}}" />
+                        {{/isimage}}
+                        {{^isimage}}
+                            <video controls="controls" {{#mediaposter}}poster="{{value}}"{{/mediaposter}}>
+                                <source src="{{value}}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {{/isimage}}
+                    {{/isembed}}
+                </div>
+                {{/media}}
+            {{/custom}}
+
+            <div class="general-items-box">
+                <div class="enroll-content enrollstate-{{enrollstate}}">
+                    {{> block_vitrina/two_cols_nodolab/enrollcontainer}}
+                </div>
+
+                <div>
+                    <ul class="list-info">
+                    {{#custom}}
+                        {{#license}}
+                            <li class="license-item">
+                                <strong>{{title}}:</strong>
+                                <span class="content-box license">
+                                    {{#path}}
+                                    <a rel="license" href="http://creativecommons.org/licenses/{{path}}/" target="_blank">
+                                        <img alt="Licencia Creative Commons" src="https://licensebuttons.net/l/{{path}}/88x31.png" />
+                                    </a>
+                                    {{/path}}
+                                    {{^path}}
+                                        {{text}}
+                                    {{/path}}
+                                </span>
+                            </li>
+                        {{/license}}
+                        {{#customfields}}
+                            <li class="customfield-item {{shortname}}-item">
+                                <strong>{{title}}:</strong>
+                                <span>{{{value}}}</span>
+                            </li>
+                        {{/customfields}}
+                    {{/custom}}
+                    </ul>
+                </div>
+
+                <div class="share-container">
+                    <h3>{{#str}}sharecourse, block_vitrina{{/str}}</h3>
+
+                    <div class="input-container">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="fa fa-link"></i>
+                                </span>
+                            </div>
+                            <input type="text" name="courselink" aria-label="course link" value="{{baseurl}}/blocks/vitrina/detail.php?id={{id}}" readonly>
+                        </div>
+                    </div>
+                    <div class="share-icons">
+                    {{#networks}}
+                        <a href="{{url}}" target="_blank">
+                            <i class="fa fa-{{icon}}"></i>
+                        </a>
+                    {{/networks}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{#detailinfo}}
+        <div class="detailinfo">
+            {{{detailinfo}}}
+        </div>
+    {{/detailinfo}}
+
+    {{#rating}}
+        <div id="rating-detail" class="course-rating-detail">
+            {{#hascomments}}<h3>{{#str}}commentstitlealternate, block_vitrina{{/str}}</h3>{{/hascomments}}
+
+            <div class="ratings-box {{#rating}}has_rating{{/rating}} {{#hascomments}}has_comments{{/hascomments}}">
+                {{#hascomments}}
+                    <div class="course-comments-box" data-count="{{commentscount}}">
+                        {{#latestcomments}}
+                            <div class="comment">
+                                <div class="comment-author">
+                                    <img src="{{userpicture}}" class="author-picture" alt="" role="presentation"/>
+                                    <div class="comment-data">
+                                        <p class="author-name">{{userfirstname}} {{userlastname}}</p>
+                                        <p class="timeformated">{{timeformated}}</p>
+                                    </div>
+                                </div>
+                                <div class="comment-content">
+                                    <p>
+                                        {{content}}
+                                    </p>
+                                </div>
+                            </div>
+                        {{/latestcomments}}
+                        <div class="box-show-more-comments">
+                            <button class="btn text-primary" data-toggle="modal" data-target="#all-comments-modal">
+                                <span class="more">{{#str}} showallcomments, block_vitrina {{/str}} ({{commentscount}})</span>
+                            </button>
+                        </div>
+                        <div
+                        class="modal fade"
+                        id="all-comments-modal"
+                        tabindex="-1"
+                        aria-labelledby="modal-label"
+                        aria-hidden="true"
+                        data-keyboard="false">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg all-comments-modal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-label">{{#str}} commentsmodaltitle, block_vitrina {{/str}}</h5>
+                                    <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    aria-label="{{#str}} closebuttontitle, core {{/str}}">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    {{#comments}}
+                                        <div class="comment">
+                                            <div class="comment-author">
+                                                <img src="{{userpicture}}" class="author-picture" alt="" role="presentation"/>
+                                                <div class="comment-data">
+                                                    <p class="author-name">{{userfirstname}} {{userlastname}}</p>
+                                                    <p class="timeformated">{{timeformated}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="comment-content">
+                                                <p>
+                                                    {{content}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    {{/comments}}
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                {{/hascomments}}
+                {{#rating}}
+                    <div class="ranking-detail">
+                        <div>
+                            <label>{{formated}}</label>
+                            <div class="vitrina-ranking-stars">
+                                <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            {{#detail}}
+                            <div class="ranking-detail-item">
+                                <label>{{#str}} countstars, block_vitrina, {{value}} {{/str}}</label>
+                                <div class="rating-bar"><div style="width: {{avg}}%"></div></div>
+                                <div>{{avg}}%</div>
+                            </div>
+                            {{/detail}}
+                        </div>
+                    </div>
+                {{/rating}}
+            </div>
+        </div>
+    {{/rating}}
+
+    {{#hasrelated}}
+        <div class="relatedcourses">
+            <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
+            <div class="block_vitrina-courseslist">
+                <div class="courses-list">
+                    {{#related}}
+                        {{>block_vitrina/two_cols_nodolab/course}}
+                    {{/related}}
+                </div>
+            </div>
+        </div>
+    {{/hasrelated}}
+</div>
+
+{{#haspaymentgw}}
+{{#js}}
+    require(['core_payment/gateways_modal'], function(modal) {
+        modal.init();
+    });
+{{/js}}
+{{/haspaymentgw}}
+
+{{/course}}
