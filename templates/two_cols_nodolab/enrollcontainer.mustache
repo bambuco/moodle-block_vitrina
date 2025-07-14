@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_vitrina/two_cols_nodolab/enrollcontainer
+
+    This template renders the template content area for a resource.
+
+    Example context (json):
+    {}
+}}
+
+<div class="enroll-container">
+    <div class="{{#haspaymentgw}}haspaymentgw{{/haspaymentgw}}">
+    {{#custom}}
+        {{#enrolltitle}}<p>{{enrolltitle}}</p>{{/enrolltitle}}
+        {{^haspaymentgw}}
+            {{#enrollurl}}
+                <a href="{{{enrollurl}}}" class="btn btn-primary">
+                    {{enrollurllabel}}
+                </a>
+            {{/enrollurl}}
+        {{/haspaymentgw}}
+        {{#enrollform}}
+            <form class="enrollform" action="{{{enrollformurl}}}" method="post">
+                <input type="hidden" name="sesskey" value="{{{sesskey}}}">
+                <input type="hidden" name="id" value="{{courseid}}">
+                <input type="hidden" name="enroll" value="1">
+                <input type="hidden" name="enrol" value="{{enrol}}">
+                <div class="enrollform-body">
+                    <div class="enrollform-content">
+                        {{{content}}}
+                    </div>
+                    <div class="enrollform-footer">
+                        <button class="btn btn-primary" type="submit">
+                            {{label}}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        {{/enrollform}}
+        {{#requireauth}}
+            <div class="requireauth">{{#str}} requireauth, block_vitrina, {{{requireauthurl}}} {{/str}}</div>
+        {{/requireauth}}
+        {{#haspaymentgw}}
+            {{^requireauth}}
+                {{#fee}}
+                    <div class="feeinfo">
+                        <p>{{#str}} feeinfo, block_vitrina, {{formatedcost}} {{/str}}</p>
+                    </div>
+                    {{#hascart}}
+                        {{> block_vitrina/cartbutton}}
+                    {{/hascart}}
+                    {{^hascart}}
+                        {{> block_vitrina/two_cols_nodolab/paymentmethods}}
+                    {{/hascart}}
+                {{/fee}}
+            {{/requireauth}}
+        {{/haspaymentgw}}
+
+    {{/custom}}
+    </div>
+</div>

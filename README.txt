@@ -25,6 +25,7 @@ IN VERSION
 =============
 2024083105:
 - Compatibility with enrol_customgr
+- New template contributed: two_cols_nodolab (by NodoLab.co)
 
 2024083104:
 - String formatting is applied to the course title
