@@ -24,7 +24,6 @@
     border-radius: 10px;
 }
 
-
 .block_vitrina-courseslist .coursebox .panel-body {
     padding: 0;
     text-align: left;
@@ -260,8 +259,9 @@
     color: #fff;
     border-color: var(--primary, #000);
 }
+
 #page-blocks-vitrina-detail .course-detail .enroll-container a.btn:hover {
-    background-color: white;
+    background-color: #fff;
     color: var(--primary, #000);
     border-color: var(--primary, #000);
 }
@@ -271,13 +271,14 @@
 }
 
 #page-blocks-vitrina-detail .course-detail .enroll-container .haspaymentgw [data-component="enrol_fee"] {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 #page-blocks-vitrina-detail .course-detail .enroll-container .haspaymentgw .btn-primary[data-toggle="collapse"]:not(.collapsed) {
     background-color: transparent;
     color: var(--primary);
 }
+
 #page-blocks-vitrina-detail .course-detail .enroll-container .haspaymentgw .btn-primary[data-toggle="collapse"] i.fa {
     margin-left: 2px;
     margin-right: 0;
@@ -453,7 +454,6 @@ html:has(body#page-blocks-vitrina-detail) {
     }
 }
 
-
 #page-blocks-vitrina-detail .course-detail .course-rating-detail .course-comments-box {
     background-color: var(--light);
     padding: 20px;
@@ -509,7 +509,7 @@ html:has(body#page-blocks-vitrina-detail) {
     margin-bottom: 8px;
 }
 
-#page-blocks-vitrina-detail .course-detail .course-rating-detail .course-comments-box .comment-author .comment-data p.timeformated{
+#page-blocks-vitrina-detail .course-detail .course-rating-detail .course-comments-box .comment-author .comment-data p.timeformated {
     font-size: 0.82rem;
     font-weight: 400;
 }
@@ -608,6 +608,7 @@ html:has(body#page-blocks-vitrina-detail) {
     font-size: 1.640625rem;
     text-align: left;
 }
+
 #page-blocks-vitrina-detail #page-header.header-maxwidth {
     max-width: unset;
 }
@@ -676,7 +677,6 @@ html:has(body#page-blocks-vitrina-detail) {
         padding-right: 0;
     }
 }
-
 
 @media (max-width: 767.98px) {
 

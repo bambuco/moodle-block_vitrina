@@ -207,14 +207,11 @@ class controller {
             $commentsmanager = self::get_commentsmanager();
             $comments = $commentsmanager::get_comments($course);
             $course->commentscount = count($comments);
+            $course->latestcomments = null;
 
             if ($course->commentscount > 0) {
                 $course->hascomments = true;
-
-                // Get 20 newest records.
-                $course->comments = $comments;
-
-                $course->comments = array_values($course->comments);
+                $course->comments = array_values($comments);
 
                 $strftimeformat = get_string('strftimerecentfull', 'langconfig');
 
