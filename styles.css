@@ -400,17 +400,6 @@
     font-size: 20px;
 }
 
-#page-blocks-vitrina-detail .course-detail .enroll-container a.btn {
-    background-color: transparent;
-    border: 2px solid #fff;
-}
-
-#page-blocks-vitrina-detail .course-detail .enroll-container a.btn:hover {
-    background-color: #fff;
-    color: #006d82;
-    border: 2px solid #fff;
-}
-
 #page-blocks-vitrina-detail .course-detail .enroll-container .requireauth {
     line-height: 19px;
     font-size: 17px;

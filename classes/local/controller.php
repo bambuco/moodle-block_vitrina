@@ -263,7 +263,7 @@ class controller {
                     }
 
                     $sqlintances = "SELECT c.id, c.category FROM {tag_instance} t " .
-                                    " INNER JOIN {course} c ON t.itemtype = 'course' AND c.id = t.itemid" .
+                                    " INNER JOIN {course} c ON t.itemtype = 'course' AND c.id = t.itemid AND c.visible = 1" .
                                     " WHERE t.tagid IN (" . (implode(',', $ids)) . ") " . $categoriescondition .
                                     " GROUP BY c.id, c.category" .
                                     " ORDER BY t.timemodified DESC";
@@ -362,6 +362,7 @@ class controller {
                     $userpicture->size = 200;
                     $user->userpicture = $userpicture->get_url($PAGE);
                     $user->profileurl = $CFG->wwwroot . '/user/profile.php?id=' . $key;
+                    $user->description = format_text($user->description, FORMAT_HTML);
 
                     $course->instructors[] = $user;
                 }
