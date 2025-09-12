@@ -56,6 +56,7 @@ if ($tologin) {
     }
 }
 
+$enrolmsg = [];
 do {
     if (!$enroll || !$course->visible) {
         break;
@@ -83,7 +84,8 @@ do {
 
     $enrollable = array_key_exists('self', $course->enrollsavailables) ||
                 array_key_exists('premium', $course->enrollsavailables) ||
-                array_key_exists('customgr', $course->enrollsavailables);
+                array_key_exists('customgr', $course->enrollsavailables) ||
+                array_key_exists('token', $course->enrollsavailables);
 
     // If not exist an available enrollment enabled.
     if (!$enrollable) {
@@ -190,6 +192,38 @@ do {
 
             $enrolplugin->enrol_customgr($instance, $data);
 
+        } else if ($instance->enrol == 'token') {
+
+            $enrolid = optional_param('enrolid', 0, PARAM_INT);
+
+            // The enrolid is required for the custom group enrolment.
+            if (empty($enrolid)) {
+                continue;
+            }
+
+            // It is not the correct instance.
+            if ($instance->id != $enrolid) {
+                continue;
+            }
+
+            $enrolplugin = enrol_get_plugin('token');
+
+            if (!$enrolplugin->can_self_enrol($instance, false) || !$enrolplugin->is_self_enrol_available($instance)) {
+                continue;
+            }
+
+            $data = new stdClass();
+
+            // The token is required.
+            $data->enroltoken = optional_param('enroltoken', '', PARAM_TEXT);
+            if (empty($data->enroltoken)) {
+                continue;
+            }
+
+            if (!$enrolplugin->enrol_self($instance, $data)) {
+                $enrolmsg[] = get_string('tokeninvalid', 'enrol_token');
+            }
+
         }
     }
 
@@ -203,7 +237,7 @@ if (!$course->visible) {
     echo get_string('notvisible', 'block_vitrina');
 } else {
 
-    $renderable = new \block_vitrina\output\detail($course);
+    $renderable = new \block_vitrina\output\detail($course, $enrolmsg);
     $renderer = $PAGE->get_renderer('block_vitrina');
     echo $renderer->render($renderable);
 }

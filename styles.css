@@ -416,6 +416,15 @@
     padding: 5px;
 }
 
+#page-blocks-vitrina-detail .course-detail .enroll-container select[name="enrolid"] {
+    margin-bottom: 10px;
+}
+
+#page-blocks-vitrina-detail .course-detail .enroll-container [name="enroltoken"] {
+    text-align: center;
+    letter-spacing: 10px;
+}
+
 #page-blocks-vitrina-detail .course-detail .detail-foot {
     padding: 20px;
     margin-top: 30px;

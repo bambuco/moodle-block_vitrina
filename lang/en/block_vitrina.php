@@ -174,3 +174,4 @@ The available views are: default, recents, greats, premium.';
 $string['vitrina:addinstance'] = 'Add a new Showcase block';
 $string['vitrina:myaddinstance'] = 'Add a new Showcase block to Dashboard';
 $string['waiting'] = 'Waiting';
+$string['tokenenroll'] = 'Enroll with token';

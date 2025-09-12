@@ -23,6 +23,9 @@ FEATURES
 
 IN VERSION
 =============
+2024083106:
+- Compatibility with enrol_token
+
 2024083105:
 - Compatibility with enrol_customgr
 - New template contributed: two_cols_nodolab (by NodoLab.co)
