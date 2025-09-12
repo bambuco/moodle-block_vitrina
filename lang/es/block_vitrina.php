@@ -161,6 +161,7 @@ $string['tabview_help'] = 'Elige el diseño de las pestañas cuando hay disponib
 $string['templatetype'] = 'Tipo de plantilla';
 $string['templatetype_help'] = 'Elija una plantilla para ajustar la apariencia de las páginas del bloque';
 $string['textandicon'] = 'Iconos y texto';
+$string['tokenenroll'] = 'Inscribirse con token';
 $string['viewall'] = 'Ver todos';
 $string['viewsicons'] = 'Iconos para vistas';
 $string['viewsicons_help'] = 'Elige los íconos que se mostrarán según la vista, normalmente para el menú de pestañas. Uno por línea, con la siguiente estructura: nombrevista=typo/icono. Por ejemplo: greats=i/star. Si no se especifica alguno, se usará el por defecto. Las vistas disponibles son: default, recents, greats, premium.';

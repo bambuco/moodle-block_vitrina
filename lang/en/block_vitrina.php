@@ -166,6 +166,7 @@ $string['tabview_help'] = 'Choose tab layout when more than one view is availabl
 $string['templatetype'] = 'Template type';
 $string['templatetype_help'] = 'Choose a template to change the block pages appearance';
 $string['textandicon'] = 'Text and icons';
+$string['tokenenroll'] = 'Enroll with token';
 $string['viewall'] = 'View all';
 $string['viewsicons'] = 'Icons to views';
 $string['viewsicons_help'] = 'Choose the icons to display based on the view, typically for the tabs menu.
@@ -174,4 +175,3 @@ The available views are: default, recents, greats, premium.';
 $string['vitrina:addinstance'] = 'Add a new Showcase block';
 $string['vitrina:myaddinstance'] = 'Add a new Showcase block to Dashboard';
 $string['waiting'] = 'Waiting';
-$string['tokenenroll'] = 'Enroll with token';
