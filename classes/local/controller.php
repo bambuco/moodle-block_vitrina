@@ -213,8 +213,6 @@ class controller {
             $course->hasprogress = false;
         }
 
-        //var_dump($course->progress);
-
         // Load data for course detail.
         if ($large) {
             $fullcourse = new \core_course_list_element($course);
