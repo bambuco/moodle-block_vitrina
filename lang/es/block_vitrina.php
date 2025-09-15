@@ -39,6 +39,7 @@ $string['commentsmodaltitle'] = 'Comentarios del curso';
 $string['commentstitle'] = 'Comentarios más recientes';
 $string['commentstitlealternate'] = 'Valoraciones del curso';
 $string['completed'] = 'Curso completado';
+$string['completepercent'] = '{$a}% completado';
 $string['countstars'] = '{$a} estrellas';
 $string['coursecategory'] = 'Categoría de curso';
 $string['coursedetail'] = 'Detalles del curso';

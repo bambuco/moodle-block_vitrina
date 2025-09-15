@@ -25,6 +25,7 @@ IN VERSION
 =============
 2024083106:
 - Compatibility with enrol_token
+- CSS class to completed courses and progress information.
 
 2024083105:
 - Compatibility with enrol_customgr

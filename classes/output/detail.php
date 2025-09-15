@@ -205,8 +205,6 @@ class detail implements renderable, templatable {
         // Load the course context.
         $coursecontext = \context_course::instance($this->course->id, $USER, '', true);
 
-        $completed = $DB->get_record('course_completions', ['userid' => $USER->id, 'course' => $this->course->id]);
-
         // Special format to the course name.
         $coursename = $this->course->fullname;
         $m = explode(' ', $coursename);
@@ -227,7 +225,9 @@ class detail implements renderable, templatable {
         // Check enrolled status.
         $custom->enrolled = !(isguestuser() || !isloggedin() || !is_enrolled($coursecontext));
 
-        $custom->completed = $completed && $completed->timecompleted;
+        $custom->completed = $this->course->completed ?? false;
+        $custom->progress = $this->course->progress ?? null;
+        $custom->hasprogress = $this->course->hasprogress;
 
         $enrollstate = $custom->completed ? 'completed' : ($custom->enrolled ? 'enrolled' : 'none');
 
