@@ -40,7 +40,7 @@
     }
 }}
 
-<div class="panel panel-default coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}">
+<div class="panel panel-default coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}}">
     <div class="courseimage" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>
         {{#hassummary}}
             <div class="course_description">
@@ -74,6 +74,12 @@
         {{/fee}}
     </div>
     <div class="panel-foot clearfix">
+        {{#hasprogress}}
+            <div class="course-progress">
+                <div class="course-progress-bar" style="width: {{progress}}%;"></div>
+                <span>{{#str}}completepercent, block_vitrina, {{progress}}{{/str}}</span>
+            </div>
+        {{/hasprogress}}
         <a class="coursebtn submit btn btn-info btn-sm" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">
             <span class="get_stringlink">
                 {{#str}} showmore, block_vitrina {{/str}}

@@ -122,7 +122,7 @@ class controller {
      * @param bool   $large  True if load full information about the course.
      */
     public static function course_preprocess($course, $large = false) {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB, $PAGE, $USER;
 
         $isuserpremium = self::is_user_premium();
 
@@ -199,6 +199,19 @@ class controller {
 
         // If course is active or waiting.
         $course->active = $course->startdate <= time();
+
+        // Course progress.
+        if (isloggedin() && !isguestuser() && !empty($course->enablecompletion)) {
+            $completioninfo = new \completion_info($course);
+            $course->completed = $completioninfo->is_course_complete($USER->id);
+            $course->progress = \core_completion\progress::get_course_progress_percentage($course);
+            $course->progress = is_numeric($course->progress) ? round($course->progress) : null;
+            $course->hasprogress = $course->progress ?? false;
+        } else {
+            $course->completed = null;
+            $course->progress = null;
+            $course->hasprogress = false;
+        }
 
         // Load data for course detail.
         if ($large) {

@@ -9,6 +9,10 @@
     align-content: space-between;
 }
 
+.block_vitrina-courseslist .coursebox.panel .course-progress {
+    padding: 5px;
+}
+
 .block_vitrina-courseslist .coursebox.panel > div {
     width: 100%;
     margin: 0;
