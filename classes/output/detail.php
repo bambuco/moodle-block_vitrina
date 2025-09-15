@@ -41,14 +41,21 @@ class detail implements renderable, templatable {
     private $course = null;
 
     /**
+     * @var array Enrollment messages.
+     */
+    private $enrolmsg = [];
+
+    /**
      * Constructor.
      *
      * @param object $course A course
+     * @param array $enrolmsg Enrollment messages
      */
-    public function __construct($course) {
+    public function __construct($course, array $enrolmsg = []) {
 
         \block_vitrina\local\controller::course_preprocess($course, true);
         $this->course = $course;
+        $this->enrolmsg = $enrolmsg;
     }
 
     /**
@@ -348,6 +355,62 @@ class detail implements renderable, templatable {
                 // If the user can self-enroll, disable the payment gateway.
                 $this->course->haspaymentgw = false;
 
+            } else if (array_key_exists('token', $this->course->enrollsavailables)) {
+
+                $custom->requireauth = isguestuser() || !isloggedin();
+
+                $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
+
+                if (!$custom->requireauth) {
+                    $enrolplugin = enrol_get_plugin('token');
+
+                    if (count($this->course->enrollsavailables['token']) > 1) {
+                        $content = \html_writer::start_tag('select', ['name' => 'enrolid', 'class' => 'custom-select']);
+
+                        foreach ($this->course->enrollsavailables['token'] as $instance) {
+                            $name = $enrolplugin->get_instance_name($instance);
+                            $content .= \html_writer::tag('option', $name, [
+                                'value' => $instance->id,
+                            ]);
+                        }
+
+                        $content .= \html_writer::end_tag('select');
+
+                        $label = get_string('tokenenroll', 'block_vitrina');
+                    } else {
+                        $instance = reset($this->course->enrollsavailables['token']);
+                        $content = \html_writer::tag('input', '', [
+                            'type' => 'hidden',
+                            'name' => 'enrolid',
+                            'value' => $instance->id,
+                        ]);
+
+                        $label = $enrolplugin->get_instance_name($instance);
+                    }
+
+                    $content .= \html_writer::tag('input', '', [
+                        'type' => 'text',
+                        'name' => 'enroltoken',
+                    ]);
+
+                    $params = [
+                        'id' => $this->course->id,
+                        'enroll' => 1,
+                        'sesskey' => $sesskey,
+                    ];
+                    $custom->enrollform = (object) [
+                        'sesskey' => sesskey(),
+                        'courseid' => $this->course->id,
+                        'enrollurl' => new \moodle_url('/blocks/vitrina/detail.php', $params),
+                        'enrol' => 'customgr',
+                        'label' => $label,
+                        'content' => $content,
+                    ];
+                }
+
+                // If the user can self-enroll, disable the payment gateway.
+                $this->course->haspaymentgw = false;
+
             } else if (!empty($this->course->paymenturl)) {
 
                 $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
@@ -404,6 +467,8 @@ class detail implements renderable, templatable {
             'enrollstate' => $enrollstate,
             'coursename' => $coursename,
             'originalcoursename' => $this->course->fullname,
+            'hasenrollmsg' => !empty($this->enrolmsg),
+            'enrolmsg' => $this->enrolmsg,
         ];
 
         return $defaultvariables;

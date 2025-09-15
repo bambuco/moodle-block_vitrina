@@ -25,6 +25,13 @@
 
 <div class="enroll-container">
     <div class="enroll-container-body{{#haspaymentgw}} haspaymentgw{{/haspaymentgw}}">
+    {{#hasenrollmsg}}
+        <div class="enroll-messages">
+            {{#enrolmsg}}
+                <div class="alert alert-danger">{{.}}</div>
+            {{/enrolmsg}}
+        </div>
+    {{/hasenrollmsg}}
     {{#custom}}
         {{#enrolltitle}}<p>{{enrolltitle}}</p>{{/enrolltitle}}
         {{#enrollurl}}

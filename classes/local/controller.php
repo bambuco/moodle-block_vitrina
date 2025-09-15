@@ -1204,6 +1204,13 @@ class controller {
                     $course->enrollable = true;
                     $course->enrollsavailables['customgr'][] = $instance;
                 }
+            } else if ($instance->enrol == 'token' && enrol_is_enabled('token')) {
+                $enrolplugin = enrol_get_plugin('token');
+
+                if ($enrolplugin->is_self_enrol_available($instance)) {
+                    $course->enrollable = true;
+                    $course->enrollsavailables['token'][] = $instance;
+                }
             }
         }
 
