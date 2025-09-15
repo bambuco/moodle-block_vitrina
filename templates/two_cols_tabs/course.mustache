@@ -40,7 +40,7 @@
     }
 }}
 
-<div class="panel panel-default coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}">
+<div class="panel panel-default coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}}">
     <div class="panel-body clearfix">
         <a class="" title="{{{shortname}}}" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">
             <div class="courseimage" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}></div>
@@ -70,6 +70,12 @@
         {{/fee}}
     </div>
     <div class="panel-foot clearfix">
+        {{#hasprogress}}
+            <div class="course-progress">
+                <div class="course-progress-bar" style="width: {{progress}}%;"></div>
+                <span>{{#str}}completepercent, block_vitrina, {{progress}}{{/str}}</span>
+            </div>
+        {{/hasprogress}}
         <a title="{{{shortname}}}" class="btn btn-outline-primary" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">Ir al curso</a>
     </div>
     {{^active}}

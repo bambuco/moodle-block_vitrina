@@ -40,7 +40,7 @@
     }
 }}
 
-<div class="coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>
+<div class="coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}}" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>
 
     {{#hasrating}}
         {{#rating}}
@@ -65,6 +65,12 @@
                 {{/hascart}}
             </div>
         {{/fee}}
+        {{#hasprogress}}
+            <div class="course-progress">
+                <div class="course-progress-bar" style="width: {{progress}}%;"></div>
+                <span>{{#str}}completepercent, block_vitrina, {{progress}}{{/str}}</span>
+            </div>
+        {{/hasprogress}}
 
         <div class="content-fullinfo">
             <div class="coursesummary">
