@@ -296,10 +296,66 @@ class detail implements renderable, templatable {
 
             } else if (array_key_exists('self', $this->course->enrollsavailables)) {
 
-                $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
-                $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey];
-                $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', $params);
-                $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
+                $enrolplugin = enrol_get_plugin('self');
+                $enrolopen = false;
+                foreach ($this->course->enrollsavailables['self'] as $instance) {
+                    if (empty($instance->password)) {
+                        $enrolopen = true;
+                        break;
+                    }
+                }
+
+                if (!$enrolopen) {
+                    $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
+                    if (count($this->course->enrollsavailables['self']) > 1) {
+                        $content = \html_writer::start_tag('select', ['name' => 'enrolid', 'class' => 'custom-select']);
+
+                        foreach ($this->course->enrollsavailables['self'] as $instance) {
+                            $name = $enrolplugin->get_instance_name($instance);
+                            $content .= \html_writer::tag('option', $name, [
+                                'value' => $instance->id,
+                            ]);
+                        }
+
+                        $content .= \html_writer::end_tag('select');
+
+                        $label = get_string('pluginname', 'enrol_self');
+                    } else {
+                        $instance = reset($this->course->enrollsavailables['self']);
+                        $content = \html_writer::tag('input', '', [
+                            'type' => 'hidden',
+                            'name' => 'enrolid',
+                            'value' => $instance->id,
+                        ]);
+
+                        $label = $enrolplugin->get_instance_name($instance);
+                    }
+
+                    $content .= \html_writer::tag('input', '', [
+                        'type' => 'password',
+                        'name' => 'enrolpassword',
+                    ]);
+
+                    $params = [
+                        'id' => $this->course->id,
+                        'enroll' => 1,
+                        'sesskey' => $sesskey,
+                    ];
+                    $custom->enrollform = (object) [
+                        'sesskey' => sesskey(),
+                        'courseid' => $this->course->id,
+                        'enrollurl' => new \moodle_url('/blocks/vitrina/detail.php', $params),
+                        'enrol' => 'self',
+                        'label' => $label,
+                        'content' => $content,
+                    ];
+
+                } else {
+                    $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
+                    $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey];
+                    $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', $params);
+                    $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
+                }
 
                 // If the user can self-enroll, disable the payment gateway.
                 $this->course->haspaymentgw = false;

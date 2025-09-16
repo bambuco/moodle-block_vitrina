@@ -1168,11 +1168,6 @@ class controller {
                     }
                 }
 
-                // Enrol with password is not supported.
-                if (!empty($instance->password)) {
-                    continue;
-                }
-
                 if ($instance->customint5) {
                     require_once($CFG->dirroot . '/cohort/lib.php');
                     if (!cohort_is_member($instance->customint5, $USER->id)) {

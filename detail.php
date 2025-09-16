@@ -155,7 +155,36 @@ do {
 
             // If the self enrolment is available use it directly because is the more basic.
             if (array_key_exists('self', $course->enrollsavailables)) {
-                $enrolplugin->enrol_self($instance);
+
+                $data = null;
+                if ($instance->password) {
+                    $enrolid = optional_param('enrolid', 0, PARAM_INT);
+
+                    // The enrolid is required for the self enrolment when use password.
+                    if (empty($enrolid)) {
+                        continue;
+                    }
+
+                    // It is not the correct instance.
+                    if ($instance->id != $enrolid) {
+                        continue;
+                    }
+
+                    $data = new stdClass();
+                    // The password is required.
+                    $data->enrolpassword = optional_param('enrolpassword', '', PARAM_TEXT);
+
+                    if (empty($data->enrolpassword)) {
+                        continue;
+                    }
+
+                    if ($data->enrolpassword != $instance->password) {
+                        $enrolmsg[] = get_string('passwordinvalid', 'enrol_self');
+                        continue;
+                    }
+                }
+
+                $enrolplugin->enrol_self($instance, $data);
                 break;
             }
 
