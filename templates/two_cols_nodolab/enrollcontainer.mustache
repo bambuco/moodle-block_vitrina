@@ -42,11 +42,11 @@
             {{/enrollurl}}
         {{/haspaymentgw}}
         {{#enrollform}}
-            <form class="enrollform" action="{{{enrollformurl}}}" method="post">
+            <form class="enrollform type-{{enrol}}" action="{{{enrollformurl}}}" method="post">
                 <input type="hidden" name="sesskey" value="{{{sesskey}}}">
                 <input type="hidden" name="id" value="{{courseid}}">
                 <input type="hidden" name="enroll" value="1">
-                <input type="hidden" name="enrol" value="{{enrol}}">
+                <input type="hidden" name="enroltype" value="{{enrol}}">
                 <div class="enrollform-body">
                     <div class="enrollform-content">
                         {{{content}}}

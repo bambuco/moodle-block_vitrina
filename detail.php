@@ -28,6 +28,7 @@ require_once('classes/output/detail.php');
 $id = optional_param('id', 0, PARAM_INT);
 $enroll = optional_param('enroll', false, PARAM_BOOL);
 $tologin = optional_param('tologin', false, PARAM_BOOL);
+$enroltype = optional_param('enroltype', '', PARAM_TEXT);
 
 if ($id == SITEID) {
     // This course is not a real course.
@@ -94,7 +95,7 @@ do {
 
     $enrolinstances = [];
     foreach ($course->enrollsavailables as $enrollsavailable) {
-        $enrolinstances += $enrollsavailable;
+        $enrolinstances = array_merge($enrolinstances, array_values($enrollsavailable));
     }
 
     $premiumcohort = null;
@@ -108,6 +109,7 @@ do {
     }
 
     foreach ($enrolinstances as $instance) {
+
         if ($instance->enrol == 'self') {
             $enrolplugin = enrol_get_plugin('self');
 
@@ -119,7 +121,8 @@ do {
 
             // The validation only applies to premium courses if the premiumcohort setting is configured.
             // If premiumcohort is configured the course requires the specific cohort.
-            if (array_key_exists('premium', $course->enrollsavailables)
+            // The enrol type is empty for premium courses.
+            if (empty($enroltype) && array_key_exists('premium', $course->enrollsavailables)
                     && (
                             !$premiumcohort
                             || empty($instance->customint5)
@@ -154,7 +157,7 @@ do {
             }
 
             // If the self enrolment is available use it directly because is the more basic.
-            if (array_key_exists('self', $course->enrollsavailables)) {
+            if (array_key_exists('self', $course->enrollsavailables) && $enroltype == 'self') {
 
                 $data = null;
                 if ($instance->password) {
@@ -188,7 +191,7 @@ do {
                 break;
             }
 
-        } else if ($instance->enrol == 'customgr') {
+        } else if ($instance->enrol == 'customgr' && $enroltype == 'customgr') {
 
             $enrolid = optional_param('enrolid', 0, PARAM_INT);
 
@@ -221,7 +224,7 @@ do {
 
             $enrolplugin->enrol_customgr($instance, $data);
 
-        } else if ($instance->enrol == 'token') {
+        } else if ($instance->enrol == 'token' && $enroltype == 'token') {
 
             $enrolid = optional_param('enrolid', 0, PARAM_INT);
 
