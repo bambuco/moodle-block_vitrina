@@ -24,17 +24,18 @@ FEATURES
 IN VERSION
 =============
 2024083106:
-- Compatibility with enrol_token
+- Compatibility with enrol_token.
 - CSS class to completed courses and progress information.
 - Self enrol with password is supported.
+- New template: two_cols_tabs.
 
 2024083105:
-- Compatibility with enrol_customgr
-- New template contributed: two_cols_nodolab (by NodoLab.co)
+- Compatibility with enrol_customgr.
+- New template contributed: two_cols_nodolab (by NodoLab.co).
 
 2024083104:
-- String formatting is applied to the course title
-- Fixed premium unenrol
+- String formatting is applied to the course title.
+- Fixed premium unenrol.
 
 2024083103:
 - Moodle 4.5+ compatibility.

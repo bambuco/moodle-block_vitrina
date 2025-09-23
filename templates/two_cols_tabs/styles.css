@@ -600,6 +600,41 @@ html:has(body#page-blocks-vitrina-detail) {
     padding: 20px 0;
 }
 
+#page-blocks-vitrina-detail .customfield-item {
+    font-size: 14px;
+}
+
+#page-blocks-vitrina-detail .customfield-item strong {
+    padding: 5px 0;
+    width: calc(50% - 35px);
+    text-align: right;
+}
+
+#page-blocks-vitrina-detail .customfield-item i {
+    background-color: var(--primary);
+    color: #fff!important;
+    margin: 0 10px;
+    height: 35px!important;
+    width: 35px!important;
+    position: relative;
+    font-style: normal;
+    font-size: 20px!important;
+    border-radius: 50%;
+}
+
+#page-blocks-vitrina-detail .customfield-item i:after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    content: "\f05a";
+}
+
 @media (min-width: 1281px) {
 
     #page-blocks-vitrina-detail .container {

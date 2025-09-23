@@ -370,4 +370,11 @@
 {{/js}}
 {{/haspaymentgw}}
 
+{{#js}}
+    require(['jquery'], function($) {
+        $('.longcustomfields-box .nav-link').first().addClass('active');
+        $('.longcustomfields-box .tab-pane').first().addClass('active show');
+    });
+{{/js}}
+
 {{/course}}
