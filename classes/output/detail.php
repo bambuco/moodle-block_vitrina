@@ -278,6 +278,12 @@ class detail implements renderable, templatable {
             // If the user is enrolled, disable the payment gateway.
             $this->course->haspaymentgw = false;
 
+        } else if (!empty($this->course->paymenturl)) {
+
+            $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
+            $custom->enrollurl = $this->course->paymenturl;
+            $custom->enrollurllabel = get_string('paymentbutton', 'block_vitrina');
+
         } else if ($this->course->enrollable) {
 
             $custom->enrollform = [];
@@ -472,14 +478,6 @@ class detail implements renderable, templatable {
 
                     // If the user can self-enroll, disable the payment gateway.
                     $this->course->haspaymentgw = false;
-
-                }
-
-                if (!empty($this->course->paymenturl)) {
-
-                    $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
-                    $custom->enrollurl = $this->course->paymenturl;
-                    $custom->enrollurllabel = get_string('paymentbutton', 'block_vitrina');
 
                 }
 

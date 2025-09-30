@@ -93,7 +93,7 @@ class controller {
     /**
      * @var array List of available types in custom fields to filter.
      */
-    public const CUSTOMFIELDS_SUPPORTED = ['select', 'checkbox'];
+    public const CUSTOMFIELDS_SUPPORTED = ['select', 'checkbox', 'multiselect'];
 
     /**
      * @var array List of available static filters (not include filters by custom fields).
@@ -663,6 +663,7 @@ class controller {
         // End of categories filter.
 
         $joincustomfields = '';
+        $customfields = self::get_configuredcustomfields();
 
         // Add filters.
         foreach ($filters as $filter) {
@@ -718,8 +719,6 @@ class controller {
                         break;
                     }
 
-                    $customfields = self::get_configuredcustomfields();
-
                     // By security. Only allow to filter by selected custom fields.
                     if (!isset($customfields[$customfieldid])) {
                         break;
@@ -738,19 +737,35 @@ class controller {
 
                     $alias = 'cfdf' . $customfieldid;
                     $prefix = 'byfield' . $customfieldid;
-                    list($selectin, $paramsin) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, $prefix);
 
-                    // Include "is null" if it is a checkbox and include the 0/not value.
-                    if ($currentfield->type == 'checkbox' && in_array(0, $values)) {
-                        $prefix = 'bynf' . $customfieldid;
-                        list($selectnull, $paramsnull) = $DB->get_in_or_equal([], SQL_PARAMS_NAMED, $prefix, true, null);
-                        $orifnull = " OR $alias.id " . $selectnull;
-                        $params = array_merge($params, $paramsnull);
+                    if ($currentfield->type == 'multiselect') {
+                        $select .= " AND (";
+                        $elements = [];
+                        foreach ($values as $key => $value) {
+                            $elementkey = $prefix . '_' . $key;
+                            // Multiselect values are stored between 0 and 1, so we need to decrease the value by 1 to search.
+                            // The select value are the position in the list, starting by 1. Select is the default value.
+                            $value = (int)$value - 1;
+                            $elements[] = $DB->sql_like($DB->sql_concat("','", $alias . '.value', "','"), ':' . $elementkey);
+                            $params[$elementkey] = '%' . $value . '%';
+                        }
+                        $select .= implode(' OR ', $elements) . ')';
+
+                    } else {
+                        list($selectin, $paramsin) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, $prefix);
+
+                        // Include "is null" if it is a checkbox and include the 0/not value.
+                        if ($currentfield->type == 'checkbox' && in_array(0, $values)) {
+                            $prefix = 'bynf' . $customfieldid;
+                            list($selectnull, $paramsnull) = $DB->get_in_or_equal([], SQL_PARAMS_NAMED, $prefix, true, null);
+                            $orifnull = " OR $alias.id " . $selectnull;
+                            $params = array_merge($params, $paramsnull);
+                        }
+
+                        $select .= " AND ($alias.intvalue " . $selectin . $orifnull . ')';
+
+                        $params = array_merge($params, $paramsin);
                     }
-
-                    $select .= " AND ($alias.intvalue " . $selectin . $orifnull . ')';
-
-                    $params = array_merge($params, $paramsin);
 
                     $joincustomfields .= " LEFT JOIN {customfield_data} $alias ON " .
                                         " c.id = $alias.instanceid AND $alias.fieldid = :fieldid$customfieldid";
@@ -1045,6 +1060,7 @@ class controller {
                         'selected' => in_array(0, $selectedinfield),
                     ];
                 break;
+                case 'multiselect':
                 case 'select':
                     $data = @json_decode($customfield->configdata);
 

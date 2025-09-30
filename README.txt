@@ -23,6 +23,10 @@ FEATURES
 
 IN VERSION
 =============
+2024083107:
+- Support for the customfield_multiselect field type in filters.
+- Improve fulltext search input.
+
 2024083106:
 - Compatibility with enrol_token.
 - CSS class to completed courses and progress information.

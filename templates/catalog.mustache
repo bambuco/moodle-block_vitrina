@@ -62,9 +62,11 @@
         <div class="filterscolbox">
             {{#filterproperties}}
                 {{#fulltext}}
-                    <div class="filterfulltext">
-                        <input type="text" name="q">
-                        <button>{{#pix}}i/search, core{{/pix}}</button>
+                    <div class="filterfulltext input-group">
+                        <input type="text" class="form-control" name="q">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button">{{#pix}}i/search, core{{/pix}}</button>
+                        </div>
                     </div>
                 {{/fulltext}}
 
