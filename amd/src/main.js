@@ -380,7 +380,6 @@ export const filters = (uniqueid, selectedfilters = []) => {
     $filtersbox.find('.filterfulltext input').on('keypress', function(e) {
         if (e.which == 13) {
             applyFilters();
-            return false;
         }
     });
 
