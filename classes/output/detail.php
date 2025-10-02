@@ -360,7 +360,7 @@ class detail implements renderable, templatable {
 
                     } else {
                         $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
-                        $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey];
+                        $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey, 'enroltype' => 'self'];
                         $custom->enrollurl = new \moodle_url('/blocks/vitrina/detail.php', $params);
                         $custom->enrollurllabel = get_string('enroll', 'block_vitrina');
                     }
