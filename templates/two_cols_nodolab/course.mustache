@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_vitrina/two_cols/course
+    @template block_vitrina/two_cols_nodolab/course
 
     This template renders the template content area for a resource.
 
@@ -76,7 +76,9 @@
                 <span>{{#str}}completepercent, block_vitrina, {{progress}}{{/str}}</span>
             </div>
         {{/hasprogress}}
-        <a title="{{{shortname}}}" class="btn btn-outline-primary" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">Ir al curso</a>
+        <a title="{{{shortname}}}" class="btn btn-outline-primary" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">
+            {{#str}} showmore, block_vitrina {{/str}}
+        </a>
     </div>
     {{^active}}
         <div class="waiting-label">{{#str}}waiting, block_vitrina{{/str}}</div>
