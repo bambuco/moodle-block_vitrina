@@ -113,21 +113,25 @@ do {
             $enrolplugin = enrol_get_plugin('self');
 
             // If the premiumcohort is configured this instance is only available to premium users enrollments.
-            if (!array_key_exists('premium', $course->enrollsavailables) && $premiumcohort
-                    && $instance->customint5 && $instance->customint5 == $premiumcohort) {
+            if (
+                !array_key_exists('premium', $course->enrollsavailables) &&
+                $premiumcohort &&
+                $instance->customint5 &&
+                $instance->customint5 == $premiumcohort
+            ) {
                 continue;
             }
 
             // The validation only applies to premium courses if the premiumcohort setting is configured.
             // If premiumcohort is configured the course requires the specific cohort.
             // The enrol type is empty for premium courses.
-            if (empty($enroltype) && array_key_exists('premium', $course->enrollsavailables)
-                    && (
-                            !$premiumcohort
-                            || empty($instance->customint5)
-                            || $instance->customint5 == $premiumcohort
-                        )
-                ) {
+            if (
+                empty($enroltype) && array_key_exists('premium', $course->enrollsavailables) && (
+                    !$premiumcohort
+                    || empty($instance->customint5)
+                    || $instance->customint5 == $premiumcohort
+                )
+            ) {
 
                 $data = null;
                 if ($instance->password) {
@@ -188,7 +192,6 @@ do {
                 $enrolplugin->enrol_self($instance, $data);
                 break;
             }
-
         } else if ($instance->enrol == 'customgr' && $enroltype == 'customgr') {
             $enrolid = optional_param('enrolid', 0, PARAM_INT);
 
@@ -252,7 +255,6 @@ do {
             }
         }
     }
-
 } while (false); // Trick to avoid nesting of IF statements.
 
 \block_vitrina\local\controller::include_templatecss();

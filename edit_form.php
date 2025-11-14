@@ -29,7 +29,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_vitrina_edit_form extends block_edit_form {
-
     /**
      * Defines forms elements.
      *
@@ -88,7 +87,8 @@ class block_vitrina_edit_form extends block_edit_form {
             'config_categories',
             get_string('coursecategory', 'block_vitrina'),
             $displaylist,
-            $options);
+            $options
+        );
 
         $editoroptions = ['maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $this->block->context];
 
@@ -99,7 +99,6 @@ class block_vitrina_edit_form extends block_edit_form {
         // Footer HTML editor.
         $mform->addElement('editor', 'config_htmlfooter', get_string('htmlfooter', 'block_vitrina'), null, $editoroptions);
         $mform->setType('config_htmlfooter', PARAM_RAW); // XSS is prevented when printing the block contents and serving files.
-
     }
 
     /**
@@ -119,13 +118,15 @@ class block_vitrina_edit_form extends block_edit_form {
             } else {
                 $currenthtmlheader = $htmlheader;
             }
-            $defaults->config_htmlheader['text'] = file_prepare_draft_area($draftidheader,
-                                                                           $this->block->context->id,
-                                                                           'block_vitrina',
-                                                                           'content_header',
-                                                                           0,
-                                                                           ['subdirs' => true],
-                                                                           $currenthtmlheader);
+            $defaults->config_htmlheader['text'] = file_prepare_draft_area(
+                $draftidheader,
+                $this->block->context->id,
+                'block_vitrina',
+                'content_header',
+                0,
+                ['subdirs' => true],
+                $currenthtmlheader
+            );
             $defaults->config_htmlheader['itemid'] = $draftidheader;
             $defaults->config_htmlheader['format'] = $this->block->config->htmlheaderformat ?? FORMAT_MOODLE;
         } else {
@@ -141,13 +142,15 @@ class block_vitrina_edit_form extends block_edit_form {
             } else {
                 $currenthtmlfooter = $htmlfooter;
             }
-            $defaults->config_htmlfooter['text'] = file_prepare_draft_area($draftidfooter,
-                                                                           $this->block->context->id,
-                                                                           'block_vitrina',
-                                                                           'content_footer',
-                                                                           0,
-                                                                           ['subdirs' => true],
-                                                                           $currenthtmlfooter);
+            $defaults->config_htmlfooter['text'] = file_prepare_draft_area(
+                $draftidfooter,
+                $this->block->context->id,
+                'block_vitrina',
+                'content_footer',
+                0,
+                ['subdirs' => true],
+                $currenthtmlfooter
+            );
             $defaults->config_htmlfooter['itemid'] = $draftidfooter;
             $defaults->config_htmlfooter['format'] = $this->block->config->htmlfooterformat ?? FORMAT_MOODLE;
         } else {

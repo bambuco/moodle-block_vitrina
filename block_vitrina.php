@@ -29,7 +29,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_vitrina extends block_base {
-
     /**
      * Initialice the block.
      */
@@ -98,7 +97,7 @@ class block_vitrina extends block_base {
             return $this->content;
         }
 
-        $this->content = new stdClass;
+        $this->content = new stdClass();
         $this->content->text = '';
         $this->content->footer = '';
 
@@ -136,7 +135,7 @@ class block_vitrina extends block_base {
         }
 
         $html = '';
-        $filteropt = new stdClass;
+        $filteropt = new stdClass();
         $filteropt->overflowdiv = true;
 
         // If the content is trusted, do not clean it.
@@ -146,12 +145,14 @@ class block_vitrina extends block_base {
 
         if (isset($this->config->htmlheader)) {
             // Rewrite url.
-            $this->config->htmlheader = file_rewrite_pluginfile_urls($this->config->htmlheader,
-                                                                     'pluginfile.php',
-                                                                     $this->context->id,
-                                                                     'block_vitrina',
-                                                                     'content_header',
-                                                                     null);
+            $this->config->htmlheader = file_rewrite_pluginfile_urls(
+                $this->config->htmlheader,
+                'pluginfile.php',
+                $this->context->id,
+                'block_vitrina',
+                'content_header',
+                null
+            );
             // Default to FORMAT_HTML.
             $htmlheaderformat = FORMAT_HTML;
             // Check to see if the format has been properly set on the config.
@@ -163,12 +164,14 @@ class block_vitrina extends block_base {
 
         if (isset($this->config->htmlfooter)) {
             // Rewrite url.
-            $this->config->htmlfooter = file_rewrite_pluginfile_urls($this->config->htmlfooter,
-                                                                     'pluginfile.php',
-                                                                     $this->context->id,
-                                                                     'block_vitrina',
-                                                                     'content_footer',
-                                                                     null);
+            $this->config->htmlfooter = file_rewrite_pluginfile_urls(
+                $this->config->htmlfooter,
+                'pluginfile.php',
+                $this->context->id,
+                'block_vitrina',
+                'content_footer',
+                null
+            );
             // Default to FORMAT_HTML.
             $htmlfooterformat = FORMAT_HTML;
             // Check to see if the format has been properly set on the config.
@@ -207,20 +210,24 @@ class block_vitrina extends block_base {
 
         $config = clone($data);
         // Move embedded files into a proper filearea and adjust HTML links to match.
-        $config->htmlheader = file_save_draft_area_files($data->htmlheader['itemid'],
-                              $this->context->id,
-                              'block_vitrina',
-                              'content_header',
-                              0,
-                              ['subdirs' => true],
-                              $data->htmlheader['text']);
-        $config->htmlfooter = file_save_draft_area_files($data->htmlfooter['itemid'],
-                              $this->context->id,
-                              'block_vitrina',
-                              'content_footer',
-                              0,
-                              ['subdirs' => true],
-                              $data->htmlfooter['text']);
+        $config->htmlheader = file_save_draft_area_files(
+            $data->htmlheader['itemid'],
+            $this->context->id,
+            'block_vitrina',
+            'content_header',
+            0,
+            ['subdirs' => true],
+            $data->htmlheader['text']
+        );
+        $config->htmlfooter = file_save_draft_area_files(
+            $data->htmlfooter['itemid'],
+            $this->context->id,
+            'block_vitrina',
+            'content_footer',
+            0,
+            ['subdirs' => true],
+            $data->htmlfooter['text']
+        );
         $config->htmlheaderformat = $data->htmlheader['format'];
         $config->htmlfooterformat = $data->htmlfooter['format'];
         parent::instance_config_save($config, $nolongerused);
@@ -300,4 +307,3 @@ class block_vitrina extends block_base {
         return false;
     }
 }
-

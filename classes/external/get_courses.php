@@ -44,7 +44,6 @@ require_once($CFG->dirroot . '/login/lib.php');
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_courses extends external_api {
-
     /**
      * Returns description of method parameters.
      *
@@ -62,8 +61,11 @@ class get_courses extends external_api {
                                 new external_value(PARAM_TEXT, 'Filter value'),
                             ),
                         ],
-                        'A filter to apply'),
-                    'List of filters to search the courses', VALUE_DEFAULT, []
+                        'A filter to apply'
+                    ),
+                    'List of filters to search the courses',
+                    VALUE_DEFAULT,
+                    []
                 ),
                 'instanceid' => new external_value(PARAM_INT, 'Block instance id', VALUE_DEFAULT, 0),
                 'amount' => new external_value(PARAM_INT, 'Amount of courses', VALUE_DEFAULT, 0),
@@ -82,11 +84,13 @@ class get_courses extends external_api {
      * @param int $initial From where to start
      * @return array Courses list
      */
-    public static function execute(string $view = 'default',
-                                    array $filters = [],
-                                    int $instanceid = 0,
-                                    int $amount = 0,
-                                    int $initial = 0): array {
+    public static function execute(
+        string $view = 'default',
+        array $filters = [],
+        int $instanceid = 0,
+        int $amount = 0,
+        int $initial = 0
+    ): array {
 
         global $PAGE, $CFG;
 
@@ -137,7 +141,6 @@ class get_courses extends external_api {
         }
 
         if (count($categoriesids) == 0) {
-
             if (!empty($params['instanceid'])) {
                 $block = block_instance_by_id($params['instanceid']);
 
@@ -148,12 +151,14 @@ class get_courses extends external_api {
         }
         // End of read categories.
 
-        $courses = \block_vitrina\local\controller::get_courses_by_view($params['view'],
-                                                                $categoriesids,
-                                                                $params['filters'],
-                                                                '',
-                                                                $params['amount'],
-                                                                $params['initial']);
+        $courses = \block_vitrina\local\controller::get_courses_by_view(
+            $params['view'],
+            $categoriesids,
+            $params['filters'],
+            '',
+            $params['amount'],
+            $params['initial']
+        );
 
         $response = [];
         $renderer = $PAGE->get_renderer('block_vitrina');
@@ -169,7 +174,6 @@ class get_courses extends external_api {
         }
 
         return $response;
-
     }
 
     /**
@@ -184,7 +188,8 @@ class get_courses extends external_api {
                     'id' => new external_value(PARAM_INT, 'Course id'),
                     'html' => new external_value(PARAM_RAW, 'HTML with course information'),
                 ]
-            ), 'List of courses'
+            ),
+            'List of courses'
         );
     }
 }

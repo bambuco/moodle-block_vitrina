@@ -22,14 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_vitrina\local as local;
+use block_vitrina\local as localvitrina;
 
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/blocks/vitrina/classes/local/admin_setting_configmultiselect_autocomplete.php');
 
 if ($ADMIN->fulltree) {
-
     // Get custom fields.
     $fields = [];
     $fieldstofilter = [];
@@ -43,7 +42,7 @@ if ($ADMIN->fulltree) {
     foreach ($customfields as $k => $v) {
         $fields[$k] = format_string($v->name, true);
 
-        if (in_array($v->type, \block_vitrina\local\controller::CUSTOMFIELDS_SUPPORTED)) {
+        if (in_array($v->type, localvitrina\controller::CUSTOMFIELDS_SUPPORTED)) {
             $fieldstofilter[$k] = format_string($v->name, true);
         }
 
@@ -139,7 +138,7 @@ if ($ADMIN->fulltree) {
     $help = get_string('premiumenrolledcourse_help', 'block_vitrina');
     $displaylist = $DB->get_records_menu('course', null, 'fullname', 'id, fullname');
     $default = [];
-    $setting = new local\admin_setting_configmultiselect_autocomplete ($name, $title, $help, $default, $displaylist);
+    $setting = new localvitrina\admin_setting_configmultiselect_autocomplete($name, $title, $help, $default, $displaylist);
     $settings->add($setting);
 
     // Cohort to recognize premium self enrolment.
@@ -177,7 +176,7 @@ if ($ADMIN->fulltree) {
     $help = get_string('categories_help', 'block_vitrina');
     $displaylist = \core_course_category::make_categories_list('moodle/category:manage');
     $default = [];
-    $setting = new local\admin_setting_configmultiselect_autocomplete ($name, $title, $help, $default, $displaylist);
+    $setting = new localvitrina\admin_setting_configmultiselect_autocomplete($name, $title, $help, $default, $displaylist);
     $settings->add($setting);
 
     // General filters.
@@ -346,11 +345,11 @@ if ($ADMIN->fulltree) {
     // Rating components.
     $options = [];
 
-    if (\block_vitrina\local\rating\base::rating_available()) {
+    if (localvitrina\rating\base::rating_available()) {
         $options['block_rate_course'] = get_string('pluginname', 'block_rate_course') . ' (block_rate_course)';
     }
 
-    if (\block_vitrina\local\rating\tool_courserating::rating_available()) {
+    if (localvitrina\rating\tool_courserating::rating_available()) {
         $options['tool_courserating'] = get_string('pluginname', 'tool_courserating') . ' (tool_courserating)';
     }
 
@@ -365,11 +364,11 @@ if ($ADMIN->fulltree) {
     // Comments components.
     $options = [];
 
-    if (\block_vitrina\local\comments\base::comments_available()) {
+    if (localvitrina\comments\base::comments_available()) {
         $options['block_comments'] = get_string('pluginname', 'block_comments') . ' (block_comments)';
     }
 
-    if (\block_vitrina\local\comments\tool_courserating::comments_available()) {
+    if (localvitrina\comments\tool_courserating::comments_available()) {
         $options['tool_courserating'] = get_string('pluginname', 'tool_courserating') . ' (tool_courserating)';
     }
 
@@ -385,11 +384,11 @@ if ($ADMIN->fulltree) {
     // Shop components.
     $options = [];
 
-    if (\block_vitrina\local\shop\local_buybee::available()) {
+    if (localvitrina\shop\local_buybee::available()) {
         $options['local_buybee'] = get_string('pluginname', 'local_buybee') . ' (local_buybee)';
     }
 
-    if (\block_vitrina\local\shop\local_bazaar::available()) {
+    if (localvitrina\shop\local_bazaar::available()) {
         $options['local_bazaar'] = get_string('pluginname', 'local_bazaar') . ' (local_bazaar)';
     }
 
@@ -400,5 +399,4 @@ if ($ADMIN->fulltree) {
         $setting = new admin_setting_configselect($name, $title, $help, '', $options);
         $settings->add($setting);
     }
-
 }

@@ -30,7 +30,6 @@ namespace block_vitrina\local\comments;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class base {
-
     /**
      * Define if comments plugin is available.
      *
@@ -63,9 +62,14 @@ class base {
         }
 
         $coursecontext = \context_course::instance($course);
-        $comments = $DB->get_records('comments',
-                                    ['contextid' => $coursecontext->id, 'component' => 'block_comments'],
-                                    'timecreated DESC', 'content, format, userid, timecreated', 0, $amount);
+        $comments = $DB->get_records(
+            'comments',
+            ['contextid' => $coursecontext->id, 'component' => 'block_comments'],
+            'timecreated DESC',
+            'content, format, userid, timecreated',
+            0,
+            $amount
+        );
 
         return $comments;
     }

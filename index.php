@@ -60,7 +60,6 @@ if (!empty($filters)) {
         $filter = explode(':', $filter);
 
         if (count($filter) == 2) {
-
             $key = trim($filter[0]);
 
             // If the filter is categories and the block is configured to show specific categories, we ignore the filter.
@@ -69,7 +68,6 @@ if (!empty($filters)) {
             }
 
             if (!in_array($key, $staticfilters) && !is_numeric($key)) {
-
                 foreach ($configuredcustomfields as $customfield) {
                     if ($customfield->shortname == $key) {
                         $key = $customfield->id;

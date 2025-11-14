@@ -49,8 +49,12 @@ function xmldb_block_vitrina_upgrade($oldversion) {
             $premiumfield = $DB->get_record('user_info_field', ['shortname' => $fieldname]);
 
             if ($premiumfield) {
-                $DB->set_field_select('config_plugins', 'value', $premiumfield->id,
-                                        "plugin = 'block_vitrina' AND name = 'premiumfield'");
+                $DB->set_field_select(
+                    'config_plugins',
+                    'value',
+                    $premiumfield->id,
+                    "plugin = 'block_vitrina' AND name = 'premiumfield'"
+                );
             }
         }
 

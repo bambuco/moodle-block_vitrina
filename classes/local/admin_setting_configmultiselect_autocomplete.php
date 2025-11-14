@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/lib/adminlib.php');
  * @return string HTML for the autocomplete display.
  */
 class admin_setting_configmultiselect_autocomplete extends \admin_setting_configmultiselect {
-
     /** @var bool $tags Should we allow typing new entries to the field? */
     protected $tags = false;
     /** @var string $ajax Name of an AMD module to send/process ajax requests. */
@@ -87,4 +86,3 @@ class admin_setting_configmultiselect_autocomplete extends \admin_setting_config
         return $html;
     }
 }
-

@@ -30,7 +30,6 @@ namespace block_vitrina\local\comments;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_courserating {
-
     /**
      * Define if comments plugin is available.
      *
@@ -65,10 +64,13 @@ class tool_courserating {
             $course = $course->id;
         }
 
-        $comments = $DB->get_records('tool_courserating_rating',
-                                    ['courseid' => $course, 'hasreview' => 1],
-                                    'timemodified DESC', 'review AS content, \'0\' AS format, userid, timemodified AS timecreated',
-                                    0, $amount);
+        $comments = $DB->get_records(
+            'tool_courserating_rating',
+            ['courseid' => $course, 'hasreview' => 1],
+            'timemodified DESC', 'review AS content, \'0\' AS format, userid, timemodified AS timecreated',
+            0,
+            $amount
+        );
 
         return $comments;
     }

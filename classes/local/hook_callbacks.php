@@ -24,7 +24,6 @@ namespace block_vitrina\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class hook_callbacks {
-
     /**
      * Callback to add head elements.
      * Load social network metadata.
@@ -58,7 +57,5 @@ class hook_callbacks {
         if ($imagepath) {
             $hook->add_html('<meta property="og:image" content="' . $imagepath . '"/>');
         }
-
     }
-
 }

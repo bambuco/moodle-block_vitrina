@@ -34,7 +34,6 @@ namespace block_vitrina\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observer {
-
     /**
      * Remove user enrolment.
      * @var int
@@ -109,7 +108,6 @@ class observer {
         }
 
         foreach ($enrolments as $enrolment) {
-
             // In order not to make changes to the enrolment that is triggering the change.
             if ($enrolment->id == $changedenrolment->id) {
                 continue;
@@ -136,17 +134,26 @@ class observer {
 
             switch ($action) {
                 case self::ACTION_INACTIVE:
-                    $selfenrol->update_user_enrol($enrol, $userid, ENROL_USER_SUSPENDED,
-                                                    $changedenrolment->timestart, $changedenrolment->timeend);
+                    $selfenrol->update_user_enrol(
+                        $enrol,
+                        $userid,
+                        ENROL_USER_SUSPENDED,
+                        $changedenrolment->timestart,
+                        $changedenrolment->timeend
+                    );
                     break;
                 case self::ACTION_REACTIVE:
-                    $selfenrol->update_user_enrol($enrol, $userid, ENROL_USER_ACTIVE,
-                                                    $changedenrolment->timestart, $changedenrolment->timeend);
+                    $selfenrol->update_user_enrol(
+                        $enrol,
+                        $userid,
+                        ENROL_USER_ACTIVE,
+                        $changedenrolment->timestart,
+                        $changedenrolment->timeend
+                    );
                     break;
                 default:
                     $selfenrol->unenrol_user($enrol, $userid);
             }
-
         }
     }
 }

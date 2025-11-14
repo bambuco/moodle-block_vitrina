@@ -34,7 +34,6 @@ use templatable;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class detail implements renderable, templatable {
-
     /**
      * @var object Course.
      */
@@ -78,7 +77,6 @@ class detail implements renderable, templatable {
 
         $courseurl = new \moodle_url('/blocks/vitrina/detail.php', ['id' => $this->course->id]);
         foreach ($networkslist as $one) {
-
             $row = explode('|', $one);
             if (count($row) >= 2) {
                 $network = new \stdClass();
@@ -155,9 +153,11 @@ class detail implements renderable, templatable {
                                 $c->text = $c->value;
                             }
                         } else if ($field == 'media') {
-                            if (strpos($c->value, 'https://www.youtube.com') === 0 ||
+                            if (
+                                strpos($c->value, 'https://www.youtube.com') === 0 ||
                                 strpos($c->value, 'https://youtube.com') === 0 ||
-                                strpos($c->value, 'https://player.vimeo.com') === 0) {
+                                strpos($c->value, 'https://player.vimeo.com') === 0
+                            ) {
                                 $c->isembed = true;
                             } else if (in_array(pathinfo(strtolower($c->value), PATHINFO_EXTENSION), $imgextentions)) {
                                 $c->isimage = true;
@@ -245,16 +245,13 @@ class detail implements renderable, templatable {
         }
 
         if ($custom->completed) {
-
             $custom->enrolltitle = get_string('completed', 'block_vitrina');
             $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
             $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
 
             // If the user complete the course, disable the payment gateway.
             $this->course->haspaymentgw = false;
-
         } else if ($custom->enrolled) {
-
             // Look for active enrolments only.
             $until = enrol_get_enrolment_end($coursecontext->instanceid, $USER->id);
 
@@ -268,30 +265,23 @@ class detail implements renderable, templatable {
 
             // If the user is enrolled, disable the payment gateway.
             $this->course->haspaymentgw = false;
-
         } else if (has_capability('moodle/course:view', $coursecontext)) {
-
             $custom->enrolltitle = get_string('hascourseview', 'block_vitrina');
             $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
             $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
 
             // If the user is enrolled, disable the payment gateway.
             $this->course->haspaymentgw = false;
-
         } else if (!empty($this->course->paymenturl)) {
-
             $custom->enrolltitle = get_string('paymentrequired', 'block_vitrina');
             $custom->enrollurl = $this->course->paymenturl;
             $custom->enrollurllabel = get_string('paymentbutton', 'block_vitrina');
-
         } else if ($this->course->enrollable) {
-
             $custom->enrollform = [];
             if (array_key_exists('guest', $this->course->enrollsavailables)) {
                 $custom->enrolltitle = get_string('allowguests', 'enrol_guest');
                 $custom->enrollurl = new \moodle_url('/course/view.php', ['id' => $this->course->id]);
                 $custom->enrollurllabel = get_string('gotocourse', 'block_vitrina');
-
             } else if (array_key_exists('premium', $this->course->enrollsavailables)) {
                 $custom->enrolltitle = get_string('enrollavailablepremium', 'block_vitrina');
                 $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey];
@@ -300,10 +290,8 @@ class detail implements renderable, templatable {
 
                 // If the user is premium, disable the payment gateway.
                 $this->course->haspaymentgw = false;
-
             } else {
                 if (array_key_exists('self', $this->course->enrollsavailables)) {
-
                     $enrolplugin = enrol_get_plugin('self');
                     $enrolopen = false;
                     foreach ($this->course->enrollsavailables['self'] as $instance) {
@@ -357,7 +345,6 @@ class detail implements renderable, templatable {
                             'label' => $label,
                             'content' => $content,
                         ];
-
                     } else {
                         $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
                         $params = ['id' => $this->course->id, 'enroll' => 1, 'sesskey' => $sesskey, 'enroltype' => 'self'];
@@ -367,11 +354,9 @@ class detail implements renderable, templatable {
 
                     // If the user can self-enroll, disable the payment gateway.
                     $this->course->haspaymentgw = false;
-
                 }
 
                 if (array_key_exists('customgr', $this->course->enrollsavailables)) {
-
                     $custom->requireauth = isguestuser() || !isloggedin();
 
                     $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
@@ -420,11 +405,9 @@ class detail implements renderable, templatable {
 
                     // If the user can self-enroll, disable the payment gateway.
                     $this->course->haspaymentgw = false;
-
                 }
 
                 if (array_key_exists('token', $this->course->enrollsavailables)) {
-
                     $custom->requireauth = isguestuser() || !isloggedin();
 
                     $custom->enrolltitle = get_string('enrollrequired', 'block_vitrina');
@@ -478,7 +461,6 @@ class detail implements renderable, templatable {
 
                     // If the user can self-enroll, disable the payment gateway.
                     $this->course->haspaymentgw = false;
-
                 }
 
                 if ($this->course->haspaymentgw) {
@@ -496,12 +478,9 @@ class detail implements renderable, templatable {
                             'id' => $this->course->id,
                             'msg' => 'enrolled',
                         ]);
-
                     }
-
                 }
             }
-
         }
 
         if ($custom->requireauth) {

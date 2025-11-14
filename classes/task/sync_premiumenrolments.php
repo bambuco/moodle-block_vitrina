@@ -24,7 +24,6 @@ namespace block_vitrina\task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sync_premiumenrolments extends \core\task\scheduled_task {
-
     /**
      * Name for this task.
      *
@@ -60,7 +59,6 @@ class sync_premiumenrolments extends \core\task\scheduled_task {
 
         foreach ($enrols as $enrol) {
             if ($enrol->status == ENROL_USER_ACTIVE) {
-
                 $select = 'enrolid = :enrolid AND status = :status AND timeend < :timeend AND timeend > 0';
                 $params = [
                     'enrolid' => $enrol->id,
@@ -76,9 +74,7 @@ class sync_premiumenrolments extends \core\task\scheduled_task {
                     $enrolplugin = enrol_get_plugin($enrol->enrol);
                     $enrolplugin->update_user_enrol($enrol, $enrolment->userid, ENROL_USER_SUSPENDED);
                 }
-
             }
         }
-
     }
 }

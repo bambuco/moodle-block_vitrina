@@ -34,7 +34,6 @@ require_once($CFG->dirroot . '/cohort/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class controller {
-
     /**
      * @var int Cached payment field id.
      */
@@ -137,16 +136,22 @@ class controller {
         $payfield = self::get_payfield();
         if (!$isuserpremium) {
             if ($payfield) {
-                $course->paymenturl = $DB->get_field('customfield_data', 'value',
-                                            ['fieldid' => $payfield->id, 'instanceid' => $course->id]);
+                $course->paymenturl = $DB->get_field(
+                    'customfield_data',
+                    'value',
+                    ['fieldid' => $payfield->id, 'instanceid' => $course->id]
+                );
             }
         }
 
         $premiumfield = self::get_premiumfield();
 
         if ($premiumfield) {
-            $course->premium = $DB->get_field('customfield_data', 'value',
-                                        ['fieldid' => $premiumfield->id, 'instanceid' => $course->id]);
+            $course->premium = $DB->get_field(
+                'customfield_data',
+                'value',
+                ['fieldid' => $premiumfield->id, 'instanceid' => $course->id]
+            );
         } else {
             $course->premium = null;
         }
@@ -175,7 +180,6 @@ class controller {
         }
 
         if (property_exists($course, 'rating') && $course->rating) {
-
             if (!is_object($course->rating)) {
                 $rating = $course->rating;
                 $course->rating = new \stdClass();
@@ -284,11 +288,12 @@ class controller {
                     $instances = $DB->get_records_sql($sqlintances);
 
                     foreach ($instances as $instance) {
-                        if ($instance->id != $course->id &&
-                                $instance->id != SITEID &&
-                                count($related) < $relatedlimit &&
-                                !in_array($instance->id, $related)) {
-
+                        if (
+                            $instance->id != $course->id &&
+                            $instance->id != SITEID &&
+                            count($related) < $relatedlimit &&
+                            !in_array($instance->id, $related)
+                        ) {
                             $related[] = $instance->id;
                         }
                     }
@@ -317,7 +322,6 @@ class controller {
 
                 // Load other info about the courses.
                 foreach ($coursesinfo as $one) {
-
                     $one->hassummary = !empty($one->summary);
                     $one->imagepath = self::get_courseimage($one);
                     $one->active = $one->startdate <= time();
@@ -325,13 +329,19 @@ class controller {
                     $one->summary = format_text($one->summary, $course->summaryformat);
 
                     if (!$isuserpremium && $payfield) {
-                        $one->paymenturl = $DB->get_field('customfield_data', 'value',
-                                                    ['fieldid' => $payfield->id, 'instanceid' => $one->id]);
+                        $one->paymenturl = $DB->get_field(
+                            'customfield_data',
+                            'value',
+                            ['fieldid' => $payfield->id, 'instanceid' => $one->id]
+                        );
                     }
 
                     if ($premiumfield) {
-                        $one->premium = $DB->get_field('customfield_data', 'value',
-                                                    ['fieldid' => $premiumfield->id, 'instanceid' => $one->id]);
+                        $one->premium = $DB->get_field(
+                            'customfield_data',
+                            'value',
+                            ['fieldid' => $premiumfield->id, 'instanceid' => $one->id]
+                        );
                     }
 
                     if ($ratingavailable) {
@@ -369,7 +379,6 @@ class controller {
                 $instructors = $fullcourse->get_course_contacts();
 
                 foreach ($instructors as $key => $instructor) {
-
                     $user = $DB->get_record('user', ['id' => $key]);
                     $userpicture = new \user_picture($user, ['alttext' => false, 'link' => false]);
                     $userpicture->size = 200;
@@ -470,7 +479,6 @@ class controller {
         // If the premium field and value are set, check if the user is premium.
         // It overrides the "Course to read premium users" setting.
         if (!empty($premiumfieldid) && !empty($premiumvalue)) {
-
             $premiumfield = $DB->get_field('user_info_field', 'shortname', ['id' => $premiumfieldid]);
 
             if (!empty($premiumfield)) {
@@ -523,9 +531,14 @@ class controller {
             $isimage = $file->is_valid_image();
 
             if ($isimage) {
-                $url = \moodle_url::make_file_url("$CFG->wwwroot/pluginfile.php",
-                        '/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
-                        $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+                $urlpath = '/' . $file->get_contextid() . '/' . $file->get_component() . '/';
+                $urlpath .= $file->get_filearea() . $file->get_filepath() . $file->get_filename();
+
+                $url = \moodle_url::make_file_url(
+                    "$CFG->wwwroot/pluginfile.php",
+                    $urlpath,
+                    !$isimage
+                );
 
                 $courseimage = $url;
                 break;
@@ -538,10 +551,10 @@ class controller {
             switch ($type) {
                 case 'generated':
                     $courseimage = $OUTPUT->get_generated_image_for_id($course->id);
-                break;
+                    break;
                 case 'none':
                     $courseimage = '';
-                break;
+                    break;
                 default:
                     $courseimage = (string)(new \moodle_url($CFG->wwwroot . '/blocks/vitrina/pix/' .
                                                                 (self::$large ? 'course' : 'course_small') . '.png'));
@@ -567,7 +580,6 @@ class controller {
         if ($template != 'default' && file_exists($csspath)) {
             $PAGE->requires->css('/blocks/vitrina/templates/' . $template . '/styles.css');
         }
-
     }
 
     /**
@@ -619,12 +631,14 @@ class controller {
      * @param int $initial From where to start counting the next courses to get.
      * @return array The courses list.
      */
-    public static function get_courses_by_view(string $view = 'default',
-                                                array $categoriesids = [],
-                                                array $filters = [],
-                                                string $sort = '',
-                                                int $amount = 0,
-                                                int $initial = 0): array {
+    public static function get_courses_by_view(
+        string $view = 'default',
+        array $categoriesids = [],
+        array $filters = [],
+        string $sort = '',
+        int $amount = 0,
+        int $initial = 0
+    ): array {
         global $DB, $CFG;
 
         $availableviews = self::get_courses_views();
@@ -656,7 +670,7 @@ class controller {
 
         // Add categories filter.
         if (count($categoriesids) > 0) {
-            list($selectincats, $paramsincats) = $DB->get_in_or_equal($categoriesids, SQL_PARAMS_NAMED, 'categories');
+            [$selectincats, $paramsincats] = $DB->get_in_or_equal($categoriesids, SQL_PARAMS_NAMED, 'categories');
             $params += $paramsincats;
             $select .= ' AND category ' . $selectincats;
         }
@@ -667,13 +681,11 @@ class controller {
 
         // Add filters.
         foreach ($filters as $filter) {
-
             switch ($filter['type']) {
                 case 'fulltext':
                     $text = trim(implode('%', $filter['values']));
 
                     if (!empty($text)) {
-
                         $text = $DB->sql_like_escape($text);
                         $text = str_replace(' ', '%', $text);
 
@@ -690,7 +702,7 @@ class controller {
                         $joincustomfields .= " LEFT JOIN {customfield_data} cfd ON c.id = cfd.instanceid AND " . $like;
                     }
 
-                break;
+                    break;
                 case 'langs':
                     $langs = $filter['values'];
                     $defaultlang = $CFG->lang;
@@ -703,12 +715,12 @@ class controller {
                     }
 
                     if (count($langs) > 0) {
-                        list($selectinlangs, $paramsinlangs) = $DB->get_in_or_equal($langs, SQL_PARAMS_NAMED, 'langs');
+                        [$selectinlangs, $paramsinlangs] = $DB->get_in_or_equal($langs, SQL_PARAMS_NAMED, 'langs');
                         $params = array_merge($params, $paramsinlangs);
                         $select .= ' AND c.lang ' . $selectinlangs;
                     }
 
-                break;
+                    break;
                 default:
                     // Custom fields filters values.
 
@@ -750,14 +762,13 @@ class controller {
                             $params[$elementkey] = '%' . $value . '%';
                         }
                         $select .= implode(' OR ', $elements) . ')';
-
                     } else {
-                        list($selectin, $paramsin) = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, $prefix);
+                        [$selectin, $paramsin] = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED, $prefix);
 
                         // Include "is null" if it is a checkbox and include the 0/not value.
                         if ($currentfield->type == 'checkbox' && in_array(0, $values)) {
                             $prefix = 'bynf' . $customfieldid;
-                            list($selectnull, $paramsnull) = $DB->get_in_or_equal([], SQL_PARAMS_NAMED, $prefix, true, null);
+                            [$selectnull, $paramsnull] = $DB->get_in_or_equal([], SQL_PARAMS_NAMED, $prefix, true, null);
                             $orifnull = " OR $alias.id " . $selectnull;
                             $params = array_merge($params, $paramsnull);
                         }
@@ -771,7 +782,7 @@ class controller {
                                         " c.id = $alias.instanceid AND $alias.fieldid = :fieldid$customfieldid";
                     $params['fieldid' . $customfieldid] = $customfieldid;
 
-                break;
+                    break;
             }
         }
         // End of filters.
@@ -783,14 +794,14 @@ class controller {
         switch ($sort) {
             case 'startdate':
                 $sortby = 'c.startdate ASC';
-            break;
+                break;
             case 'finishdate':
                 $sortby = 'endtype ASC, c.enddate ASC, c.startdate DESC';
                 $specialfields = ", CASE WHEN c.enddate = 0 THEN 2 ELSE 1 END AS endtype";
-            break;
+                break;
             case 'alphabetically':
                 $sortby = 'c.fullname ASC';
-            break;
+                break;
             default:
                 $sortby = 'c.sortorder ASC';
         }
@@ -798,7 +809,7 @@ class controller {
         switch ($view) {
             case 'greats':
                 $ratemanager = self::get_ratemanager();
-                list($ratingfield, $totalfield, $joinrate) = array_values($ratemanager::sql_map());
+                [$ratingfield, $totalfield, $joinrate] = array_values($ratemanager::sql_map());
 
                 $sql = "SELECT DISTINCT c.*, $ratingfield AS rating, $totalfield AS ratings " .
                             " FROM {course} c " .
@@ -807,13 +818,11 @@ class controller {
                             " WHERE " . $select .
                             " GROUP BY c.id HAVING rating > 3 " .
                             " ORDER BY rating DESC";
-            break;
+                break;
             case 'premium':
-
                 $premiumfield = self::get_premiumfield();
 
                 if ($premiumfield) {
-
                     $params['fieldid'] = $premiumfield->id;
 
                     $sql = "SELECT DISTINCT c.* $specialfields " .
@@ -823,14 +832,12 @@ class controller {
                         " WHERE " . $select .
                         " ORDER BY " . $sortby;
                 }
-            break;
+                break;
             case 'recents':
-
                 $select .= ' AND c.startdate > :nowtostart';
                 $params['nowtostart'] = time();
                 // Not break, continue to default.
             default:
-
                 $sql = "SELECT DISTINCT c.* $specialfields " .
                         " FROM {course} c" .
                         $joincustomfields .
@@ -966,7 +973,7 @@ class controller {
         }
 
         if (count($categoriesids) > 0) {
-            list($selectincats, $paramsincats) = $DB->get_in_or_equal($categoriesids, SQL_PARAMS_NAMED, 'categories');
+            [$selectincats, $paramsincats] = $DB->get_in_or_equal($categoriesids, SQL_PARAMS_NAMED, 'categories');
             $params += $paramsincats;
             $select .= ' AND id ' . $selectincats;
         }
@@ -1016,7 +1023,6 @@ class controller {
                 } else {
                     $response[] = $node;
                 }
-
             } else {
                 $response[] = $node;
             }
@@ -1039,7 +1045,6 @@ class controller {
         $customfields = self::get_configuredcustomfields();
 
         foreach ($customfields as $key => $customfield) {
-
             $options = [];
             $selectedinfield = [];
 
@@ -1059,7 +1064,7 @@ class controller {
                         'label' => get_string('no'),
                         'selected' => in_array(0, $selectedinfield),
                     ];
-                break;
+                    break;
                 case 'multiselect':
                 case 'select':
                     $data = @json_decode($customfield->configdata);
@@ -1074,7 +1079,7 @@ class controller {
                             'selected' => $selected,
                         ];
                     }
-                break;
+                    break;
             }
 
             if (count($options) > 1) {
@@ -1084,7 +1089,6 @@ class controller {
                 $control->options = $options;
                 $filtercontrols[] = $control;
             }
-
         }
 
         return $filtercontrols;
@@ -1111,7 +1115,7 @@ class controller {
         // Cast to int.
         $filtercustomfields = array_map('intval', $filtercustomfields);
 
-        list($selectin, $params) = $DB->get_in_or_equal($filtercustomfields, SQL_PARAMS_NAMED, 'ids');
+        [$selectin, $params] = $DB->get_in_or_equal($filtercustomfields, SQL_PARAMS_NAMED, 'ids');
         $select = ' cf.id ' . $selectin;
 
         $sql = "SELECT cf.* FROM {customfield_field} cf " .
@@ -1163,7 +1167,6 @@ class controller {
             }
 
             if ($instance->enrol == 'self') {
-
                 if ($instance->customint3 > 0) {
                     // Max enrol limit specified.
                     $count = $DB->count_records('user_enrolments', ['enrolid' => $instance->id]);
@@ -1175,12 +1178,13 @@ class controller {
 
                 // Course premium require a self enrolment.
                 if (property_exists($course, 'premium') && ($course->premium || !self::premium_available()) && $ispremium) {
-
                     // The validation only applies to premium courses if the premiumcohort setting is configured.
                     // If premiumcohort is configured the course requires the specific cohort.
-                    if (!$premiumcohort
+                    if (
+                            !$premiumcohort
                             || empty($instance->customint5)
-                            || $instance->customint5 == $premiumcohort) {
+                            || $instance->customint5 == $premiumcohort
+                        ) {
 
                         $course->enrollable = true;
                         $course->enrollsavailables['premium'][] = $instance;
@@ -1199,9 +1203,8 @@ class controller {
                 $course->enrollsavailables['self'][] = $instance;
                 $course->enrollable = true;
             } else if ($instance->enrol == 'fee' && enrol_is_enabled('fee')) {
-
                 $cost = (float) $instance->cost;
-                if ( $cost <= 0 ) {
+                if ($cost <= 0) {
                     $cost = (float) get_config('enrol_fee', 'cost');
                 }
 
@@ -1212,8 +1215,11 @@ class controller {
                     $datafee->formatedcost = self::format_cost($cost, $instance->currency);
                     $datafee->itemid = $instance->id;
                     $datafee->label = !empty($instance->name) ? $instance->name : get_string('sendpaymentbutton', 'enrol_fee');
-                    $datafee->description = get_string('purchasedescription', 'enrol_fee',
-                                                format_string($course->fullname, true, ['context' => $coursecontext]));
+                    $datafee->description = get_string(
+                        'purchasedescription',
+                        'enrol_fee',
+                        format_string($course->fullname, true, ['context' => $coursecontext])
+                    );
                     $datafee->originalcoursename = $course->fullname;
 
                     $course->fee[] = $datafee;
@@ -1221,7 +1227,6 @@ class controller {
                     $course->enrollsavailables['fee'][] = $instance;
                     $course->haspaymentgw = true;
                 }
-
             } else if ($instance->enrol == 'guest' && enrol_is_enabled('guest')) {
                 $course->enrollable = true;
                 $course->enrollsavailables['guest'][] = $instance;
@@ -1241,7 +1246,6 @@ class controller {
                 }
             }
         }
-
     }
 
     /**
@@ -1300,5 +1304,4 @@ class controller {
                 return '\block_vitrina\local\comments\base';
         }
     }
-
 }

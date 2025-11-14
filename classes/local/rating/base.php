@@ -30,7 +30,6 @@ namespace block_vitrina\local\rating;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class base {
-
     /**
      * Define if rating is available.
      *

@@ -23,7 +23,7 @@
  */
 
 /**
- * Form for editing VITRINA block instances.
+ * Form for editing Vitrina block instances.
  *
  * @package block_vitrina
  * @category files
@@ -38,11 +38,11 @@
  * @todo MDL-36050 improve capability check on stick blocks, so we can check user capability before sending images.
  */
 function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload, array $options = []) {
-    global $DB, $CFG, $USER;
-
-    if ($context->contextlevel != CONTEXT_BLOCK &&
+    if (
+        $context->contextlevel != CONTEXT_BLOCK &&
         $context->contextlevel != CONTEXT_COURSE &&
-        $context->contextlevel != CONTEXT_MODULE) {
+        $context->contextlevel != CONTEXT_MODULE
+    ) {
         send_file_not_found();
     }
 
@@ -53,7 +53,7 @@ function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $
     $fs = get_file_storage();
 
     $filename = array_pop($args);
-    $filepath = $args ? '/'.implode('/', $args).'/' : '/';
+    $filepath = $args ? '/' . implode('/', $args) . '/' : '/';
 
     if ($filearea === 'content_header') {
         $file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename);
@@ -88,21 +88,31 @@ function block_vitrina_global_db_replace($search, $replace) {
 
     $instances = $DB->get_recordset('block_instances', ['blockname' => 'vitrina']);
     foreach ($instances as $instance) {
-
         $config = unserialize_object(base64_decode($instance->configdata));
 
         if (isset($config->htmlheader) && is_string($config->htmlheader)) {
             $config->htmlheader = str_replace($search, $replace, $config->htmlheader);
-            $DB->update_record('block_instances', ['id' => $instance->id,
-                    'configdata' => base64_encode(serialize($config)), 'timemodified' => time()]);
+            $DB->update_record(
+                'block_instances',
+                [
+                    'id' => $instance->id,
+                    'configdata' => base64_encode(serialize($config)),
+                    'timemodified' => time(),
+                ]
+            );
         }
 
         if (isset($config->htmlfooter) && is_string($config->htmlfooter)) {
             $config->htmlfooter = str_replace($search, $replace, $config->htmlfooter);
-            $DB->update_record('block_instances', ['id' => $instance->id,
-                    'configdata' => base64_encode(serialize($config)), 'timemodified' => time()]);
+            $DB->update_record(
+                'block_instances',
+                [
+                    'id' => $instance->id,
+                    'configdata' => base64_encode(serialize($config)),
+                    'timemodified' => time(),
+                ]
+            );
         }
-
     }
 
     $instances->close();
