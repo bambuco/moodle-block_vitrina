@@ -24,6 +24,7 @@
         "course": {
             "id": 1,
             "coursename": "Course name",
+            "fullname": "Course full name",
             "summary": "Course summary",
             "category": "Category name",
             "instructors": [
@@ -85,7 +86,8 @@
                         "percent": 100
                     }
                 }
-            ]
+            ],
+            "opendetailstarget": "_blank"
         }
     }
 }}
@@ -105,7 +107,7 @@
                 <div class="experts-box">
                 {{#instructors}}
                     <p>
-                        <img src="{{userpicture}}" alt="{{firstname}}" width="138" height="132" />
+                        <img src="{{userpicture}}" alt="{{firstname}}" width="138" height="132">
                         <strong>{{firstname}} {{lastname}}</strong>
                         <em>{{imagealt}}</em>
                     </p>
@@ -133,7 +135,7 @@
                     {{/isembed}}
                     {{^isembed}}
                         {{#isimage}}
-                            <img src="{{value}}" />
+                            <img src="{{value}}" alt="{{coursename}}">
                         {{/isimage}}
                         {{^isimage}}
                             <video controls="controls" {{#mediaposter}}poster="{{value}}"{{/mediaposter}}>
@@ -178,7 +180,7 @@
                                 <span class="content-box license">
                                     {{#path}}
                                     <a rel="license" href="http://creativecommons.org/licenses/{{path}}/" target="_blank">
-                                        <img alt="Licencia Creative Commons" src="https://licensebuttons.net/l/{{path}}/88x31.png" />
+                                        <img alt="Licencia Creative Commons" src="https://licensebuttons.net/l/{{path}}/88x31.png">
                                     </a>
                                     {{/path}}
                                     {{^path}}
@@ -249,7 +251,7 @@
                         <div class="onecomment">
                             <div class="timeformated">{{timeformated}}</div>
                             <div class="comment-body">
-                                <img src="{{userpicture}}" class="userpicture" />
+                                <img src="{{userpicture}}" class="userpicture" alt="{{userfirstname}}">
                                 <p>
                                     {{content}}
                                 </p>
