@@ -67,7 +67,8 @@ class tool_courserating {
         $comments = $DB->get_records(
             'tool_courserating_rating',
             ['courseid' => $course, 'hasreview' => 1],
-            'timemodified DESC', 'review AS content, \'0\' AS format, userid, timemodified AS timecreated',
+            'timemodified DESC',
+            'review AS content, \'0\' AS format, userid, timemodified AS timecreated',
             0,
             $amount
         );

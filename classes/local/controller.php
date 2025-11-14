@@ -1181,11 +1181,10 @@ class controller {
                     // The validation only applies to premium courses if the premiumcohort setting is configured.
                     // If premiumcohort is configured the course requires the specific cohort.
                     if (
-                            !$premiumcohort
-                            || empty($instance->customint5)
-                            || $instance->customint5 == $premiumcohort
-                        ) {
-
+                        !$premiumcohort
+                        || empty($instance->customint5)
+                        || $instance->customint5 == $premiumcohort
+                    ) {
                         $course->enrollable = true;
                         $course->enrollsavailables['premium'][] = $instance;
                         continue;

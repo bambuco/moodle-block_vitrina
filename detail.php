@@ -132,7 +132,6 @@ do {
                     || $instance->customint5 == $premiumcohort
                 )
             ) {
-
                 $data = null;
                 if ($instance->password) {
                     // If the instance has a password but the course is premium the password is simuled.
