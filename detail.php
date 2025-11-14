@@ -84,9 +84,9 @@ do {
     \block_vitrina\local\controller::course_preprocess($course, true);
 
     $enrollable = array_key_exists('self', $course->enrollsavailables) ||
-                array_key_exists('premium', $course->enrollsavailables) ||
-                array_key_exists('customgr', $course->enrollsavailables) ||
-                array_key_exists('token', $course->enrollsavailables);
+        array_key_exists('premium', $course->enrollsavailables) ||
+        array_key_exists('customgr', $course->enrollsavailables) ||
+        array_key_exists('token', $course->enrollsavailables);
 
     // If not exist an available enrollment enabled.
     if (!$enrollable) {
@@ -109,7 +109,6 @@ do {
     }
 
     foreach ($enrolinstances as $instance) {
-
         if ($instance->enrol == 'self') {
             $enrolplugin = enrol_get_plugin('self');
 
@@ -158,7 +157,6 @@ do {
 
             // If the self enrolment is available use it directly because is the more basic.
             if (array_key_exists('self', $course->enrollsavailables) && $enroltype == 'self') {
-
                 $data = null;
                 if ($instance->password) {
                     $enrolid = optional_param('enrolid', 0, PARAM_INT);
@@ -192,7 +190,6 @@ do {
             }
 
         } else if ($instance->enrol == 'customgr' && $enroltype == 'customgr') {
-
             $enrolid = optional_param('enrolid', 0, PARAM_INT);
 
             // The enrolid is required for the custom group enrolment.
@@ -223,9 +220,7 @@ do {
             }
 
             $enrolplugin->enrol_customgr($instance, $data);
-
         } else if ($instance->enrol == 'token' && $enroltype == 'token') {
-
             $enrolid = optional_param('enrolid', 0, PARAM_INT);
 
             // The enrolid is required for the custom group enrolment.
@@ -255,7 +250,6 @@ do {
             if (!$enrolplugin->enrol_self($instance, $data)) {
                 $enrolmsg[] = get_string('tokeninvalid', 'enrol_token');
             }
-
         }
     }
 
@@ -268,7 +262,6 @@ echo $OUTPUT->header();
 if (!$course->visible) {
     echo get_string('notvisible', 'block_vitrina');
 } else {
-
     $renderable = new \block_vitrina\output\detail($course, $enrolmsg);
     $renderer = $PAGE->get_renderer('block_vitrina');
     echo $renderer->render($renderable);

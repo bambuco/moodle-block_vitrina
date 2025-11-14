@@ -21,11 +21,18 @@ FEATURES
 - Recognize Youtube and Vimeo media URL.
 - Premium users management.
 
+COMING SOON
+============
+- Open course detail in a modal (extend opendetailstarget).
+
+
 IN VERSION
 =============
 2024083107:
 - Support for the customfield_multiselect field type in filters.
 - Improve fulltext search input.
+- Fixed: Consider enrolstartdate and enrolenddate to enable enrollments.
+- New setting: opendetailstarget.
 
 2024083106:
 - Compatibility with enrol_token.

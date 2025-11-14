@@ -254,6 +254,16 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
     $settings->add($setting);
 
+    $name = 'block_vitrina/opendetailstarget';
+    $title = get_string('opendetailstarget', 'block_vitrina');
+    $help = get_string('opendetailstarget_help', 'block_vitrina');
+    $options = [
+        '_blank' => get_string('opendetailstarget_blank', 'block_vitrina'),
+        '_self' => get_string('opendetailstarget_self', 'block_vitrina'),
+    ];
+    $setting = new admin_setting_configselect($name, $title, $help, '_blank', $options);
+    $settings->add($setting);
+
     // Days to upcoming courses.
     $name = 'block_vitrina/daystoupcoming';
     $title = get_string('daystoupcoming', 'block_vitrina');

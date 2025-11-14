@@ -534,6 +534,7 @@ class detail implements renderable, templatable {
             'originalcoursename' => $this->course->fullname,
             'hasenrollmsg' => !empty($this->enrolmsg),
             'enrolmsg' => $this->enrolmsg,
+            'opendetailstarget' => get_config('block_vitrina', 'opendetailstarget'),
         ];
 
         return $defaultvariables;

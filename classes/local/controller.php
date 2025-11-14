@@ -1129,7 +1129,6 @@ class controller {
      * @return array The static filters.
      */
     public static function get_staticfilters(): array {
-
         return self::STATICFILTERS;
     }
 
@@ -1158,6 +1157,11 @@ class controller {
         $premiumcohort = get_config('block_vitrina', 'premiumcohort');
 
         foreach ($enrolinstances as $instance) {
+            if ($instance->enrolstartdate > time() || ($instance->enrolenddate > 0 && $instance->enrolenddate < time())) {
+                // Self enrolment not yet started.
+                continue;
+            }
+
             if ($instance->enrol == 'self') {
 
                 if ($instance->customint3 > 0) {

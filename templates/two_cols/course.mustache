@@ -42,10 +42,10 @@
 
 <div class="panel panel-default coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}}">
     <div class="panel-body clearfix">
-        <a class="" title="{{{shortname}}}" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">
+        <a class="" title="{{{shortname}}}" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="{{opendetailstarget}}">
             <div class="courseimage" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}></div>
         </a>
-        <a  title="{{{shortname}}}" class="coursebtn submit btn btn-info btn-sm" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="_blank">
+        <a  title="{{{shortname}}}" class="coursebtn submit btn btn-info btn-sm" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="{{opendetailstarget}}">
             {{{fullname}}}
         </a>
         <div class="coursesummary">

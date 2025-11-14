@@ -140,6 +140,7 @@ class catalog implements renderable, templatable {
             'filtercontrols' => $filtercontrols,
             'filterproperties' => $filterproperties,
             'catfilterview' => $catfilterview,
+            'opendetailstarget' => get_config('block_vitrina', 'opendetailstarget'),
         ];
 
         return $defaultvariables;

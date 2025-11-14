@@ -132,6 +132,7 @@ class renderer extends plugin_renderer_base {
                 $fee->reference = $shopmanager::get_product_reference('enrol_fee', $fee->itemid);
             }
         }
+        $course->opendetailstarget = get_config('block_vitrina', 'opendetailstarget');
 
         return $this->render_from_template($templatefile, $course);
     }
