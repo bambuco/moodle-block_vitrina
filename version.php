@@ -28,5 +28,5 @@ $plugin->version = 2024083107; // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires = 2024042200; // Requires this Moodle version.
 $plugin->component = 'block_vitrina'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v4.04.07';
-$plugin->supported = [404, 405];
+$plugin->release = 'v4.05.07';
+$plugin->supported = [405, 405];
