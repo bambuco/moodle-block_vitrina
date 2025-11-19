@@ -35,15 +35,30 @@
 }}
 {{#debugmode}}<ul>{{/debugmode}}
 <li class="filter-optiongroup {{#haschilds}}haschilds{{/haschilds}}" data-indent="{{indent}}" style="padding-left: {{indent}}0px;">
-    <div class="filter-option">
-        <input id="option-{{key}}_{{value}}"
-                type="checkbox"
-                value="{{value}}"
-                class="filteroption"
-                {{#selected}}checked{{/selected}}>
-        <label for="option-{{key}}_{{value}}" title="{{label}}">{{label}}</label>
-    </div>
+    {{^filterroot}}
+        {{^haschilds}}
+        <div class="filter-option">
+            <input id="option-{{key}}_{{value}}"
+                    type="checkbox"
+                    value="{{value}}"
+                    class="filteroption"
+                    {{#selected}}checked{{/selected}}>
+            <label for="option-{{key}}_{{value}}" title="{{label}}">{{label}}</label>
+        </div>
+        {{/haschilds}}
+    {{/filterroot}}
+    {{#filterroot}}
+        <div class="filter-option">
+            <input id="option-{{key}}_{{value}}"
+                    type="checkbox"
+                    value="{{value}}"
+                    class="filteroption"
+                    {{#selected}}checked{{/selected}}>
+            <label for="option-{{key}}_{{value}}" title="{{label}}">{{label}}</label>
+        </div>
+    {{/filterroot}}
     {{#haschilds}}
+        {{^filterroot}}<h6 class="filter-subtitle">{{label}}</h6>{{/filterroot}}
         <ul class="filteroptions">
             {{#childs}}
                 {{>block_vitrina/filterchild}}

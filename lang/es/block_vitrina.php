@@ -29,7 +29,11 @@ $string['categories'] = 'Categorias';
 $string['categories_help'] = 'Elija las categorías con los cursos que desea mostrar.';
 $string['catfilterview'] = 'Vista de filtro de categorías';
 $string['catfilterview_default'] = 'Por defecto';
-$string['catfilterview_help'] = 'Seleccione la vista como se mostrará el filtro de categorías.';
+$string['catfilterview_directory'] = 'Directorio';
+$string['catfilterview_help'] = 'Seleccione la vista como se mostrará el filtro de categorías:<br>
+- Por defecto: muestra una lista simple de categorías.<br>
+- Árbol: muestra una vista en forma de árbol con categorías indentadas.<br>
+- Directorio: Las categorías que tienen subcategorías no se usan como filtro, sólo como título.';
 $string['catfilterview_tree'] = 'Árbol';
 $string['comment_by'] = 'Por {$a}';
 $string['commentslabel'] = '{$a} comentarios';

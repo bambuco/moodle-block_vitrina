@@ -86,11 +86,10 @@ class catalog implements renderable, templatable {
         $staticfilters = explode(',', $staticfilters);
 
         // Filter by category.
-        $catfilterview = null;
+        $catfilterview = get_config('block_vitrina', 'catfilterview');
         if (in_array('categories', $staticfilters)) {
-            $catfilterview = get_config('block_vitrina', 'catfilterview');
 
-            $nested = $catfilterview == 'tree';
+            $nested = in_array($catfilterview, ['tree', 'directory']);
 
             $categoriesoptions = \block_vitrina\local\controller::get_categories([], $nested);
 
@@ -139,6 +138,7 @@ class catalog implements renderable, templatable {
             'filterproperties' => $filterproperties,
             'catfilterview' => $catfilterview,
             'opendetailstarget' => get_config('block_vitrina', 'opendetailstarget'),
+            'filterroot' => $catfilterview != 'directory',
         ];
 
         return $defaultvariables;

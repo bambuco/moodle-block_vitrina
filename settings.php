@@ -195,6 +195,7 @@ if ($ADMIN->fulltree) {
     $catfilterviews = [
         'default' => new lang_string('catfilterview_default', 'block_vitrina'),
         'tree' => new lang_string('catfilterview_tree', 'block_vitrina'),
+        'directory' => new lang_string('catfilterview_directory', 'block_vitrina'),
     ];
     $name = 'block_vitrina/catfilterview';
     $title = get_string('catfilterview', 'block_vitrina');

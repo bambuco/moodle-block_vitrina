@@ -29,7 +29,11 @@ $string['categories'] = 'Categories';
 $string['categories_help'] = 'Choose the categories with the courses to display in the main view.';
 $string['catfilterview'] = 'Category filter view';
 $string['catfilterview_default'] = 'By default';
-$string['catfilterview_help'] = 'Choose the view to display the categories filter.';
+$string['catfilterview_directory'] = 'Directory';
+$string['catfilterview_help'] = 'Choose the view to display the categories filter:<br>
+- By default: shows a simple list of categories.<br>
+- Tree: shows a tree style view with indented categories.<br>
+- Directory: Categories that have subcategories are not used as a filter, only as a title.';
 $string['catfilterview_tree'] = 'Tree';
 $string['comment_by'] = 'By {$a}';
 $string['commentslabel'] = '{$a} comments';
