@@ -153,7 +153,7 @@
                     <div id="tab-experts" class="tab-pane nav-item longcustomfields-box experts-box">
                     {{#instructors}}
                         <div>
-                            <img src="{{userpicture}}" alt="{{firstname}}" width="138" height="132" />
+                            <img src="{{{userpicture}}}" alt="{{firstname}}" width="138" height="132" />
                             <strong>{{firstname}} {{lastname}}</strong>
                             <em>{{imagealt}}</em>
                             <p>
@@ -265,7 +265,7 @@
                         {{#latestcomments}}
                             <div class="comment">
                                 <div class="comment-author">
-                                    <img src="{{userpicture}}" class="author-picture" alt="" role="presentation"/>
+                                    <img src="{{{userpicture}}}" class="author-picture" alt="" role="presentation"/>
                                     <div class="comment-data">
                                         <p class="author-name">{{userfirstname}} {{userlastname}}</p>
                                         <p class="timeformated">{{timeformated}}</p>
@@ -306,7 +306,7 @@
                                     {{#comments}}
                                         <div class="comment">
                                             <div class="comment-author">
-                                                <img src="{{userpicture}}" class="author-picture" alt="" role="presentation"/>
+                                                <img src="{{{userpicture}}}" class="author-picture" alt="" role="presentation"/>
                                                 <div class="comment-data">
                                                     <p class="author-name">{{userfirstname}} {{userlastname}}</p>
                                                     <p class="timeformated">{{timeformated}}</p>
