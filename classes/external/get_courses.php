@@ -168,13 +168,15 @@ class get_courses extends external_api {
         foreach ($courses as $course) {
             \block_vitrina\local\controller::course_preprocess($course);
 
-            if (!empty($includehiddencourses)) {
-                $coursecontext = \context_course::instance($course->id);
-                if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+            if (empty($course->visible)) {
+                if (!empty($includehiddencourses)) {
+                    $coursecontext = \context_course::instance($course->id);
+                    if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                        continue;
+                    }
+                } else {
                     continue;
                 }
-            } else if (empty($course->visible)) {
-                continue;
             }
 
             $renderedcourse = new \stdClass();
