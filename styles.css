@@ -31,6 +31,11 @@
     filter: grayscale(1);
 }
 
+.block_vitrina-courseslist .coursebox.coursehidden {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
 .block_vitrina-courseslist .coursebox .waiting-label {
     position: absolute;
     background-color: #595959;

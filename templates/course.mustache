@@ -41,7 +41,7 @@
     }
 }}
 
-<div class="panel panel-default coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}}">
+<div class="panel panel-default coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}} {{^visible}}coursehidden{{/visible}}">
     <div class="courseimage" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>
         {{#hassummary}}
             <div class="course_description">

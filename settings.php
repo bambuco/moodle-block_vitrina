@@ -213,6 +213,13 @@ if ($ADMIN->fulltree) {
         $settings->add($setting);
     }
 
+    // Can show hidden courses in catalog.
+    $name = 'block_vitrina/includehiddencourses';
+    $title = get_string('includehiddencourses', 'block_vitrina');
+    $help = get_string('includehiddencourses_help', 'block_vitrina');
+    $setting = new admin_setting_configcheckbox($name, $title, $help, 0);
+    $settings->add($setting);
+
     // Appearance.
     $name = 'block_vitrina/settingsheaderappearance';
     $heading = get_string('settingsheaderappearance', 'block_vitrina');
