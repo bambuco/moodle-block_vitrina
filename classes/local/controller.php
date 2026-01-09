@@ -280,7 +280,7 @@ class controller {
                     }
 
                     $sqlintances = "SELECT c.id, c.category FROM {tag_instance} t " .
-                                    " INNER JOIN {course} c ON t.itemtype = 'course' AND c.id = t.itemid AND c.visible = 1" .
+                                    " INNER JOIN {course} c ON t.itemtype = 'course' AND c.id = t.itemid" .
                                     " WHERE t.tagid IN (" . (implode(',', $ids)) . ") " . $categoriescondition .
                                     " GROUP BY c.id, c.category" .
                                     " ORDER BY t.timemodified DESC";
@@ -664,8 +664,16 @@ class controller {
             }
         }
 
+        $includehiddencourses = get_config('block_vitrina', 'includehiddencourses');
         $courses = [];
-        $select = 'c.visible = 1 AND c.id <> :siteid AND (c.enddate > :now OR c.enddate = 0)';
+        $select = '';
+
+        // Only visible courses.
+        if (empty($includehiddencourses)) {
+            $select = 'c.visible = 1 AND ';
+        }
+
+        $select .= 'c.id <> :siteid AND (c.enddate > :now OR c.enddate = 0)';
         $params = ['siteid' => SITEID, 'now' => time()];
 
         // Add categories filter.

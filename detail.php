@@ -260,8 +260,15 @@ do {
 
 echo $OUTPUT->header();
 
-if (!$course->visible) {
-    echo get_string('notvisible', 'block_vitrina');
+$includehiddencourses = get_config('block_vitrina', 'includehiddencourses');
+$canview = $course->visible;
+if (!$canview && !empty($includehiddencourses)) {
+    $coursecontext = $coursecontext = \context_course::instance($course->id, $USER, '', true);
+    $canview = has_capability('moodle/course:viewhiddencourses', $coursecontext);
+}
+
+if (!$canview) {
+    echo \core\notification::error(get_string('notvisible', 'block_vitrina'));
 } else {
     $renderable = new \block_vitrina\output\detail($course, $enrolmsg);
     $renderer = $PAGE->get_renderer('block_vitrina');

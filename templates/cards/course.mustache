@@ -41,7 +41,7 @@
     }
 }}
 
-<div class="coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}}" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>
+<div class="coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}} {{^visible}}coursehidden{{/visible}}" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>
 
     {{#hasrating}}
         {{#rating}}

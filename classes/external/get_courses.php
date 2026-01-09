@@ -163,8 +163,21 @@ class get_courses extends external_api {
         $response = [];
         $renderer = $PAGE->get_renderer('block_vitrina');
 
+        $includehiddencourses = get_config('block_vitrina', 'includehiddencourses');
+
         foreach ($courses as $course) {
             \block_vitrina\local\controller::course_preprocess($course);
+
+            if (empty($course->visible)) {
+                if (!empty($includehiddencourses)) {
+                    $coursecontext = \context_course::instance($course->id);
+                    if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+            }
 
             $renderedcourse = new \stdClass();
             $renderedcourse->id = $course->id;
