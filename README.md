@@ -33,6 +33,11 @@ Download zip package, extract the vitrina folder and upload this folder into blo
 
 ## Versions history
 
+### 2025111901
+- New catfilterview option: directory
+- Manage special characters in userpicture url
+- New feature to include hidden courses with capability validation
+
 ### 2024083107
 - Support for the customfield_multiselect field type in filters.
 - Improve fulltext search input.
