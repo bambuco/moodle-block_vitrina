@@ -17,6 +17,8 @@ Download zip package, extract the vitrina folder and upload this folder into blo
 
 **Git:** https://github.com/bambuco/moodle-block_vitrina
 
+**Supported by:** [BambuCo](https://bambuco.co/), [Universidad de Medellín](https://udemedellin.edu.co/), [Universidad CES](https://www.ces.edu.co/), [Grupo fek](https://grupofek.com/), [Aalborg University](https://www.its.aau.dk/)
+
 ## Features
 
 - Multilanguage filter compatibility.
