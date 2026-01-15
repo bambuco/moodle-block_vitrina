@@ -767,7 +767,7 @@ class controller {
                             // The select value are the position in the list, starting by 1. Select is the default value.
                             $value = (int)$value - 1;
                             $elements[] = $DB->sql_like($DB->sql_concat("','", $alias . '.value', "','"), ':' . $elementkey);
-                            $params[$elementkey] = '%' . $value . '%';
+                            $params[$elementkey] = '%,' . $value . ',%';
                         }
                         $select .= implode(' OR ', $elements) . ')';
                     } else {
