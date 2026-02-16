@@ -1,0 +1,37 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_vitrina/contactslist
+
+    Shows the list of contacts for a course.
+
+    Example context (json):
+    {
+    }
+}}
+{{#hasinstructors}}
+    <div class="clearfix contactslist">
+        <h5>{{#str}}teachers{{/str}}</h5>
+        <div class="courseinstructors">
+            {{#instructors}}
+                <a href="{{profileurl}}" target="_blank" class="instructor">
+                    <img src="{{{userpicture}}}" alt="{{imagealt}}" title="{{firstname}} {{lastname}}" />
+                </a>
+            {{/instructors}}
+        </div>
+    </div>
+{{/hasinstructors}}

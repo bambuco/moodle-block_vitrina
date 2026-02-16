@@ -50,6 +50,10 @@
     color: var(--primary);
 }
 
+.block_vitrina-courseslist .coursebox .customfieldslist {
+    text-align: left;
+}
+
 .block_vitrina-courseslist .coursebox .vitrina-ranking-stars {
     transform-origin: right;
     position: absolute;

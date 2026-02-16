@@ -74,6 +74,13 @@
             </div>
         {{/fee}}
     </div>
+
+    {{> block_vitrina/contactslist}}
+
+    {{#includecustomfieldsinlist}}
+        {{> block_vitrina/customfieldslist}}
+    {{/includecustomfieldsinlist}}
+
     <div class="panel-foot clearfix">
         {{#hasprogress}}
             <div class="course-progress">

@@ -68,9 +68,7 @@
 }
 
 .block_vitrina-courseslist .coursebox .panel-body a {
-    color: #4c6295;
     font-weight: bold;
-    display: block;
 }
 
 .block_vitrina-courseslist .coursebox .panel-body a.btn-primary {
@@ -93,6 +91,57 @@
     display: inline-block;
     margin: 5px;
     background-color: var(--secondary);
+}
+
+.block_vitrina-courseslist .coursebox.panel .contactslist {
+    display: flex;
+    justify-content: left;
+    align-content: center;
+    padding: 5px;
+    gap: 5px;
+    border-bottom: 1px solid #eee;
+    margin: 5px 0;
+}
+
+.block_vitrina-courseslist .coursebox .contactslist h5 {
+    display: flex;
+    align-items: center;
+    font-size: 80%;
+}
+
+.block_vitrina-courseslist .coursebox .contactslist .courseinstructors {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.block_vitrina-courseslist .coursebox .contactslist .courseinstructors a {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.block_vitrina-courseslist .coursebox .contactslist .courseinstructors a:hover {
+    opacity: 0.8;
+}
+
+.block_vitrina-courseslist .coursebox .contactslist .courseinstructors img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.block_vitrina-courseslist .coursebox .customfieldslist {
+    padding: 5px 0;
+}
+
+.block_vitrina-courseslist .coursebox .customfieldslist .list-group {
+    border-radius: 0;
+}
+
+.block_vitrina-courseslist .coursebox .customfieldslist .list-group-item {
+    padding: 0.4rem 0.6rem;
+    font-size: 90%;
+    border-right: none;
+    border-left: none;
 }
 
 .block_vitrina-courseslist .coursebox .panel-foot {
@@ -866,7 +915,7 @@
 
     .block_vitrina-content.opened-popup #vitrina-filtercol {
         position: fixed;
-        top: 50px;
+        top: var(--navbar-height, 50px);
         right: 0;
         bottom: 0;
         left: 0;

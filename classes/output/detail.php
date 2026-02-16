@@ -90,116 +90,7 @@ class detail implements renderable, templatable {
         }
 
         // Load custom course fields.
-        $handler = \core_customfield\handler::get_handler('core_course', 'course');
-        $datas = $handler->get_instance_data($this->course->id);
-        $fields = ['license', 'media', 'mediaposter'];
-        $custom = new \stdClass();
-
-        // Select specific fields to display.
-        $fieldids = [];
-        foreach ($fields as $field) {
-            $id = get_config('block_vitrina', $field);
-
-            if (!empty($id)) {
-                $fieldids[$field] = $id;
-            }
-        }
-
-        $custom->customfields = [];
-        $custom->longcustomfields = [];
-        $custom->hascustomfields = false;
-        $custom->haslongcustomfields = false;
-
-        // Select generic short fields to display.
-        $showcustomfields = get_config('block_vitrina', 'showcustomfields');
-
-        if (!empty($showcustomfields)) {
-            $showcustomfields = explode(',', $showcustomfields);
-        }
-
-        if (!$showcustomfields || count($showcustomfields) == 0) {
-            $showcustomfields = [];
-        }
-
-        // Select generic long fields to display.
-        $showlongfields = get_config('block_vitrina', 'showlongcustomfields');
-
-        if (!empty($showlongfields)) {
-            $showlongfields = explode(',', $showlongfields);
-        }
-
-        if (!$showlongfields || count($showlongfields) == 0) {
-            $showlongfields = [];
-        }
-
-        $imgextentions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-        foreach ($datas as $data) {
-            $key = $data->get_field()->get('id');
-
-            $exist = false;
-            foreach ($fieldids as $field => $id) {
-                if ($id == $key) {
-                    $c = new \stdClass();
-                    $c->title = format_text($data->get_field()->get('name'), FORMAT_HTML);
-
-                    $c->value = $data->export_value();
-
-                    if (!empty($c->value)) {
-                        if ($field == 'license') {
-                            if (get_string_manager()->string_exists('license-' . $c->value, 'block_vitrina')) {
-                                $c->text = get_string('license-' . $c->value, 'block_vitrina');
-                                $c->path = $c->value == 'cc-0' ? 'zero/1.0' : trim($c->value, 'cc-') . '/4.0';
-                            } else {
-                                $c->text = $c->value;
-                            }
-                        } else if ($field == 'media') {
-                            if (
-                                strpos($c->value, 'https://www.youtube.com') === 0 ||
-                                strpos($c->value, 'https://youtube.com') === 0 ||
-                                strpos($c->value, 'https://player.vimeo.com') === 0
-                            ) {
-                                $c->isembed = true;
-                            } else if (in_array(pathinfo(strtolower($c->value), PATHINFO_EXTENSION), $imgextentions)) {
-                                $c->isimage = true;
-                            }
-                        }
-
-                        $custom->$field = $c;
-                    }
-
-                    $exist = true;
-                    break;
-                }
-            }
-
-            if (!$exist) {
-                $value = $data->export_value();
-
-                if (is_string($value)) {
-                    $value = trim($value);
-                }
-
-                if (!empty($value)) {
-                    $c = new \stdClass();
-                    $c->title = format_text($data->get_field()->get('name'), FORMAT_HTML);
-                    $c->value = $value;
-                    $c->key = $key;
-                    $c->shortname = $data->get_field()->get('shortname');
-
-                    if (in_array($key, $showcustomfields)) {
-                        $custom->customfields[] = $c;
-                    } else if (in_array($key, $showlongfields)) {
-                        $custom->longcustomfields[] = $c;
-                    } else {
-                        $custom->{$c->shortname} = $c;
-                    }
-                }
-            }
-        }
-
-        $custom->hascustomfields = count($custom->customfields) > 0;
-        $custom->haslongcustomfields = count($custom->longcustomfields) > 0;
-
+        $custom = \block_vitrina\local\controller::load_customfields($this->course);
         // End Load custom course fields.
 
         // Load the course context.
@@ -514,6 +405,7 @@ class detail implements renderable, templatable {
             'hasenrollmsg' => !empty($this->enrolmsg),
             'enrolmsg' => $this->enrolmsg,
             'opendetailstarget' => get_config('block_vitrina', 'opendetailstarget'),
+            'includecustomfieldsinlist' => get_config('block_vitrina', 'includecustomfieldsinlist'),
         ];
 
         return $defaultvariables;

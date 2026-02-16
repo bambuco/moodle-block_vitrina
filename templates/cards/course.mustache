@@ -73,7 +73,13 @@
             </div>
         {{/hasprogress}}
 
+        {{> block_vitrina/contactslist}}
+
         <div class="content-fullinfo">
+            {{#includecustomfieldsinlist}}
+                {{> block_vitrina/customfieldslist}}
+            {{/includecustomfieldsinlist}}
+
             <div class="coursesummary">
                 {{{summary}}}
             </div>

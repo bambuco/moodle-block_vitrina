@@ -186,3 +186,7 @@ The available views are: default, recents, greats, premium.';
 $string['vitrina:addinstance'] = 'Add a new Showcase block';
 $string['vitrina:myaddinstance'] = 'Add a new Showcase block to Dashboard';
 $string['waiting'] = 'Waiting';
+$string['includecontactsinlist'] = 'Include contacts in list of courses';
+$string['includecontactsinlist_help'] = 'If enabled, the block will also display the contacts information in the list of courses.';
+$string['includecustomfieldsinlist'] = 'Include custom fields in list of courses';
+$string['includecustomfieldsinlist_help'] = 'If enabled, the block will also display the custom fields information in the list of courses.';
