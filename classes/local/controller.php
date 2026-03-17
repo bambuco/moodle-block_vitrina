@@ -378,7 +378,7 @@ class controller {
                     }
 
                     if ($includecustomfieldsinlist) {
-                        $one->custom = \block_vitrina\local\controller::load_customfields($one);
+                        $one->custom = self::load_customfields($one);
                     } else {
                         $one->custom = null;
                     }

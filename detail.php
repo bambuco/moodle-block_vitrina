@@ -183,8 +183,14 @@ do {
                     }
 
                     if ($data->enrolpassword != $instance->password) {
-                        $enrolmsg[] = get_string('passwordinvalid', 'enrol_self');
-                        continue;
+                        // Check if the password is a group password.
+                        $group = $DB->get_record('groups', ['courseid' => $course->id, 'enrolmentkey' => $data->enrolpassword]);
+                        if (empty($group)) {
+                            $enrolmsg[] = get_string('passwordinvalid', 'enrol_self');
+                            continue;
+                        } else {
+                            $data->groupid = $group->id;
+                        }
                     }
                 }
 
