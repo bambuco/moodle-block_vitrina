@@ -244,7 +244,7 @@
 }
 
 #page-blocks-vitrina-detail .course-detail .enrollstate-completed .enroll-container,
-#page-blocks-vitrina-detail .course-detail .enrollstate-enrolled .enroll-container  {
+#page-blocks-vitrina-detail .course-detail .enrollstate-enrolled .enroll-container {
     background-color: transparent;
     color: inherit;
 }
@@ -267,7 +267,7 @@
     margin-right: 0;
 }
 
-#page-blocks-vitrina-detail .course-detail .enroll-container .haspaymentgw .btn-primary[data-toggle="collapse"]:not(.collapsed) i.fa::before {
+#page-blocks-vitrina-detail .enroll-container .haspaymentgw .btn-primary[data-toggle="collapse"]:not(.collapsed) i.fa::before {
     content: "\f106";
 }
 
@@ -275,7 +275,8 @@ html:has(body#page-blocks-vitrina-detail) {
     scroll-behavior: smooth;
 }
 
-#page-blocks-vitrina-detail .course-detail .vitrina-ranking-stars, .vitrina-ranking-stars {
+#page-blocks-vitrina-detail .course-detail .vitrina-ranking-stars,
+.vitrina-ranking-stars {
     --stars-width: 159px;
     --stars-height: 35px;
     width: var(--stars-width);
@@ -286,13 +287,15 @@ html:has(body#page-blocks-vitrina-detail) {
     background-repeat: no-repeat;
 }
 
-#page-blocks-vitrina-detail .course-detail .vitrina-ranking-stars .vitrina-ranking-stars-bar::after, .vitrina-ranking-stars-bar::after {
+#page-blocks-vitrina-detail .course-detail .vitrina-ranking-stars .vitrina-ranking-stars-bar::after,
+.vitrina-ranking-stars-bar::after {
     width: var(--stars-width);
     height: var(--stars-height);
     background-image: url('pix/stars_nl.png');
 }
 
-#page-blocks-vitrina-detail .course-detail .vitrina-ranking-stars .icon, .vitrina-ranking-stars .icon {
+#page-blocks-vitrina-detail .course-detail .vitrina-ranking-stars .icon,
+.vitrina-ranking-stars .icon {
     width: var(--stars-width);
     height: var(--stars-height);
     max-width: unset;
@@ -365,7 +368,7 @@ html:has(body#page-blocks-vitrina-detail) {
 
 #page-blocks-vitrina-detail .list-info li[data-certified="No"] {
     display: none;
-    justify-content: flex-start ;
+    justify-content: flex-start;
 }
 
 #page-blocks-vitrina-detail .share-container {
@@ -441,7 +444,6 @@ html:has(body#page-blocks-vitrina-detail) {
     background-color: var(--light);
     padding: 20px;
     margin-right: 20px;
-    border-radius: 3px;
     font-size: 15px;
     border-radius: 10px;
 }
@@ -515,7 +517,7 @@ html:has(body#page-blocks-vitrina-detail) {
 }
 
 #page-blocks-vitrina-detail .course-detail .course-rating-detail .course-comments-box .all-comments-modal div.comment:last-child {
-    border-bottom: 0
+    border-bottom: 0;
 }
 
 #page-blocks-vitrina-detail .course-detail .course-rating-detail .ranking-detail {
@@ -537,7 +539,7 @@ html:has(body#page-blocks-vitrina-detail) {
 
 #page-blocks-vitrina-detail .relatedcourses .block_vitrina-courseslist {
     background-color: transparent;
-    border: none
+    border: none;
 }
 
 #page-blocks-vitrina-detail .relatedcourses .block_vitrina-courseslist .courses-list {
@@ -610,17 +612,19 @@ html:has(body#page-blocks-vitrina-detail) {
     text-align: right;
 }
 
+/* stylelint-disable declaration-no-important */
 #page-blocks-vitrina-detail .customfield-item i {
     background-color: var(--primary);
-    color: #fff!important;
+    color: #fff !important;
     margin: 0 10px;
-    height: 35px!important;
-    width: 35px!important;
+    height: 35px !important;
+    width: 35px !important;
     position: relative;
     font-style: normal;
-    font-size: 20px!important;
+    font-size: 20px !important;
     border-radius: 50%;
 }
+/* stylelint-enable declaration-no-important  */
 
 #page-blocks-vitrina-detail .customfield-item i:after {
     position: absolute;

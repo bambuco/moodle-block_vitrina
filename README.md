@@ -2,7 +2,7 @@
 
 A block to display a list of courses and their general information.
 
-Package tested in: moodle 4.4 y 4.5.
+Package tested in: moodle 4.5, 5.1.
 
 > **Note:** We recommend using the [enrol_customredirect](https://github.com/bambuco/moodle-enrol_customredirect) plugin with Vitrina.
 > This component allows users without access to view the Vitrina details page instead of the default Moodle page.
