@@ -217,6 +217,10 @@ class controller {
             $course->hasprogress = false;
         }
 
+        $fullcourse = null;
+        $includecustomfieldsinlist = get_config('block_vitrina', 'includecustomfieldsinlist');
+        $includecontactsinlist = get_config('block_vitrina', 'includecontactsinlist');
+
         // Load data for course detail.
         if ($large) {
             $fullcourse = new \core_course_list_element($course);
@@ -366,30 +370,186 @@ class controller {
 
                     // Load the related course enrol info.
                     self::load_enrolinfo($one);
+
+                    if ($includecontactsinlist) {
+                        self::load_instructors($one, null, true);
+                    } else {
+                        $one->hasinstructors = false;
+                    }
+
+                    if ($includecustomfieldsinlist) {
+                        $one->custom = self::load_customfields($one);
+                    } else {
+                        $one->custom = null;
+                    }
+
                     $course->related[] = $one;
                 }
             }
+        }
 
-            // Load the teachers information.
+        if ($large || $includecontactsinlist) {
+            self::load_instructors($course, $fullcourse, !$large);
+        } else {
             $course->hasinstructors = false;
+        }
+    }
 
-            if ($fullcourse->has_course_contacts()) {
-                $course->hasinstructors = true;
-                $course->instructors = [];
-                $instructors = $fullcourse->get_course_contacts();
+    /**
+     * Load the course enrol info.
+     *
+     * @param object $course Course to be processed.
+     * @param object|null $fullcourse Full course object if is already instanced, null if not.
+     * @param bool $inlist True if the course is being loaded to be displayed in a list, false if not.
+     * @return void
+     */
+    protected static function load_instructors($course, $fullcourse = null, $inlist = false) {
+        global $PAGE, $CFG, $DB;
 
-                foreach ($instructors as $key => $instructor) {
-                    $user = $DB->get_record('user', ['id' => $key]);
-                    $userpicture = new \user_picture($user, ['alttext' => false, 'link' => false]);
-                    $userpicture->size = 200;
-                    $user->userpicture = $userpicture->get_url($PAGE);
-                    $user->profileurl = $CFG->wwwroot . '/user/profile.php?id=' . $key;
-                    $user->description = format_text($user->description, FORMAT_HTML);
+        // Load the teachers information.
+        $course->hasinstructors = false;
 
-                    $course->instructors[] = $user;
+        // If not instanced the full course, instance it to load the contacts.
+        if (!$fullcourse) {
+            $fullcourse = new \core_course_list_element($course);
+        }
+
+        if ($fullcourse->has_course_contacts()) {
+            $course->hasinstructors = true;
+            $course->instructors = [];
+            $instructors = $fullcourse->get_course_contacts();
+
+            foreach ($instructors as $key => $instructor) {
+                $user = $DB->get_record('user', ['id' => $key]);
+                $userpicture = new \user_picture($user, ['alttext' => false, 'link' => false]);
+                $userpicture->size = $inlist ? 35 : 200;
+                $user->userpicture = $userpicture->get_url($PAGE);
+                $user->profileurl = $CFG->wwwroot . '/user/profile.php?id=' . $key;
+                $user->description = format_text($user->description, FORMAT_HTML);
+
+                $course->instructors[] = $user;
+            }
+        }
+    }
+
+    /**
+     * Load the course custom fields.
+     *
+     * @param object $course Course to be processed.
+     * @return object Custom fields information.
+     */
+    public static function load_customfields($course) {
+        $handler = \core_customfield\handler::get_handler('core_course', 'course');
+        $datas = $handler->get_instance_data($course->id);
+        $fields = ['license', 'media', 'mediaposter'];
+        $custom = new \stdClass();
+
+        // Select specific fields to display.
+        $fieldids = [];
+        foreach ($fields as $field) {
+            $id = get_config('block_vitrina', $field);
+
+            if (!empty($id)) {
+                $fieldids[$field] = $id;
+            }
+        }
+
+        $custom->customfields = [];
+        $custom->longcustomfields = [];
+        $custom->hascustomfields = false;
+        $custom->haslongcustomfields = false;
+
+        // Select generic short fields to display.
+        $showcustomfields = get_config('block_vitrina', 'showcustomfields');
+
+        if (!empty($showcustomfields)) {
+            $showcustomfields = explode(',', $showcustomfields);
+        }
+
+        if (!$showcustomfields || count($showcustomfields) == 0) {
+            $showcustomfields = [];
+        }
+
+        // Select generic long fields to display.
+        $showlongfields = get_config('block_vitrina', 'showlongcustomfields');
+
+        if (!empty($showlongfields)) {
+            $showlongfields = explode(',', $showlongfields);
+        }
+
+        if (!$showlongfields || count($showlongfields) == 0) {
+            $showlongfields = [];
+        }
+
+        $imgextentions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+        foreach ($datas as $data) {
+            $key = $data->get_field()->get('id');
+
+            $exist = false;
+            foreach ($fieldids as $field => $id) {
+                if ($id == $key) {
+                    $c = new \stdClass();
+                    $c->title = format_text($data->get_field()->get('name'), FORMAT_HTML);
+
+                    $c->value = $data->export_value();
+
+                    if (!empty($c->value)) {
+                        if ($field == 'license') {
+                            if (get_string_manager()->string_exists('license-' . $c->value, 'block_vitrina')) {
+                                $c->text = get_string('license-' . $c->value, 'block_vitrina');
+                                $c->path = $c->value == 'cc-0' ? 'zero/1.0' : trim($c->value, 'cc-') . '/4.0';
+                            } else {
+                                $c->text = $c->value;
+                            }
+                        } else if ($field == 'media') {
+                            if (
+                                strpos($c->value, 'https://www.youtube.com') === 0 ||
+                                strpos($c->value, 'https://youtube.com') === 0 ||
+                                strpos($c->value, 'https://player.vimeo.com') === 0
+                            ) {
+                                $c->isembed = true;
+                            } else if (in_array(pathinfo(strtolower($c->value), PATHINFO_EXTENSION), $imgextentions)) {
+                                $c->isimage = true;
+                            }
+                        }
+
+                        $custom->$field = $c;
+                    }
+
+                    $exist = true;
+                    break;
+                }
+            }
+
+            if (!$exist) {
+                $value = $data->export_value();
+
+                if (is_string($value)) {
+                    $value = trim($value);
+                }
+
+                if (!empty($value)) {
+                    $c = new \stdClass();
+                    $c->title = format_text($data->get_field()->get('name'), FORMAT_HTML);
+                    $c->value = $value;
+                    $c->key = $key;
+                    $c->shortname = $data->get_field()->get('shortname');
+
+                    if (in_array($key, $showcustomfields)) {
+                        $custom->customfields[] = $c;
+                    } else if (in_array($key, $showlongfields)) {
+                        $custom->longcustomfields[] = $c;
+                    } else {
+                        $custom->{$c->shortname} = $c;
+                    }
                 }
             }
         }
+
+        $custom->hascustomfields = count($custom->customfields) > 0;
+        $custom->haslongcustomfields = count($custom->longcustomfields) > 0;
+
+        return $custom;
     }
 
     /**

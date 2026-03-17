@@ -415,11 +415,6 @@
     max-width: unset;
 }
 
-#page-blocks-vitrina-detail .relatedcourses h5 {
-    text-align: center;
-    margin: 60px 0 30px;
-}
-
 #page-blocks-vitrina-detail .relatedcourses > div {
     display: flex;
     justify-content: space-evenly;

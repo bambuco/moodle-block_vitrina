@@ -57,6 +57,13 @@
             </div>
             {{/rating}}
         {{/hasrating}}
+
+        {{> block_vitrina/contactslist}}
+
+        {{#includecustomfieldsinlist}}
+            {{> block_vitrina/customfieldslist}}
+        {{/includecustomfieldsinlist}}
+
         <div class="course-summary">
          {{{summary}}}
         </div>

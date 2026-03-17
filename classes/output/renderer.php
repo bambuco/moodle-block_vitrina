@@ -132,6 +132,8 @@ class renderer extends plugin_renderer_base {
             }
         }
         $course->opendetailstarget = get_config('block_vitrina', 'opendetailstarget');
+        $course->includecustomfieldsinlist = get_config('block_vitrina', 'includecustomfieldsinlist');
+        $course->custom = \block_vitrina\local\controller::load_customfields($course);
 
         return $this->render_from_template($templatefile, $course);
     }

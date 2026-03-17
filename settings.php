@@ -278,11 +278,28 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext($name, $title, $help, 0, PARAM_INT, 3);
     $settings->add($setting);
 
+    // Inlcude contacts information in list of courses.
+    $name = 'block_vitrina/includecontactsinlist';
+    $title = get_string('includecontactsinlist', 'block_vitrina');
+    $help = get_string('includecontactsinlist_help', 'block_vitrina');
+    $setting = new admin_setting_configcheckbox($name, $title, $help, 0);
+    $settings->add($setting);
+
+    // Include custom fields information in list of courses.
+    $name = 'block_vitrina/includecustomfieldsinlist';
+    $title = get_string('includecustomfieldsinlist', 'block_vitrina');
+    $help = get_string('includecustomfieldsinlist_help', 'block_vitrina');
+    $setting = new admin_setting_configcheckbox($name, $title, $help, 0);
+    $settings->add($setting);
+
     // Social networks.
     $name = 'block_vitrina/networks';
     $title = get_string('socialnetworks', 'block_vitrina');
     $help = get_string('socialnetworks_help', 'block_vitrina');
-    $setting = new admin_setting_configtextarea($name, $title, $help, '');
+    $default = "facebook|https://www.facebook.com/sharer/sharer.php?u={url}&t={name}\n" .
+                "twitter|https://twitter.com/intent/tweet?source={url}&text={name}\n" .
+                "pinterest|https://pinterest.com/pin/create/button/?url={url}&description={name}";
+    $setting = new admin_setting_configtextarea($name, $title, $help, $default);
     $settings->add($setting);
 
     // Block summary.

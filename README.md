@@ -33,6 +33,10 @@ Download zip package, extract the vitrina folder and upload this folder into blo
 
 ## Versions history
 
+### 2025111902
+- New setting: Include contacts in list of courses
+- New setting: Include custom fields in list of courses
+
 ### 2025111901
 - New catfilterview option: directory
 - Manage special characters in userpicture url

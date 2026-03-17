@@ -635,6 +635,22 @@ html:has(body#page-blocks-vitrina-detail) {
     content: "\f05a";
 }
 
+.block_vitrina-courseslist .coursebox .customfieldslist .list-group-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.block_vitrina-courseslist .coursebox .customfieldslist .list-group-item > * {
+    flex: 0 0 auto;
+    width: 50%;
+    text-align: left;
+}
+
+.block_vitrina-courseslist .coursebox .customfieldslist .list-group-item > strong {
+    text-align: right;
+}
+
 @media (min-width: 1281px) {
 
     #page-blocks-vitrina-detail .container {

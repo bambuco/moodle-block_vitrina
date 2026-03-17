@@ -243,6 +243,10 @@
     margin-bottom: 5px;
 }
 
+.block_vitrina-courseslist .coursebox .customfieldslist .list-group-item {
+    border-top: none;
+}
+
 @media (max-width: 512px) {
     #page-blocks-vitrina-detail .share-container .share-content {
         display: block;
