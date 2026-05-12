@@ -382,7 +382,7 @@ if ($ADMIN->fulltree) {
         $name = 'block_vitrina/ratingmanager';
         $title = get_string('ratingmanager', 'block_vitrina');
         $help = get_string('ratingmanager_help', 'block_vitrina');
-        $setting = new admin_setting_configselect($name, $title, $help, '', $options);
+        $setting = new admin_setting_configselect($name, $title, $help, array_key_first($options), $options);
         $settings->add($setting);
     }
 
