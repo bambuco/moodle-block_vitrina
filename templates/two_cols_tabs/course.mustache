@@ -59,16 +59,6 @@
         <div class="coursesummary">
             {{{summary}}}
         </div>
-        {{#fee}}
-            <div class="coursefee">
-                <div class="feeinfo">
-                    {{#str}} feeinfoinlist, block_vitrina, {{formatedcost}} {{/str}}
-                </div>
-                {{#hascart}}
-                    {{> block_vitrina/cartbutton}}
-                {{/hascart}}
-            </div>
-        {{/fee}}
     </div>
 
     {{> block_vitrina/contactslist}}
@@ -78,6 +68,17 @@
     {{/includecustomfieldsinlist}}
 
     <div class="panel-foot clearfix">
+        {{#fee}}
+            <div class="coursefee">
+                <div class="feeinfo">
+                    {{#str}} feeinfoinlist, block_vitrina, {{formatedcost}} {{/str}}
+                </div>
+                {{#hascart}}
+                    {{> block_vitrina/cartbutton}}
+                {{/hascart}}
+            </div>
+            <hr>
+        {{/fee}}
         {{#hasprogress}}
             <div class="course-progress">
                 <div class="course-progress-bar" style="width: {{progress}}%;"></div>
