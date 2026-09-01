@@ -26,15 +26,14 @@ declare(strict_types=1);
 
 namespace block_vitrina\external;
 
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_multiple_structure;
-use external_single_structure;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_value;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/login/lib.php');
 
 /**
@@ -54,7 +53,7 @@ class get_courses extends external_api {
             [
                 'view' => new external_value(PARAM_TEXT, 'Courses view', VALUE_DEFAULT, 'default'),
                 'filters' => new external_multiple_structure(
-                    new \external_single_structure(
+                    new external_single_structure(
                         [
                             'type' => new external_value(PARAM_TEXT, 'Filter type key'),
                             'values' => new external_multiple_structure(

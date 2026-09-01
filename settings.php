@@ -27,6 +27,7 @@ use block_vitrina\local as localvitrina;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/blocks/vitrina/classes/local/admin_setting_configmultiselect_autocomplete.php');
+require_once($CFG->dirroot . '/blocks/vitrina/classes/local/admin_setting_confightmleditor_files.php');
 
 if ($ADMIN->fulltree) {
     // Get custom fields.
@@ -306,14 +307,14 @@ if ($ADMIN->fulltree) {
     $name = 'block_vitrina/summary';
     $title = get_string('summary', 'block_vitrina');
     $help = get_string('summary_help', 'block_vitrina');
-    $setting = new admin_setting_confightmleditor($name, $title, $help, '');
+    $setting = new block_vitrina_admin_setting_confightmleditor_files($name, $title, $help, 'summary');
     $settings->add($setting);
 
     // Block detail info.
     $name = 'block_vitrina/detailinfo';
     $title = get_string('detailinfo', 'block_vitrina');
     $help = get_string('detailinfo_help', 'block_vitrina');
-    $setting = new admin_setting_confightmleditor($name, $title, $help, '');
+    $setting = new block_vitrina_admin_setting_confightmleditor_files($name, $title, $help, 'detailinfo');
     $settings->add($setting);
 
     // Tabs view.

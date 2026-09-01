@@ -106,6 +106,14 @@ $PAGE->requires->js_call_amd('block_vitrina/main', 'catalog', [$uniqueid, $view,
 echo $OUTPUT->header();
 
 $summary = get_config('block_vitrina', 'summary');
+$summary = file_rewrite_pluginfile_urls(
+    $summary,
+    'pluginfile.php',
+    context_system::instance()->id,
+    'block_vitrina',
+    'summary',
+    0
+);
 
 echo format_text($summary, FORMAT_HTML, ['trusted' => true, 'noclean' => true]);
 
