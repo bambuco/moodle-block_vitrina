@@ -59,6 +59,8 @@ final class block_vitrina_test extends \advanced_testcase {
             'htmlfooter' => ['itemid' => $itemid2, 'text' => '', 'format' => FORMAT_HTML],
         ];
         $block->instance_config_save($data);
+        // Theinstance_config_save() only persists to the DB; simulate a reload to refresh in-memory config.
+        $block->config = $data;
         $block->specialization();
 
         $this->assertEquals('Custom Vitrina Title', $block->title);

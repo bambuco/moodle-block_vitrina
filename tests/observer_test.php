@@ -60,7 +60,7 @@ class observer_test extends \advanced_testcase {
         $category = $DB->get_record('customfield_category', ['component' => 'core_course']);
         if (!$category) {
             $handler = \core_customfield\handler::get_handler('core_course', 'course');
-            $handler->ensure_field_category_exists();
+            $handler->create_category();
             $category = $DB->get_record('customfield_category', ['component' => 'core_course']);
         }
 

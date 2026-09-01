@@ -65,11 +65,10 @@ class sync_premiumenrolments_test extends \advanced_testcase {
         // Ensure no premiumenrolledcourse config is set.
         unset_config('premiumenrolledcourse', 'block_vitrina');
 
+        $this->expectOutputString("No premium course selected\n");
+
         $task = new sync_premiumenrolments();
         $task->execute();
-
-        // Should complete without errors.
-        $this->assertTrue(true);
     }
 
     /**
@@ -84,11 +83,10 @@ class sync_premiumenrolments_test extends \advanced_testcase {
         set_config('premiumenrolledcourse', $course->id, 'block_vitrina');
         unset_config('premiumcoursefield', 'block_vitrina');
 
+        $this->expectOutputString("No course premium field selected\n");
+
         $task = new sync_premiumenrolments();
         $task->execute();
-
-        // Should complete without errors.
-        $this->assertTrue(true);
     }
 
     /**
@@ -105,7 +103,7 @@ class sync_premiumenrolments_test extends \advanced_testcase {
         $category = $DB->get_record('customfield_category', ['component' => 'core_course']);
         if (!$category) {
             $handler = \core_customfield\handler::get_handler('core_course', 'course');
-            $handler->ensure_field_category_exists();
+            $handler->create_category();
             $category = $DB->get_record('customfield_category', ['component' => 'core_course']);
         }
 
@@ -148,6 +146,7 @@ class sync_premiumenrolments_test extends \advanced_testcase {
         $this->assertEquals(ENROL_USER_ACTIVE, (int) $enrolment->status);
 
         // Execute the task.
+        $this->expectOutputString("Suspended enrolment for user {$user->id}\n");
         $task = new sync_premiumenrolments();
         $task->execute();
 
@@ -173,7 +172,7 @@ class sync_premiumenrolments_test extends \advanced_testcase {
         $category = $DB->get_record('customfield_category', ['component' => 'core_course']);
         if (!$category) {
             $handler = \core_customfield\handler::get_handler('core_course', 'course');
-            $handler->ensure_field_category_exists();
+            $handler->create_category();
             $category = $DB->get_record('customfield_category', ['component' => 'core_course']);
         }
 
