@@ -33,6 +33,9 @@ Download zip package, extract the vitrina folder and upload this folder into blo
 
 ## Versions history
 
+### 2025111903
+- Allow to add files to the summary content and detailinfo parameters in the site settings.
+
 ### 2025111902
 - New setting: Include contacts in list of courses
 - New setting: Include custom fields in list of courses

@@ -68,6 +68,14 @@ class detail implements renderable, templatable {
 
         // Course detail info.
         $detailinfo = get_config('block_vitrina', 'detailinfo');
+        $detailinfo = file_rewrite_pluginfile_urls(
+            $detailinfo,
+            'pluginfile.php',
+            context_system::instance()->id,
+            'block_vitrina',
+            'detailinfo',
+            0
+        );
         $detailinfo = format_text($detailinfo, FORMAT_HTML, ['trusted' => true, 'noclean' => true]);
 
         // Load social networks.

@@ -38,15 +38,25 @@
  * @todo MDL-36050 improve capability check on stick blocks, so we can check user capability before sending images.
  */
 function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload, array $options = []) {
-    if (
+    $systemareas = ['summary', 'detailinfo'];
+    $instanceareas = ['content_header', 'content_footer'];
+    $itemid = 0;
+
+    if ($context->contextlevel == CONTEXT_SYSTEM && in_array($filearea, $systemareas)) {
+        if ((int)array_shift($args) !== $itemid) {
+            send_file_not_found();
+        }
+    } else if (
         $context->contextlevel != CONTEXT_BLOCK &&
         $context->contextlevel != CONTEXT_COURSE &&
         $context->contextlevel != CONTEXT_MODULE
     ) {
         send_file_not_found();
+    } else if (!in_array($filearea, $instanceareas)) {
+        send_file_not_found();
     }
 
-    if ($filearea !== 'content_header' && $filearea !== 'content_footer') {
+    if (!in_array($filearea, array_merge($systemareas, $instanceareas))) {
         send_file_not_found();
     }
 
@@ -55,19 +65,12 @@ function block_vitrina_pluginfile($course, $birecordorcm, $context, $filearea, $
     $filename = array_pop($args);
     $filepath = $args ? '/' . implode('/', $args) . '/' : '/';
 
-    if ($filearea === 'content_header') {
-        $file = $fs->get_file($context->id, 'block_vitrina', 'content_header', 0, $filepath, $filename);
+    if (!in_array($filearea, array_merge($systemareas, $instanceareas))) {
+        send_file_not_found();
+    }
 
-        if (!($file && !$file->is_directory())) {
-            send_file_not_found();
-        }
-    } else if ($filearea === 'content_footer') {
-        $file = $fs->get_file($context->id, 'block_vitrina', 'content_footer', 0, $filepath, $filename);
-
-        if (!($file && !$file->is_directory())) {
-            send_file_not_found();
-        }
-    } else {
+    $file = $fs->get_file($context->id, 'block_vitrina', $filearea, $itemid, $filepath, $filename);
+    if (!($file && !$file->is_directory())) {
         send_file_not_found();
     }
 
