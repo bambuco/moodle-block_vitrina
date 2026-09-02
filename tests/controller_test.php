@@ -83,7 +83,10 @@ final class controller_test extends \advanced_testcase {
     }
 
     /**
-     * Test get_courses_views returns default and recents but not greats or premium.
+     * Test get_courses_views always includes default and recents.
+     *
+     * Optional views depend on site plugins/config: greats when a rating manager
+     * is available, premium when a premium course field is configured.
      *
      * @covers ::get_courses_views
      */
@@ -94,8 +97,19 @@ final class controller_test extends \advanced_testcase {
 
         $this->assertContains('default', $views);
         $this->assertContains('recents', $views);
-        $this->assertNotContains('greats', $views);
-        $this->assertNotContains('premium', $views);
+
+        $ratemanager = \block_vitrina\local\controller::get_ratemanager();
+        if ($ratemanager::rating_available()) {
+            $this->assertContains('greats', $views);
+        } else {
+            $this->assertNotContains('greats', $views);
+        }
+
+        if (\block_vitrina\local\controller::premium_available()) {
+            $this->assertContains('premium', $views);
+        } else {
+            $this->assertNotContains('premium', $views);
+        }
     }
 
     /**
@@ -129,11 +143,12 @@ final class controller_test extends \advanced_testcase {
 
         $courses = \block_vitrina\local\controller::get_courses_by_view('default');
 
-        $courseids = array_keys($courses);
-        $this->assertContains($course1->id, $courseids);
-        $this->assertContains($course2->id, $courseids);
-        $this->assertNotContains($course3->id, $courseids);
-        $this->assertNotContains(SITEID, $courseids);
+        // Use array key lookup: MariaDB returns course ids as strings while
+        // get_records_sql array keys are integers (PHPUnit assertContains is strict).
+        $this->assertArrayHasKey($course1->id, $courses);
+        $this->assertArrayHasKey($course2->id, $courses);
+        $this->assertArrayNotHasKey($course3->id, $courses);
+        $this->assertArrayNotHasKey(SITEID, $courses);
     }
 
     /**
@@ -162,9 +177,8 @@ final class controller_test extends \advanced_testcase {
 
         $courses = \block_vitrina\local\controller::get_courses_by_view('recents');
 
-        $courseids = array_keys($courses);
-        $this->assertContains($future->id, $courseids);
-        $this->assertNotContains($past->id, $courseids);
+        $this->assertArrayHasKey($future->id, $courses);
+        $this->assertArrayNotHasKey($past->id, $courses);
     }
 
     /**
@@ -184,8 +198,7 @@ final class controller_test extends \advanced_testcase {
 
         $courses = \block_vitrina\local\controller::get_courses_by_view('nonexistentview');
 
-        $courseids = array_keys($courses);
-        $this->assertContains($course->id, $courseids);
+        $this->assertArrayHasKey($course->id, $courses);
     }
 
     /**
