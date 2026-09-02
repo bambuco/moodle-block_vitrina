@@ -33,7 +33,7 @@ use block_vitrina\local\controller;
  * @package    block_vitrina
  * @coversDefaultClass \block_vitrina\local\observer
  */
-class observer_test extends \advanced_testcase {
+final class observer_test extends \advanced_testcase {
     /**
      * Reset controller static caches before each test.
      */

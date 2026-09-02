@@ -24,8 +24,6 @@
  */
 namespace block_vitrina\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use block_vitrina\privacy\provider;
 
 /**
@@ -37,7 +35,6 @@ use block_vitrina\privacy\provider;
  * @coversDefaultClass \block_vitrina\privacy\provider
  */
 final class provider_test extends \advanced_testcase {
-
     /**
      * Test that the provider implements the null_provider interface.
      *

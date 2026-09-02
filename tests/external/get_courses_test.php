@@ -38,7 +38,6 @@ global $CFG;
  * @coversDefaultClass \block_vitrina\external\get_courses
  */
 final class get_courses_test extends \core_external\tests\externallib_testcase {
-
     /**
      * Set up the page context for rendering.
      */

@@ -24,8 +24,7 @@ namespace block_vitrina\task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \block_vitrina\task\sync_premiumenrolments
  */
-class sync_premiumenrolments_test extends \advanced_testcase {
-
+final class sync_premiumenrolments_test extends \advanced_testcase {
     /**
      * Set up the test environment.
      */
