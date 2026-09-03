@@ -71,7 +71,7 @@ class detail implements renderable, templatable {
         $detailinfo = file_rewrite_pluginfile_urls(
             $detailinfo,
             'pluginfile.php',
-            context_system::instance()->id,
+            \context_system::instance()->id,
             'block_vitrina',
             'detailinfo',
             0
