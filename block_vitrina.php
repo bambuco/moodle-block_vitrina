@@ -84,6 +84,18 @@ class block_vitrina extends block_base {
     }
 
     /**
+     * Add the course template class to the block container.
+     *
+     * @return array
+     */
+    public function html_attributes() {
+        $attributes = parent::html_attributes();
+        $attributes['class'] .= ' block_vitrina-coursestyle-' . \block_vitrina\local\controller::get_template_style('course');
+
+        return $attributes;
+    }
+
+    /**
      * Implemented to return the content object.
      *
      * @return stdObject

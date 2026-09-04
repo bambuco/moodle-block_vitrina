@@ -359,7 +359,7 @@ class controller {
                         $onerating = $ratemanager::get_ratings($one->id, $large);
 
                         if ($onerating && $onerating->count > 0) {
-                            $one->rating->total = round($onerating->rating, 1);
+                            $one->rating->total = round($onerating->total, 1);
                             $one->rating->count = $onerating->count;
                             $one->rating->percent = round($onerating->total * 20);
                             $one->rating->formated = str_pad($onerating->total, 3, '.0');

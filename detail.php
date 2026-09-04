@@ -47,6 +47,7 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_heading(get_string('coursedetail', 'block_vitrina', $course));
 $PAGE->set_title(get_string('coursedetailtitle', 'block_vitrina', $course));
 $PAGE->set_course($course);
+$PAGE->add_body_class('block_vitrina-detailstyle-' . \block_vitrina\local\controller::get_template_style('detail'));
 
 $msg = [];
 

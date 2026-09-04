@@ -39,6 +39,7 @@ $PAGE->set_url('/blocks/vitrina/index.php');
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_heading(get_string('catalog', 'block_vitrina'));
 $PAGE->set_title(get_string('catalog', 'block_vitrina'));
+$PAGE->add_body_class('block_vitrina-coursestyle-' . \block_vitrina\local\controller::get_template_style('course'));
 
 $uniqueid = \block_vitrina\local\controller::get_uniqueid();
 \block_vitrina\local\controller::include_templatecss();
