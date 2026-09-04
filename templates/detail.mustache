@@ -11,7 +11,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU General Public Licensecourse
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
@@ -96,7 +96,7 @@
 <div class="catalog-return">
     <a href="{{baseurl}}/blocks/vitrina/">{{#pix}}i/return, core{{/pix}}  {{#str}}returntocatalog, block_vitrina{{/str}}</a>
 </div>
-<div class="course-detail coursecategory-{{category}} {{#premium}}type-premium{{/premium}}">
+<div class="course-detail coursecategory-{{category}} {{#premium}}type-premium{{/premium}} block_vitrina-detailstyle-{{detailstyle}}">
     <div class="coursebanner-box">
         {{#imagepath}}
             <img src="{{.}}" alt="{{coursename}}">
@@ -244,9 +244,9 @@
     {{#hasrelated}}
         <div class="relatedcourses">
             <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
-            <div class="block_vitrina-courseslist">
+            <div class="block_vitrina-courseslist block_vitrina-coursestyle-{{coursestyle}}">
                 {{#related}}
-                    {{>block_vitrina/course}}
+                    {{{html}}}
                 {{/related}}
             </div>
         </div>

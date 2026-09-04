@@ -725,7 +725,7 @@ class controller {
     }
 
     /**
-     * Include a CSS file according the current used template.
+     * Include CSS files according the current used course and detail templates.
      *
      * @return void
      */
@@ -733,13 +733,99 @@ class controller {
 
         global $CFG, $PAGE;
 
-        $template = get_config('block_vitrina', 'templatetype');
-        $csspath = $CFG->dirroot . '/blocks/vitrina/templates/' . $template . '/styles.css';
+        $styles = array_unique([
+            self::get_template_style('course'),
+            self::get_template_style('detail'),
+        ]);
 
-        // If the template is not the default and a templace CSS file exist, include the CSS file.
-        if ($template != 'default' && file_exists($csspath)) {
-            $PAGE->requires->css('/blocks/vitrina/templates/' . $template . '/styles.css');
+        foreach ($styles as $template) {
+            if (empty($template) || $template === 'default') {
+                continue;
+            }
+
+            $csspath = $CFG->dirroot . '/blocks/vitrina/templates/' . $template . '/styles.css';
+
+            // If a template CSS file exist, include the CSS file.
+            if (file_exists($csspath)) {
+                $PAGE->requires->css('/blocks/vitrina/templates/' . $template . '/styles.css');
+            }
         }
+    }
+
+    /**
+     * Get available template styles that provide a mustache file for the given kind.
+     *
+     * @param string $kind Template file kind: course, detail, main or catalog.
+     * @return array Map of style key => label.
+     */
+    public static function get_available_templates(string $kind): array {
+        global $CFG;
+
+        $options = ['default' => get_string('default')];
+        $path = $CFG->dirroot . '/blocks/vitrina/templates/';
+
+        if (!is_dir($path)) {
+            return $options;
+        }
+
+        $files = array_diff(scandir($path), ['..', '.']);
+
+        foreach ($files as $file) {
+            if (is_dir($path . $file) && file_exists($path . $file . '/' . $kind . '.mustache')) {
+                $options[$file] = $file;
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get the configured style key for a template kind.
+     *
+     * @param string $kind Template file kind: course, detail, main or catalog.
+     * @return string Style key (default or folder name).
+     */
+    public static function get_template_style(string $kind): string {
+        if ($kind === 'detail') {
+            $style = get_config('block_vitrina', 'detailtemplatetype');
+            if (empty($style)) {
+                $style = get_config('block_vitrina', 'templatetype');
+            }
+        } else {
+            $style = get_config('block_vitrina', 'templatetype');
+        }
+
+        if (empty($style)) {
+            return 'default';
+        }
+
+        return (string)$style;
+    }
+
+    /**
+     * Resolve the mustache template path for a kind and style.
+     *
+     * @param string $kind Template file kind: course, detail, main or catalog.
+     * @param string|null $style Style folder name, or null to use the configured setting.
+     * @return string Mustache template name, e.g. block_vitrina/cards/course.
+     */
+    public static function resolve_template_file(string $kind, ?string $style = null): string {
+        global $CFG;
+
+        if ($style === null) {
+            $style = self::get_template_style($kind);
+        }
+
+        if (empty($style) || $style === 'default') {
+            return 'block_vitrina/' . $kind;
+        }
+
+        $path = $CFG->dirroot . '/blocks/vitrina/templates/' . $style . '/' . $kind . '.mustache';
+        if (file_exists($path)) {
+            return 'block_vitrina/' . $style . '/' . $kind;
+        }
+
+        return 'block_vitrina/' . $kind;
     }
 
     /**

@@ -397,6 +397,12 @@ class detail implements renderable, templatable {
             }
         }
 
+        if (!empty($this->course->hasrelated) && !empty($this->course->related)) {
+            foreach ($this->course->related as $onerelated) {
+                $onerelated->html = $output->render_course($onerelated);
+            }
+        }
+
         $PAGE->requires->js_call_amd('block_vitrina/main', 'detail');
 
         // End Check enrolled status.
@@ -414,6 +420,8 @@ class detail implements renderable, templatable {
             'enrolmsg' => $this->enrolmsg,
             'opendetailstarget' => get_config('block_vitrina', 'opendetailstarget'),
             'includecustomfieldsinlist' => get_config('block_vitrina', 'includecustomfieldsinlist'),
+            'detailstyle' => \block_vitrina\local\controller::get_template_style('detail'),
+            'coursestyle' => \block_vitrina\local\controller::get_template_style('course'),
         ];
 
         return $defaultvariables;

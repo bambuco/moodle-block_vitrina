@@ -355,11 +355,103 @@ final class controller_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         set_config('templatetype', 'default', 'block_vitrina');
+        set_config('detailtemplatetype', 'default', 'block_vitrina');
 
         \block_vitrina\local\controller::include_templatecss();
 
         // If no exception was thrown, the test passes.
         $this->assertTrue(true);
+    }
+
+    /**
+     * Test include_templatecss does not throw when course and detail styles differ.
+     *
+     * @covers ::include_templatecss
+     */
+    public function test_include_templatecss_mixed_styles(): void {
+        $this->resetAfterTest();
+
+        set_config('templatetype', 'cards', 'block_vitrina');
+        set_config('detailtemplatetype', 'two_cols', 'block_vitrina');
+
+        \block_vitrina\local\controller::include_templatecss();
+
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Test get_available_templates lists default and style folders that provide the kind.
+     *
+     * @covers ::get_available_templates
+     */
+    public function test_get_available_templates(): void {
+        $this->resetAfterTest();
+
+        $courseoptions = \block_vitrina\local\controller::get_available_templates('course');
+        $detailoptions = \block_vitrina\local\controller::get_available_templates('detail');
+        $mainoptions = \block_vitrina\local\controller::get_available_templates('main');
+
+        $this->assertArrayHasKey('default', $courseoptions);
+        $this->assertArrayHasKey('cards', $courseoptions);
+        $this->assertArrayHasKey('two_cols', $courseoptions);
+        $this->assertArrayHasKey('cesil', $courseoptions);
+
+        $this->assertArrayHasKey('default', $detailoptions);
+        $this->assertArrayHasKey('cards', $detailoptions);
+        $this->assertArrayHasKey('two_cols', $detailoptions);
+
+        // No style folder currently overrides main.mustache.
+        $this->assertSame(['default' => get_string('default')], $mainoptions);
+        $this->assertArrayNotHasKey('pix', $courseoptions);
+    }
+
+    /**
+     * Test resolve_template_file returns the style path or falls back to default.
+     *
+     * @covers ::resolve_template_file
+     * @covers ::get_template_style
+     */
+    public function test_resolve_template_file(): void {
+        $this->resetAfterTest();
+
+        $this->assertEquals(
+            'block_vitrina/course',
+            \block_vitrina\local\controller::resolve_template_file('course', 'default')
+        );
+        $this->assertEquals(
+            'block_vitrina/cards/course',
+            \block_vitrina\local\controller::resolve_template_file('course', 'cards')
+        );
+        $this->assertEquals(
+            'block_vitrina/two_cols/detail',
+            \block_vitrina\local\controller::resolve_template_file('detail', 'two_cols')
+        );
+        $this->assertEquals(
+            'block_vitrina/course',
+            \block_vitrina\local\controller::resolve_template_file('course', 'missingstyle')
+        );
+
+        set_config('templatetype', 'cards', 'block_vitrina');
+        set_config('detailtemplatetype', 'cesil', 'block_vitrina');
+
+        $this->assertEquals('cards', \block_vitrina\local\controller::get_template_style('course'));
+        $this->assertEquals('cesil', \block_vitrina\local\controller::get_template_style('detail'));
+        $this->assertEquals(
+            'block_vitrina/cards/course',
+            \block_vitrina\local\controller::resolve_template_file('course')
+        );
+        $this->assertEquals(
+            'block_vitrina/cesil/detail',
+            \block_vitrina\local\controller::resolve_template_file('detail')
+        );
+
+        // Detail falls back to the course style when its own setting is empty.
+        unset_config('detailtemplatetype', 'block_vitrina');
+        $this->assertEquals('cards', \block_vitrina\local\controller::get_template_style('detail'));
+        $this->assertEquals(
+            'block_vitrina/cards/detail',
+            \block_vitrina\local\controller::resolve_template_file('detail')
+        );
     }
 
     /**

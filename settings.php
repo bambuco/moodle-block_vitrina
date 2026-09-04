@@ -350,22 +350,20 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
     $settings->add($setting);
 
-    // Template type.
-    $options = ['default' => get_string('default')];
-
-    $path = $CFG->dirroot . '/blocks/vitrina/templates/';
-    $files = array_diff(scandir($path), ['..', '.']);
-
-    foreach ($files as $file) {
-        if (is_dir($path . $file)) {
-            $options[$file] = $file;
-        }
-    }
-
+    // Course card template type.
+    $courseoptions = localvitrina\controller::get_available_templates('course');
     $name = 'block_vitrina/templatetype';
     $title = get_string('templatetype', 'block_vitrina');
     $help = get_string('templatetype_help', 'block_vitrina');
-    $setting = new admin_setting_configselect($name, $title, $help, 'default', $options);
+    $setting = new admin_setting_configselect($name, $title, $help, 'default', $courseoptions);
+    $settings->add($setting);
+
+    // Detail template type.
+    $detailoptions = localvitrina\controller::get_available_templates('detail');
+    $name = 'block_vitrina/detailtemplatetype';
+    $title = get_string('detailtemplatetype', 'block_vitrina');
+    $help = get_string('detailtemplatetype_help', 'block_vitrina');
+    $setting = new admin_setting_configselect($name, $title, $help, 'default', $detailoptions);
     $settings->add($setting);
 
     // Rating components.

@@ -92,7 +92,7 @@
 <div class="catalog-return">
     <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-secondary">{{#pix}}i/return, core{{/pix}}  {{#str}}returntocatalog, block_vitrina{{/str}}</a>
 </div>
-<div class="course-detail coursecategory-{{category}} {{#premium}}type-premium{{/premium}} container">
+<div class="course-detail coursecategory-{{category}} {{#premium}}type-premium{{/premium}} container block_vitrina-detailstyle-{{detailstyle}}">
     <div class="coursetitle-box d-md-none">
         <h2 class="h1">{{{coursename}}}</h2>
         {{#rating}}
@@ -331,10 +331,10 @@
     {{#hasrelated}}
         <div class="relatedcourses">
             <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
-            <div class="block_vitrina-courseslist">
+            <div class="block_vitrina-courseslist block_vitrina-coursestyle-{{coursestyle}}">
                 <div class="courses-list">
                     {{#related}}
-                        {{>block_vitrina/two_cols_nodolab/course}}
+                        {{{html}}}
                     {{/related}}
                 </div>
             </div>

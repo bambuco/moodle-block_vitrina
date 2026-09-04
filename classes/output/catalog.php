@@ -138,6 +138,7 @@ class catalog implements renderable, templatable {
             'catfilterview' => $catfilterview,
             'opendetailstarget' => get_config('block_vitrina', 'opendetailstarget'),
             'filterroot' => $catfilterview != 'directory',
+            'coursestyle' => \block_vitrina\local\controller::get_template_style('course'),
         ];
 
         return $defaultvariables;
