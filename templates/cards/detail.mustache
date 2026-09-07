@@ -286,9 +286,11 @@
     <div class="relatedcourses block_vitrina-coursestyle-{{coursestyle}}">
         <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
         <div class="block_vitrina-courseslist">
-            {{#related}}
-                {{{html}}}
-            {{/related}}
+            <div class="courses-list">
+                {{#related}}
+                    {{{html}}}
+                {{/related}}
+            </div>
         </div>
     </div>
 {{/hasrelated}}

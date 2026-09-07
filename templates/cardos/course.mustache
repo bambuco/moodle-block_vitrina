@@ -41,19 +41,30 @@
     }
 }}
 
-<div class="coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}} {{^visible}}coursehidden{{/visible}}" {{#imagepath}}style="background-image: url({{imagepath}});"{{/imagepath}}>
-    {{#hasrating}}
-        {{#rating}}
-        <div class="vitrina-ranking-stars">
-            <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
-            {{#pix}}stars_empty, block_vitrina{{/pix}}
+<div class="coursebox coursecategory-{{category}} state-{{#active}}active{{/active}}{{^active}}waiting{{/active}} {{#premium}}type-premium{{/premium}}{{#completed}} coursecompleted{{/completed}} {{^visible}}coursehidden{{/visible}}">
+    <div class="card_body">
+        {{#hasrating}}
+            {{#rating}}
+            <div class="vitrina-ranking-stars">
+                <div class="vitrina-ranking-stars-bar" style="width: {{percent}}%;"></div>
+                {{#pix}}stars_empty, block_vitrina{{/pix}}
+            </div>
+            {{/rating}}
+        {{/hasrating}}
+
+        {{#includecustomfieldsinlist}}
+            {{> block_vitrina/customfieldslist}}
+        {{/includecustomfieldsinlist}}
+
+        <div>
+            <a title="{{{shortname}}}" class="btntitle" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="{{opendetailstarget}}">
+                {{{fullname}}}
+            </a>
+
+            <div class="coursesummary">
+                {{{summary}}}
+            </div>
         </div>
-        {{/rating}}
-    {{/hasrating}}
-
-    <div class="content-initial">
-
-        <h6>{{{fullname}}}</h6>
 
         {{#fee}}
             <div class="coursefee">
@@ -65,6 +76,7 @@
                 {{/hascart}}
             </div>
         {{/fee}}
+
         {{#hasprogress}}
             <div class="course-progress">
                 <div class="course-progress-bar" style="width: {{progress}}%;"></div>
@@ -74,20 +86,15 @@
 
         {{> block_vitrina/contactslist}}
 
-        <div class="content-fullinfo">
-            {{#includecustomfieldsinlist}}
-                {{> block_vitrina/customfieldslist}}
-            {{/includecustomfieldsinlist}}
-
-            <div class="coursesummary">
-                {{{summary}}}
-            </div>
-            <a  title="{{{shortname}}}" class="coursebtn submit btn btn-primary" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="{{opendetailstarget}}">
-                <span class="get_stringlink">{{# str }} showmore, block_vitrina {{/ str }}</span>
+    </div>
+    {{#imagepath}}
+        <div class="card_imagen">
+            <a title="{{{shortname}}}" class="btnimg" href="{{{baseurl}}}/blocks/vitrina/detail.php?id={{{id}}}" target="{{opendetailstarget}}">
+                <img src="{{imagepath}}" alt="{{fullname}}" title="{{fullname}}">
             </a>
         </div>
+    {{/imagepath}}
 
-    </div>
     {{^active}}
         <div class="waiting-label">{{#str}}waiting, block_vitrina{{/str}}</div>
     {{/active}}

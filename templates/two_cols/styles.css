@@ -1,6 +1,6 @@
 /* Course cards: catalog, block and related list */
 .block_vitrina-coursestyle-two_cols {
-    .block_vitrina-courseslist {
+    .block_vitrina-courseslist .courses-list {
         background-color: #f9f9f9;
         border-top: 1px solid #e7e7e7;
     }

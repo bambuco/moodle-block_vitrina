@@ -143,6 +143,14 @@
 }
 
 .block_vitrina-courseslist {
+    .courses-list {
+        display: flex;
+        align-items: stretch;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        gap: 16px;
+    }
+
     .coursebox .courseimage {
         height: 160px;
         overflow: hidden;

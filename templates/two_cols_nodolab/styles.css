@@ -209,17 +209,6 @@
     }
 }
 
-/* Related courses list on the detail page */
-.block_vitrina-detailstyle-two_cols_nodolab {
-    .relatedcourses .block_vitrina-courseslist {
-        display: flex;
-        align-items: stretch;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-        gap: 16px;
-    }
-}
-
 @media (max-width: 767.98px) {
     .block_vitrina-detailstyle-two_cols_nodolab {
         .relatedcourses > div .coursebox {

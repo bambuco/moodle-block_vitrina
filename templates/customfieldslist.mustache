@@ -28,7 +28,7 @@
         <div class="customfieldslist">
             <ul class="list-group">
             {{#customfields}}
-                <li class="list-group-item {{shortname}}-box">
+                <li class="list-group-item {{shortname}}-box" data-customfield="{{shortname}}" data-customfieldvalue="{{value}}">
                     <strong>{{title}}</strong>
                     <span>{{{value}}}</span>
                 </li>
