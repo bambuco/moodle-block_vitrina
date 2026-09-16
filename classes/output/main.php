@@ -99,6 +99,7 @@ class main implements renderable, templatable {
             'showtext' => \block_vitrina\local\controller::show_tabtext(),
             'instanceid' => $this->instanceid,
             'opendetailstarget' => get_config('block_vitrina', 'opendetailstarget'),
+            'coursestyle' => \block_vitrina\local\controller::get_template_style('course'),
         ];
 
         return $defaultvariables;

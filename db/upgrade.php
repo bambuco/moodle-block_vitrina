@@ -74,5 +74,19 @@ function xmldb_block_vitrina_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2023042604, 'vitrina');
     }
 
+    if ($oldversion < 2025111904) {
+        $detailtype = get_config('block_vitrina', 'detailtemplatetype');
+        if ($detailtype === false || $detailtype === '') {
+            $templatetype = get_config('block_vitrina', 'templatetype');
+            if ($templatetype === false || $templatetype === '') {
+                $templatetype = 'default';
+            }
+            set_config('detailtemplatetype', $templatetype, 'block_vitrina');
+        }
+
+        // Savepoint reached.
+        upgrade_block_savepoint(true, 2025111904, 'vitrina');
+    }
+
     return true;
 }

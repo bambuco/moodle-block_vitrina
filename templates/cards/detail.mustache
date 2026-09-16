@@ -92,6 +92,7 @@
     }
 }}
 {{#course}}
+<div class="block_vitrina-detailstyle-{{detailstyle}}">
 <div class="catalog-return">
     <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-secondary">{{#pix}}i/return, core{{/pix}}  {{#str}}returntocatalog, block_vitrina{{/str}}</a>
 </div>
@@ -230,17 +231,6 @@
         </div>
     {{/detailinfo}}
 
-    {{#hasrelated}}
-        <div class="relatedcourses">
-            <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
-            <div class="block_vitrina-courseslist">
-                {{#related}}
-                    {{>block_vitrina/cards/course}}
-                {{/related}}
-            </div>
-        </div>
-    {{/hasrelated}}
-
     <div class="detail-foot">
         {{#hascomments}}<h3>{{#str}}commentstitle, block_vitrina{{/str}}</h3>{{/hascomments}}
 
@@ -290,6 +280,20 @@
         </div>
     </div>
 </div>
+</div>
+
+{{#hasrelated}}
+    <div class="relatedcourses block_vitrina-coursestyle-{{coursestyle}}">
+        <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
+        <div class="block_vitrina-courseslist">
+            <div class="courses-list">
+                {{#related}}
+                    {{{html}}}
+                {{/related}}
+            </div>
+        </div>
+    </div>
+{{/hasrelated}}
 
 {{#haspaymentgw}}
 {{#js}}

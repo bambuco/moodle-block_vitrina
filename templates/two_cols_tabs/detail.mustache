@@ -89,6 +89,7 @@
 }}
 
 {{#course}}
+<div class="block_vitrina-detailstyle-{{detailstyle}}">
 <div class="catalog-return">
     <a href="{{baseurl}}/blocks/vitrina/" class="btn btn-secondary">{{#pix}}i/return, core{{/pix}}  {{#str}}returntocatalog, block_vitrina{{/str}}</a>
 </div>
@@ -347,20 +348,21 @@
             </div>
         </div>
     {{/rating}}
+</div>
+</div>
 
-    {{#hasrelated}}
-        <div class="relatedcourses">
-            <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
-            <div class="block_vitrina-courseslist">
-                <div class="courses-list">
-                    {{#related}}
-                        {{>block_vitrina/two_cols_tabs/course}}
-                    {{/related}}
-                </div>
+{{#hasrelated}}
+    <div class="relatedcourses block_vitrina-coursestyle-{{coursestyle}}">
+        <h3>{{#str}}relatedcourses, block_vitrina{{/str}}</h3>
+        <div class="block_vitrina-courseslist">
+            <div class="courses-list">
+                {{#related}}
+                    {{{html}}}
+                {{/related}}
             </div>
         </div>
-    {{/hasrelated}}
-</div>
+    </div>
+{{/hasrelated}}
 
 {{#haspaymentgw}}
 {{#js}}

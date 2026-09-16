@@ -1,0 +1,174 @@
+/* Course cardos: catalog, block and related list */
+.block_vitrina-coursestyle-cardos {
+    .block_vitrina-tabcontent .courses-list {
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    .block_vitrina-courseslist {
+        .coursebox {
+            margin: 15px 10px 10px;
+            position: relative;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            width: 260px;
+            background-color: #f5f4f2;
+            border-radius: 10px;
+            padding: 20px 20px 0 20px;
+            color: var(--secondary);
+            justify-content: space-between;
+
+            &:hover {
+                transform: scale(1.02);
+                box-shadow: 0px 0px 10px 0px #aaa;
+            }
+
+            .card_body {
+                height: 100%;
+            }
+
+            h5 {
+                font-size: 16px;
+            }
+
+            .card_imagen {
+                width: 100%;
+                height: 150px;
+                position: relative;
+                padding-top: 10px;
+
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    height: 150px;
+                    object-fit: cover;
+                    border-radius: 10px 10px 0 0;
+                }
+            }
+
+            .btntitle {
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                color: var(--secondary);
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            .coursesummary {
+                max-height: 80px;
+                overflow: auto;
+                padding: 0 10px;
+                font-size: 90%;
+                line-height: 1.2;
+                margin-bottom: 10px;
+            }
+
+            .customfieldslist {
+                .list-group {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    flex-direction: row;
+                    margin: 10px auto;
+
+                    .list-group-item {
+                        display: inline-block;
+                        border: 1px solid var(--secondary);
+                        border-radius: 10px;
+                        padding: 0 5px;
+                        font-size: 10px;
+                        background: transparent;
+                    }
+                }
+            }
+
+            .vitrina-ranking-stars {
+                margin: 0;
+            }
+
+            .coursefee {
+                padding: 10px;
+            }
+
+            .feeinfo {
+                display: inline;
+                border: 2px solid var(--primary);
+                padding: 5px 10px;
+                border-radius: 20px;
+                background-color: var(--secondary);
+                color: var(--primary);
+            }
+
+            &.state-waiting {
+                .waiting-label {
+                    background-color: transparent;
+                    text-transform: uppercase;
+                    font-size: 23px;
+                    font-weight: bold;
+                    border-top: 2px solid;
+                    border-bottom: 2px solid;
+                    left: 10px;
+                    right: 10px;
+                }
+
+                &:hover .waiting-label {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .vitrina-ranking-stars {
+        margin: auto;
+    }
+
+    .vitrina-ranking-stars-bar:after {
+        left: 0;
+    }
+}
+
+.block_vitrina-coursestyle-cardos .courses-list {
+    .coursebox {
+        &:nth-child(even) {
+            background-color: var(--primary);
+            padding-bottom: 20px;
+            flex-direction: column-reverse;
+
+            .card_imagen {
+                text-align: left;
+                margin: -30px 0 10px -20px;
+
+                img {
+                    display: inline-block;
+                    border-radius: 10px 0 10px 0;
+                }
+            }
+        }
+
+        &:nth-child(4n) {
+            background-color: var(--secondary);
+            color: var(--secondaryreverse);
+
+            a {
+                color: var(--secondaryreverse);
+            }
+
+            .customfieldslist .list-group-item {
+                border-color: var(--secondaryreverse);
+            }
+        }
+    }
+}
+
+/* Related courses list on the detail page */
+@media (max-width: 715px) {
+    .block_vitrina-coursestyle-cardos {
+        .relatedcourses > div .coursebox {
+            width: calc(100% - 20px);
+        }
+    }
+}
